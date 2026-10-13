@@ -63,5 +63,29 @@
     "fullSession": "Ver sesión completa",
     "loading": "Cargando la ficha de la sesión…",
     "error": "No se pudo cargar la ficha de la sesión."
+  },
+  "insights": {
+    "label": "Cifras del periodo",
+    "tasks_completed": "Tareas completadas",
+    "tokens": "Tokens usados",
+    "time_worked_ms": "Tiempo trabajado",
+    "streak": "Racha",
+    "days": "días",
+    "streakSplit": "Tareas de la racha (hasta 35 días visibles): Claude {{claude}} · Codex {{codex}}",
+    "streakHint": "Días seguidos con trabajo completado",
+    "charts": "Gráficas de trabajo",
+    "donut": "Quién ha hecho qué",
+    "donutHint": "Tareas completadas por agente",
+    "completed": "{{formatted}} tareas completadas",
+    "done": "hechas",
+    "filter": "Filtrar gráficas y muro por {{agent}}",
+    "rhythm": "Ritmo",
+    "rhythm_today": "Tareas completadas por hora",
+    "rhythm_7d": "Tareas completadas por día",
+    "rhythm_30d": "Tareas completadas cada 3 días",
+    "heatmap": "Últimas 5 semanas",
+    "heatHint": "Tareas completadas · hoy remarcado",
+    "error": "No se pudo cargar el resumen de trabajo.",
+    "loading": "Cargando el resumen de trabajo…"
   }
 }

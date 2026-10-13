@@ -303,7 +303,7 @@ flowchart LR
   <em>⌘ <strong>命令面板</strong> · 用一个键盘启动器访问页面、会话、项目、筛选器和操作</em>
 </p>
 
-侧边栏链接 Dashboard、Kanban 看板、会话、活动流、分析、工作流、Agent 配置、Run Agent 和设置。以下章节说明这些视图背后的完整行为。
+侧边栏链接 Dashboard、Kanban 看板、Muro、会话、活动流、分析、工作流、Agent 配置、Run Agent 和设置。以下章节说明这些视图背后的完整行为。
 ---
 
 ## 功能特性
@@ -315,6 +315,7 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 | **任务进度** | 汇总 Claude 任务工具、旧版 `TodoWrite` 与 Codex `update_plan` 的按归属进度。卡片和表格行显示紧凑预览；会话详情增加状态分段、当前工作、归属信息和每页 10 行的分页。新的顶层工作会清除陈旧的未完成状态，已完成历史仍保留。 |
 | **Dashboard** | 持久化的 **Monitor** 和 **Health** 标签页汇总 Agent 总量、活跃层级、最近活动、加权的成功率/缓存/错误/堆内存健康度，以及存储、工具、模型、Subagent 效能和压缩指标。Health 每 5 秒从 `/api/settings/info` 和 `/api/workflows` 刷新。 |
 | **Kanban 看板** | Agent 列覆盖 Working、Waiting、Completed 和 Error，会话列另含 Active 和 Abandoned。卡片每次显示 10 张，仅订阅当前 WebSocket 视图，保留完整标题，并说明权限输入、回合完成、提示符空闲或中断等等待原因。 |
+| **Muro** | `/muro` 提供 Claude/Codex 可视化工作墙：会话便签、实时吉祥物、已完成任务、token、工作时长、连续完成天数、完成占比环形图、节奏柱状图和五周热力图。今天 / 7 天 / 30 天及共享 Agent 筛选器让看板与图表保持一致；不包含 Cursor。 |
 | **会话** | 可搜索、可筛选、服务端分页的历史记录，费用仅按可见页计算，并包含临时的内存 Codex 启动行。搜索以 300 ms 防抖匹配 `id`、`name` 和 `cwd`。名称依次取显式标题、AI 标题和首条有意义的用户提示。 |
 | **会话详情** | 实时统计、当前工作、工具用量、Subagent、Token、层级、筛选后的事件时间线、`tool_use_id` 分组和工具专用渲染器。对话视图渲染排队回合、系统通知、Markdown、高亮代码和样式化工具；等待横幅显示原因和已等待时长。 |
 | **活动流** | 可暂停的实时事件流，带共享筛选器、服务端分页、分组、项目/会话/Subagent 来源、会话链接，以及一致的 Claude/Codex 状态徽标。 |
@@ -362,6 +363,16 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 > **Provider 范围和主目录：** Settings 在 Claude 兼容（Claude Code + Cursor）/ Codex / Both 之间保持全局一致。Claude Code 和 Codex 主目录无需重启 Dashboard 即可编辑；Cursor 自动从 `~/.cursor` 或 `DASHBOARD_CURSOR_HOME` 发现。
 >
 > **本地安全边界：** Run Agent 接受任意已存在的绝对工作目录，并在使用前进行规范化，因此仍支持从主目录和最近项目启动。托管 Webhook Provider 必须使用 HTTPS；generic 和 n8n 目标可为本地/自托管接收端使用 HTTP，且投递从不跟随重定向。
+### Muro
+
+在 Kanban 看板下方打开 **Muro**。工作时 Claude 扫地，Codex 搭建；等待气泡显示最近需要你输入的会话。舞台卡片显示今天的任务和 token。点击卡片或完成占比环形图的图例可切换同一个 Agent 筛选器；悬停或聚焦图例会淡化另一个 Agent 的便签。全局范围排除的产品保持淡化，不显示数字，也不可选择。
+
+便签自动在**工作中**、**等待我的确认**和**已完成**之间移动；仅已完成列按所选本地日历周期筛选。打开便签可查看原始请求、会话时长、token、工具次数、修改文件及完整会话链接。按 Escape、关闭按钮或背景可关闭详情并恢复焦点。详情时长与便签一致：`ended_at`（或当前时间）减去 `started_at`。
+
+四个计数器显示已完成会话、包含基线的有效 token、工作时长和不设上限的连续完成天数。汇总按所选周期与 Agent 筛选；舞台数字始终为今天。节奏图在今天按小时、7 天按天、30 天按三天分组。热力图覆盖最近 35 个本地日期并标记今天。Claude 为橙色（`#D46F3A`），Codex 为青绿色（`#2BA394`）。启用 `prefers-reduced-motion` 时停止计数器动画、过渡、吉祥物动画和彩纸。
+
+文件列表包含 Claude `Edit` / `Write` / `MultiEdit` 路径及新摄入 Codex `apply_patch` 调用的路径。rollout 和 `PreToolUse` hook 从 `*** Add File:`、`*** Update File:` 和 `*** Delete File:` 提取路径到 `data.files`（最多 50 个）。会话统计返回最多 50 个去重排序路径；不会回填此前已摄入的 Codex 调用。
+
 ---
 
 ## 快速开始
@@ -532,6 +543,7 @@ sequenceDiagram
    - 连续项目同步组合立即扫描、防抖 `fs.watch` 与 `DASHBOARD_SESSION_SYNC_MS` 轮询，默认 30 秒。单个 mtime 缓存只重新解析新增或增长的 Transcript，并广播与 Hook 相同的会话帧。
 4. **WebSocket** 发布已提交的变更。
 5. **UI** 无需轮询即可刷新受影响视图。
+6. **Muro** 在实时事件后以 300 ms 防抖重新加载范围内会话和汇总；更改周期或 Agent 会刷新图表。
 ### Agent 状态机
 
 持久化状态:`working | waiting | completed | error`。`awaiting_input_since`

@@ -301,7 +301,7 @@ Giao diện tối thích ứng bao quát toàn bộ quy trình. Mỗi bản xem 
   <em>⌘ <strong>Bảng lệnh</strong> · một trình khởi chạy bằng bàn phím cho trang, phiên, dự án, bộ lọc và hành động</em>
 </p>
 
-Thanh bên liên kết Dashboard, Bảng Kanban, Phiên, Luồng hoạt động, Phân tích, Quy trình, Cấu hình Agent, Chạy Agent và Cài đặt. Các phần dưới đây mô tả đầy đủ hành vi đằng sau những chế độ xem này.
+Thanh bên liên kết Dashboard, Bảng Kanban, Muro, Phiên, Luồng hoạt động, Phân tích, Quy trình, Cấu hình Agent, Chạy Agent và Cài đặt. Các phần dưới đây mô tả đầy đủ hành vi đằng sau những chế độ xem này.
 
 ---
 
@@ -314,6 +314,7 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 | **Tiến độ công việc** | Tiến độ theo chủ sở hữu từ công cụ tác vụ Claude, `TodoWrite` cũ và `update_plan` của Codex. Bản xem trước gọn xuất hiện trên thẻ và hàng; Chi tiết phiên bổ sung các đoạn trạng thái, công việc hiện tại, chủ sở hữu và phân trang 10 hàng. Công việc cấp cao nhất mới xóa trạng thái chưa hoàn tất cũ, còn lịch sử đã hoàn tất được giữ lại. |
 | **Dashboard** | Hai tab **Monitor** và **Health** được lưu bền vững, kết hợp tổng số Agent, hệ thống phân cấp đang hoạt động, hoạt động gần đây, sức khỏe có trọng số theo thành công/cache/lỗi/heap, lưu trữ, công cụ, model, hiệu quả Subagent và chỉ số compaction. Health làm mới mỗi 5 giây từ `/api/settings/info` và `/api/workflows`. |
 | **Bảng Kanban** | Các cột Agent gồm Đang làm việc, Đang chờ, Hoàn tất và Lỗi; các cột phiên bổ sung Đang hoạt động và Bị bỏ dở. Thẻ phân trang 10 mục mỗi lần, chỉ đăng ký chế độ xem WebSocket đang hoạt động, giữ nguyên tiêu đề đầy đủ và giải thích lý do chờ như yêu cầu quyền, kết thúc lượt, đang ở dấu nhắc hoặc bị gián đoạn. |
+| **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. |
 | **Phiên** | Lịch sử có thể tìm kiếm, lọc và phân trang phía máy chủ, với chi phí chỉ tính trên trang đang hiển thị và một hàng khởi động Codex tạm thời trong bộ nhớ. Tìm kiếm bao quát `id`, `name` và `cwd` với debounce 300 ms. Tên được lấy lần lượt từ tiêu đề rõ ràng, tiêu đề AI rồi lời nhắc người dùng có ý nghĩa đầu tiên. |
 | **Chi tiết phiên** | Thống kê trực tiếp, công việc hiện tại, mức dùng công cụ, Subagent, token, hệ thống phân cấp, dòng thời gian sự kiện có bộ lọc, nhóm theo `tool_use_id` và trình kết xuất riêng cho từng công cụ. Chế độ Hội thoại kết xuất lượt chờ, thông báo hệ thống, Markdown, mã được tô sáng và công cụ có kiểu riêng; banner chờ hiển thị lý do và thời gian đã trôi qua. |
 | **Luồng hoạt động** | Sự kiện thời gian thực có thể tạm dừng, với bộ lọc dùng chung, phân trang phía máy chủ, nhóm, nguồn dự án/phiên/Subagent, liên kết phiên và badge trạng thái Claude/Codex nhất quán. |
@@ -361,6 +362,16 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 > **Phạm vi nhà cung cấp và thư mục:** Cài đặt giữ lựa chọn tương thích Claude (Claude Code + Cursor) / Codex / Cả hai nhất quán trên toàn ứng dụng. Có thể chỉnh sửa thư mục Claude Code và Codex mà không cần khởi động lại dashboard; Cursor được tự động phát hiện từ `~/.cursor` hoặc `DASHBOARD_CURSOR_HOME`.
 >
 > **Ranh giới an toàn cục bộ:** Chạy Agent chấp nhận mọi thư mục làm việc tuyệt đối đang tồn tại và chuẩn hóa trước khi dùng, nên vẫn hỗ trợ khởi chạy từ thư mục nhà và dự án gần đây. Nhà cung cấp webhook được lưu trữ bắt buộc dùng HTTPS; đích generic và n8n có thể dùng HTTP cho bên nhận cục bộ/tự lưu trữ, và quá trình gửi không theo redirect.
+
+### Muro
+
+Mở **Muro** bên dưới Bảng Kanban. Claude quét dọn và Codex xây dựng khi làm việc; bong bóng chờ nêu phiên mới nhất cần bạn nhập liệu. Thẻ sân khấu hiển thị tác vụ và token hôm nay. Nhấn thẻ hoặc chú giải biểu đồ vòng để bật/tắt cùng bộ lọc Agent; di chuột hoặc đặt tiêu điểm vào chú giải sẽ làm mờ ghi chú của Agent còn lại. Sản phẩm bị loại bởi phạm vi toàn cục được làm mờ, không có số liệu và không thể chọn.
+
+Ghi chú tự chuyển giữa **Đang làm việc**, **Đang chờ tôi xác nhận** và **Hoàn tất**; chỉ cột Hoàn tất theo khoảng ngày địa phương đã chọn. Mở ghi chú để xem yêu cầu ban đầu, thời lượng phiên, token, số lần dùng công cụ, tệp đã sửa và liên kết phiên đầy đủ. Escape, nút đóng hoặc nền đóng bảng chi tiết và trả tiêu điểm. Thời lượng giống ghi chú: `ended_at` (hoặc hiện tại) trừ `started_at`.
+
+Bốn bộ đếm hiển thị phiên hoàn tất, token hiệu dụng gồm baseline, thời gian làm việc và chuỗi ngày hoàn tất không giới hạn. Tổng hợp theo khoảng thời gian và Agent đã chọn; số liệu sân khấu luôn là hôm nay. Nhịp độ nhóm theo giờ cho hôm nay, theo ngày cho 7 ngày và mỗi ba ngày cho 30 ngày. Bản đồ nhiệt phủ 35 ngày địa phương gần nhất và đánh dấu hôm nay. Claude màu cam (`#D46F3A`), Codex màu xanh ngọc (`#2BA394`). Với `prefers-reduced-motion`, bộ đếm, chuyển động, linh vật và giấy màu đều dừng hoạt ảnh.
+
+Tệp gồm đường dẫn Claude `Edit` / `Write` / `MultiEdit` và đường dẫn từ các lệnh Codex `apply_patch` mới được nạp. Rollout và hook `PreToolUse` trích `*** Add File:`, `*** Update File:` và `*** Delete File:` vào `data.files` (tối đa 50). Thống kê phiên trả tối đa 50 đường dẫn duy nhất đã sắp xếp; không bổ sung ngược các lệnh Codex đã nạp trước đó.
 
 ---
 
@@ -527,6 +538,7 @@ sequenceDiagram
    - Đồng bộ dự án liên tục kết hợp quét ngay lập tức, `fs.watch` có debounce và polling `DASHBOARD_SESSION_SYNC_MS`, mặc định 30 giây. Một cache mtime chỉ phân tích lại transcript mới hoặc lớn hơn và broadcast cùng các frame phiên như hook.
 4. **WebSocket** phát thay đổi đã commit.
 5. **UI** làm mới chế độ xem bị ảnh hưởng mà không cần polling.
+6. **Muro** tải lại phiên và tổng hợp trong phạm vi sau sự kiện trực tiếp với debounce 300 ms; thay đổi khoảng thời gian hoặc Agent làm mới biểu đồ.
 
 ### Máy trạng thái Agent
 

@@ -5,7 +5,7 @@
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
-import { act, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -61,7 +61,10 @@ describe("Muro", () => {
     vi.mocked(api.muro.summary).mockResolvedValue(emptySummary);
     vi.mocked(api.sessions.list).mockResolvedValue(list([]));
   });
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
 
   it("opens with today's period, waiting mascots, zero counters, and the tab title", async () => {
     render(
@@ -120,7 +123,7 @@ describe("Muro", () => {
       expect(screen.getAllByRole("button", { pressed: true })).toHaveLength(1);
       expect(claude.getByText("3 hechas hoy")).toBeVisible();
     }
-    expect(api.muro.summary).toHaveBeenCalledTimes(1);
+    expect(api.muro.summary).toHaveBeenCalledTimes(3);
   });
 
   it("shows waiting context and falls back to a shortened prompt", async () => {
@@ -168,7 +171,7 @@ describe("Muro", () => {
       within(screen.getByRole("region", { name: "Trabajando" })).getAllByRole("button")
     ).toHaveLength(2);
     expect(container.firstChild).toHaveAttribute("data-agent-filter", "all");
-    expect(api.muro.summary).toHaveBeenCalledTimes(1);
+    expect(api.muro.summary).toHaveBeenCalledTimes(3);
   });
 
   it("recovers from an API error while retaining header and period", async () => {
@@ -302,6 +305,105 @@ describe("Muro", () => {
     expect(
       within(screen.getByRole("region", { name: "Trabajando" })).queryByRole("button")
     ).not.toBeInTheDocument();
+  });
+
+  it("shares the donut filter with the stage, board, totals and exact agent streak", async () => {
+    vi.mocked(api.sessions.list).mockResolvedValue(list([session("claude"), session("codex")]));
+    vi.mocked(api.muro.summary).mockImplementation(async (period = "today", agent) => ({
+      ...emptySummary,
+      period,
+      streak_days: agent === "claude" ? 42 : 50,
+      totals: {
+        claude: {
+          tasks_completed: agent === "codex" ? 0 : 3,
+          tokens: 150000,
+          time_worked_ms: 1000,
+        },
+        codex: {
+          tasks_completed: agent === "claude" ? 0 : 5,
+          tokens: 250000,
+          time_worked_ms: 2000,
+        },
+      },
+    }));
+    const user = userEvent.setup();
+    const { container } = render(<Muro />);
+    const legend = await screen.findByRole("button", {
+      name: "Filtrar gráficas y muro por Claude",
+    });
+    fireEvent.mouseEnter(legend);
+    expect(container.querySelector('[data-session-id="codex-1"]')).toHaveClass("muro-dimmed");
+    expect(container.querySelector('[data-session-id="claude-1"]')).not.toHaveClass("muro-dimmed");
+    fireEvent.mouseLeave(legend);
+    expect(container.querySelector(".muro-dimmed")).toBeNull();
+    await user.click(legend);
+    await waitFor(() => expect(api.muro.summary).toHaveBeenCalledWith("today", "claude"));
+    expect(await screen.findByLabelText("42")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Filtrar por Claude" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).getAllByRole("button")
+    ).toHaveLength(1);
+    expect(
+      within(screen.getByRole("region", { name: "Cifras del periodo" })).getByLabelText("3")
+    ).toBeVisible();
+    const selected = screen.getByRole("button", { name: "Filtrar gráficas y muro por Claude" });
+    expect(selected).toHaveAttribute("aria-pressed", "true");
+    await user.click(selected);
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).getAllByRole("button")
+    ).toHaveLength(2);
+    expect(screen.getByLabelText("50")).toBeVisible();
+  });
+
+  it("loads the selected period, ignores a late response, and refreshes that period live", async () => {
+    let resolveWeek!: (value: MuroSummary) => void;
+    vi.mocked(api.muro.summary).mockImplementation((period = "today") =>
+      period === "7d"
+        ? new Promise((resolve) => {
+            resolveWeek = resolve;
+          })
+        : Promise.resolve({ ...emptySummary, period, streak_days: period === "30d" ? 30 : 1 })
+    );
+    const user = userEvent.setup();
+    render(<Muro />);
+    await screen.findByRole("region", { name: "Cifras del periodo" });
+    await user.click(screen.getByRole("button", { name: "7 días" }));
+    expect(
+      await screen.findByRole("status", { name: "Cargando el resumen de trabajo…" })
+    ).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "30 días" }));
+    expect(await screen.findByLabelText("30")).toBeVisible();
+    await act(async () => resolveWeek({ ...emptySummary, period: "7d", streak_days: 7 }));
+    expect(screen.queryByLabelText("7")).not.toBeInTheDocument();
+    expect(screen.getByText("Tareas completadas cada 3 días")).toBeVisible();
+    vi.mocked(api.muro.summary).mockResolvedValue({
+      ...emptySummary,
+      period: "30d",
+      streak_days: 31,
+    });
+    act(() => publish("session_updated"));
+    expect(await screen.findByLabelText("31")).toBeVisible();
+    expect(api.muro.summary).toHaveBeenLastCalledWith("30d", undefined);
+    expect(api.sessions.list).toHaveBeenCalledTimes(4);
+  });
+
+  it("keeps the board usable when period insights fail and retries the current period", async () => {
+    const user = userEvent.setup();
+    render(<Muro />);
+    await screen.findByRole("region", { name: "Cifras del periodo" });
+    vi.mocked(api.muro.summary).mockRejectedValueOnce(new Error("offline"));
+    await user.click(screen.getByRole("button", { name: "7 días" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "No se pudo cargar el resumen de trabajo."
+    );
+    expect(screen.getByRole("region", { name: "Tablero de sesiones" })).toBeVisible();
+    vi.mocked(api.muro.summary).mockResolvedValue({ ...emptySummary, period: "7d" });
+    await user.click(screen.getByRole("button", { name: i18n.t("common:retry") }));
+    expect(await screen.findByText("Tareas completadas por día")).toBeVisible();
+    expect(api.muro.summary).toHaveBeenLastCalledWith("7d", undefined);
   });
 
   it.each(["en", "es", "zh", "vi", "ko"])("renders stage translations in %s", async (language) => {

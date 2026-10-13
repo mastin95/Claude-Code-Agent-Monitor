@@ -553,9 +553,21 @@ describe("screen snapshots", () => {
     await snapshot(<KanbanBoard />, "/kanban");
   });
   it("Muro", async () => {
+    const original = window.matchMedia;
+    const media = vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      ...original(query),
+      matches: query.includes("prefers-reduced-motion"),
+    }));
     await snapshot(<Muro />, "/muro");
+    cleanup();
+    media.mockRestore();
   });
   it("Muro working stage", async () => {
+    const original = window.matchMedia;
+    const media = vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+      ...original(query),
+      matches: query.includes("prefers-reduced-motion"),
+    }));
     const previousScope = getScope();
     setScope({ mode: "all", selected: [], provider: "both" });
     vi.mocked(api.sessions.list).mockResolvedValueOnce({
@@ -599,17 +611,29 @@ describe("screen snapshots", () => {
     vi.mocked(api.muro.summary).mockResolvedValueOnce({
       period: "today",
       totals: {
-        claude: { tasks_completed: 3, tokens: 150000, time_worked_ms: 1000 },
-        codex: { tasks_completed: 5, tokens: 299000, time_worked_ms: 2000 },
+        claude: { tasks_completed: 3, tokens: 150000, time_worked_ms: 3240000 },
+        codex: { tasks_completed: 5, tokens: 299000, time_worked_ms: 6540000 },
       },
-      series: { unit: "hour", buckets: [] },
-      heatmap: [],
-      streak_days: 1,
+      series: {
+        unit: "hour",
+        buckets: Array.from({ length: 24 }, (_, hour) => ({
+          bucket: `2026-06-10T${String(hour).padStart(2, "0")}`,
+          claude: hour === 10 ? 3 : 0,
+          codex: hour === 11 ? 5 : 0,
+        })),
+      },
+      heatmap: Array.from({ length: 35 }, (_, index) => ({
+        date: new Date(Date.UTC(2026, 4, 7 + index)).toISOString().slice(0, 10),
+        claude: index > 28 ? 3 : 0,
+        codex: index > 28 ? 5 : 0,
+      })),
+      streak_days: 6,
     });
     await snapshot(<Muro />, "/muro");
     // Scope is restored after the snapshot so unrelated screen baselines keep their defaults.
     cleanup();
     setScope({ ...previousScope, provider: previousScope.provider || "claude" });
+    media.mockRestore();
   });
   it("Sessions", async () => {
     await snapshot(<Sessions />, "/sessions");

@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { MuroPeriod } from "../../lib/types";
+import type { MuroAgent } from "./Mascot";
 import { getCurrentLocale } from "../../lib/format";
 import { LANES, sessionLane, type Lane, type MuroSession } from "./model";
 import { PostIt } from "./PostIt";
@@ -17,10 +18,12 @@ export function Board({
   sessions,
   period,
   filterKey,
+  highlight = null,
 }: {
   sessions: MuroSession[];
   period: MuroPeriod;
   filterKey: string;
+  highlight?: MuroAgent | null;
 }) {
   const { t } = useTranslation("muro");
   const reducedMotion = useReducedMotion();
@@ -131,6 +134,7 @@ export function Board({
                     <div
                       key={session.id}
                       data-session-id={session.id}
+                      className={`muro-note-wrap${highlight && highlight !== session.provider ? " muro-dimmed" : ""}`}
                       ref={(element) => {
                         if (element) wrappers.current.set(session.id, element);
                         else wrappers.current.delete(session.id);

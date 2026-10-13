@@ -63,5 +63,29 @@
     "fullSession": "查看完整会话",
     "loading": "正在加载会话摘要…",
     "error": "无法加载会话摘要。"
+  },
+  "insights": {
+    "label": "时段汇总",
+    "tasks_completed": "已完成任务",
+    "tokens": "已用 Token",
+    "time_worked_ms": "工作时长",
+    "streak": "连续天数",
+    "days": "天",
+    "streakSplit": "连续工作期间的完成任务（最多显示 35 天）：Claude {{claude}} · Codex {{codex}}",
+    "streakHint": "连续有任务完成的天数",
+    "charts": "工作图表",
+    "donut": "谁完成了什么",
+    "donutHint": "按 Agent 统计已完成任务",
+    "completed": "已完成 {{formatted}} 个任务",
+    "done": "已完成",
+    "filter": "按 {{agent}} 筛选图表和看板",
+    "rhythm": "节奏",
+    "rhythm_today": "每小时完成的任务",
+    "rhythm_7d": "每天完成的任务",
+    "rhythm_30d": "每 3 天完成的任务",
+    "heatmap": "最近 5 周",
+    "heatHint": "已完成任务 · 今天以边框标记",
+    "error": "无法加载工作汇总。",
+    "loading": "正在加载工作汇总…"
   }
 }

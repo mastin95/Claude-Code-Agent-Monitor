@@ -443,14 +443,14 @@ components:
         cost:
           type: number
           nullable: true
-        has_token_usage:
-          type: boolean
-          nullable: true
-          description: True when durable token-usage buckets exist for this session. It is independent of cost, which may be zero for genuinely empty or unpriced usage.
         total_tokens:
           type: integer
           minimum: 0
           description: Effective input, output, cache-read and cache-write tokens (including baselines). Included in session list responses, including zero for transient sessions.
+        has_token_usage:
+          type: boolean
+          nullable: true
+          description: True when durable token-usage buckets exist for this session. It is independent of cost, which may be zero for genuinely empty or unpriced usage.
         awaiting_input_since:
           type: string
           format: date-time
@@ -879,7 +879,7 @@ components:
           type: array
           maxItems: 50
           uniqueItems: true
-          description: Alphabetically sorted unique nonempty tool_input.file_path strings from PreToolUse events for Edit, Write and MultiEdit. Invalid JSON and non-string paths are ignored.
+          description: Alphabetically sorted unique nonempty paths from Edit/Write/MultiEdit PreToolUse tool_input.file_path and Codex apply_patch codex_tool_call data.files. New Codex rollout and PreToolUse ingestion records Add/Update/Delete File patch headers (up to 50 per call); existing ingested events are not backfilled. Invalid JSON and non-string paths are ignored.
           items:
             type: string
         error_count:

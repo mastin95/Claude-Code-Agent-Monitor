@@ -402,7 +402,11 @@ Returns aggregated counts powering the Session Detail overview panel. All aggreg
 
 `files_touched` contains up to 50 unique, alphabetically sorted nonempty
 `tool_input.file_path` strings from this session's `PreToolUse` events for `Edit`,
-`Write` and `MultiEdit`. Invalid JSON and non-string paths are ignored; no matching
+`Write` and `MultiEdit`, plus `data.files` entries from `codex_tool_call`
+events whose tool is `apply_patch`. New rollout and `PreToolUse` hook ingestion
+extracts up to 50 paths from `*** Add File:`, `*** Update File:` and
+`*** Delete File:` patch headers. Existing ingested events are not backfilled.
+The combined result remains unique, sorted and capped at 50. Invalid JSON and non-string paths are ignored; no matching
 events returns `[]`. The existing source/provider scope applies. Other stats
 fields keep their existing semantics. Session list rows additionally expose
 `total_tokens` (input + output + cache read + cache write, including baselines),
@@ -748,7 +752,7 @@ The response always contains `period` and both `totals.claude` and `totals.codex
 
 `heatmap` always contains the last 35 local days including today, oldest first, as `{ date, claude, codex }`, with zero-filled gaps. `streak_days` counts consecutive days with at least one completion through today, or through yesterday if today is empty. The streak is not capped at 35 days. Both metrics respect source/provider scope and are independent of `period`. The supplied fixed timezone offset applies to every historical date, matching Analytics; it does not encode historical daylight-saving changes.
 
-Client access: `api.muro.summary(period)` defaults to `today` and automatically sends the browser timezone and active global scope. The Muro page's data integration is a later step.
+Client access: `api.muro.summary(period)` defaults to `today` and automatically sends the browser timezone and active global scope. The Muro page uses the selected period for counters and charts, with a separate today summary for the stage. Its shared agent filter narrows the summary provider scope; the server returns the exact filtered streak. The 30-day rhythm chart groups the daily series into ten three-day buckets; the heatmap retains its 35 daily values.
 
 ```bash
 curl 'http://localhost:4820/api/muro/summary?period=7d&tz_offset=-120&sources=local&providers=claude,codex'

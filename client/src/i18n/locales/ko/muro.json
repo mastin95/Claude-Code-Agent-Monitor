@@ -63,5 +63,29 @@
     "fullSession": "전체 세션 보기",
     "loading": "세션 요약을 불러오는 중…",
     "error": "세션 요약을 불러올 수 없습니다."
+  },
+  "insights": {
+    "label": "기간 합계",
+    "tasks_completed": "완료한 작업",
+    "tokens": "사용한 토큰",
+    "time_worked_ms": "작업 시간",
+    "streak": "연속 일수",
+    "days": "일",
+    "streakSplit": "연속 작업 기간의 완료 작업(표시된 최대 35일): Claude {{claude}} · Codex {{codex}}",
+    "streakHint": "작업을 완료한 연속 일수",
+    "charts": "작업 차트",
+    "donut": "누가 무엇을 했나요",
+    "donutHint": "Agent별 완료 작업",
+    "completed": "작업 {{formatted}}개 완료",
+    "done": "완료",
+    "filter": "{{agent}} 기준으로 차트와 보드 필터링",
+    "rhythm": "작업 리듬",
+    "rhythm_today": "시간별 완료 작업",
+    "rhythm_7d": "일별 완료 작업",
+    "rhythm_30d": "3일 단위 완료 작업",
+    "heatmap": "최근 5주",
+    "heatHint": "완료 작업 · 오늘은 테두리로 표시",
+    "error": "작업 요약을 불러올 수 없습니다.",
+    "loading": "작업 요약 불러오는 중…"
   }
 }

@@ -301,7 +301,7 @@ La interfaz oscura y adaptable cubre todo el flujo de trabajo. Cada vista previa
   <em>⌘ <strong>Paleta de comandos</strong> · un iniciador de teclado para páginas, sesiones, proyectos, filtros y acciones</em>
 </p>
 
-La barra lateral enlaza Panel, Tablero Kanban, Sesiones, Feed de Actividad, Analíticas, Flujos, Configuración del agente, Ejecutar agente y Configuración. Las secciones siguientes describen el comportamiento completo detrás de estas vistas.
+La barra lateral enlaza Panel, Tablero Kanban, Muro, Sesiones, Feed de Actividad, Analíticas, Flujos, Configuración del agente, Ejecutar agente y Configuración. Las secciones siguientes describen el comportamiento completo detrás de estas vistas.
 
 ---
 ## Características
@@ -313,6 +313,7 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 | **Progreso de tareas** | Progreso por propietario a partir de las herramientas de tareas de Claude, el `TodoWrite` heredado y `update_plan` de Codex. Las tarjetas y filas muestran vistas previas compactas. Detalles de la sesión añade segmentos de estado, trabajo activo, propietarios y paginación de 10 filas. El trabajo principal nuevo elimina el estado incompleto obsoleto, mientras que se conserva el historial completado. |
 | **Panel** | Las pestañas persistentes **Monitor** y **Salud** combinan totales del conjunto, jerarquías activas, actividad reciente, estado ponderado de éxito, caché, errores y heap, almacenamiento, herramientas, modelos, eficacia de subagentes y métricas de compactación. Salud se actualiza cada 5 segundos desde `/api/settings/info` y `/api/workflows`. |
 | **Tablero Kanban** | Las columnas de agentes cubren Trabajando, En espera, Completados y Error. Las columnas de sesiones añaden Activas y Abandonadas. Las tarjetas se paginan de 10 en 10, se suscriben solo a la vista WebSocket activa, conservan los títulos completos y explican motivos de espera como permisos, fin de turno, inactividad en el prompt o interrupción. |
+| **Muro** | Un muro visual de Claude/Codex en `/muro`: post-its de sesiones ilustrados, muñecos en vivo, tareas completadas, tokens, tiempo trabajado, racha, donut de reparto, barras de ritmo y mapa de calor de cinco semanas. Hoy / 7 días / 30 días y un filtro de agente compartido mantienen alineados el tablero y las gráficas; Cursor queda fuera. |
 | **Sesiones** | Historial con búsqueda, filtros y paginación del servidor, cálculo del costo de la página visible y una fila temporal en memoria para el inicio de Codex. La búsqueda cubre `id`, `name` y `cwd` con un debounce de 300 ms. Los nombres se obtienen del título explícito, el título de IA y, por último, el primer prompt relevante del usuario. |
 | **Detalles de la sesión** | Estadísticas en vivo, trabajo activo, uso de herramientas, subagentes, tokens, jerarquía, cronologías filtradas, agrupación por `tool_use_id` y renderizadores específicos por herramienta. La vista Conversación muestra turnos en cola, avisos del sistema, Markdown, código resaltado y herramientas con estilo. Los avisos de espera muestran el motivo y el tiempo transcurrido. |
 | **Feed de Actividad** | Eventos en tiempo real que se pueden pausar, con filtros compartidos, paginación del servidor, agrupación, origen por proyecto, sesión o subagente, enlaces a sesiones e insignias de estado coherentes para Claude y Codex. |
@@ -360,6 +361,16 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 > **Alcance y homes de los proveedores:** Configuración mantiene coherente en toda la aplicación la elección Claude-compatible (Claude Code + Cursor), Codex o Ambos. Los homes de Claude Code y Codex se pueden editar sin reiniciar el panel. Cursor se detecta automáticamente desde `~/.cursor` o `DASHBOARD_CURSOR_HOME`.
 >
 > **Límites de seguridad local:** Ejecutar agente acepta cualquier directorio de trabajo absoluto existente y lo canoniza antes de usarlo, por lo que se mantienen los inicios desde el home y proyectos recientes. Los proveedores de webhooks alojados exigen HTTPS. Los destinos generic y n8n pueden usar HTTP para receptores locales o autoalojados, y la entrega nunca sigue redirecciones.
+
+### Muro
+
+Abre **Muro** debajo de Tablero Kanban. Claude barre y Codex construye mientras trabajan; los bocadillos de espera nombran la sesión más reciente que necesita tu entrada. Las tarjetas del escenario muestran tareas y tokens de hoy. Pulsa una tarjeta o la leyenda del donut para activar o quitar el mismo filtro de agente; pasar el cursor o enfocar la leyenda atenúa los post-its del otro agente. Los productos excluidos del ámbito global aparecen atenuados, sin cifras y sin poder seleccionarse.
+
+Los post-its cambian solos entre **Trabajando**, **Esperando mi OK** y **Hecho**; solo Hecho sigue el periodo de calendario local elegido. Abre una nota para ver la petición original, duración de sesión, tokens, usos de herramientas, archivos tocados y enlace a la sesión completa. Escape, la X o el fondo cierran la ficha y devuelven el foco. La duración coincide con la nota: `ended_at` (o ahora) menos `started_at`.
+
+Cuatro contadores muestran sesiones completadas, tokens efectivos con sus baselines, tiempo trabajado y racha de días sin límite. El resumen sigue el periodo y agente elegidos; las cifras del escenario siguen siendo de hoy. Ritmo agrupa por hora con Hoy, por día con 7 días y cada tres días con 30 días. El mapa de calor cubre los últimos 35 días locales y remarca hoy. Claude es naranja (`#D46F3A`) y Codex verde azulado (`#2BA394`). Con `prefers-reduced-motion` se paran contadores animados, transiciones, muñecos y confeti.
+
+Los archivos incluyen las rutas de Claude `Edit` / `Write` / `MultiEdit` y las capturadas en nuevas llamadas Codex `apply_patch`. Los rollouts y hooks `PreToolUse` extraen `*** Add File:`, `*** Update File:` y `*** Delete File:` a `data.files` (máximo 50). Las estadísticas devuelven hasta 50 rutas únicas ordenadas; no se rellenan llamadas Codex ya ingeridas.
 
 ---
 
@@ -526,6 +537,7 @@ sequenceDiagram
    - La sincronización continua de proyectos combina un barrido inmediato, `fs.watch` con debounce y el polling de `DASHBOARD_SESSION_SYNC_MS`, predeterminado en 30 segundos. Una caché de mtime vuelve a analizar solo transcripciones nuevas o ampliadas y emite los mismos mensajes de sesión que los hooks.
 4. **WebSocket** publica el cambio confirmado.
 5. **La interfaz** actualiza las vistas afectadas sin polling.
+6. **Muro** recarga las sesiones y el resumen del ámbito tras los eventos en vivo con 300 ms de espera; cambiar el periodo o agente refresca sus gráficas.
 
 ### Máquina de Estado del Agente
 

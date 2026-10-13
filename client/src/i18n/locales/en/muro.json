@@ -63,5 +63,29 @@
     "fullSession": "View full session",
     "loading": "Loading session summary…",
     "error": "Could not load the session summary."
+  },
+  "insights": {
+    "label": "Period totals",
+    "tasks_completed": "Tasks completed",
+    "tokens": "Tokens used",
+    "time_worked_ms": "Time worked",
+    "streak": "Streak",
+    "days": "days",
+    "streakSplit": "Completions during the streak (up to 35 visible days): Claude {{claude}} · Codex {{codex}}",
+    "streakHint": "Consecutive days with completed work",
+    "charts": "Work charts",
+    "donut": "Who did what",
+    "donutHint": "Completed tasks by agent",
+    "completed": "{{formatted}} tasks completed",
+    "done": "done",
+    "filter": "Filter charts and board by {{agent}}",
+    "rhythm": "Rhythm",
+    "rhythm_today": "Tasks completed per hour",
+    "rhythm_7d": "Tasks completed per day",
+    "rhythm_30d": "Tasks completed every 3 days",
+    "heatmap": "Last 5 weeks",
+    "heatHint": "Completed tasks · today outlined",
+    "error": "Could not load the work summary.",
+    "loading": "Loading work summary…"
   }
 }

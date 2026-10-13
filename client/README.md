@@ -517,7 +517,21 @@ there is no drag-and-drop. Live lane changes use FLIP movement and completion
 confetti, both disabled with reduced motion. A post-it opens a native modal
 dialog with a zoom transition, on-demand session statistics, tool counts and up
 to 50 touched paths. Escape, the close button or the backdrop close it and return
-focus to the post-it. Charts are a subsequent Muro step.
+focus to the post-it. Its duration uses the same session timestamps and formatter
+as the post-it, rather than the statistics event range. Paths include new Codex
+`apply_patch` events as well as Claude edit/write tools.
+
+Between stage and board, animated counters show completed tasks, effective
+tokens, worked time and an uncapped streak, with Claude/Codex share bars. The
+selected-period summary refreshes on period, agent and live-data changes; the
+stage keeps its separate today summary. The streak share bar uses completions
+from streak days visible in the 35-day heatmap, without capping the streak count.
+To the right, a completion donut shares the stage agent filter; hovering or
+focusing its legend dims the other agent’s notes. Stacked rhythm bars use 24
+hours, 7 days or ten three-day groups, with breakdown tooltips. The Monday–Sunday
+heatmap covers the last 35 dates (up to six partial calendar columns), marks
+today and exposes date/count tooltips. Claude is `#D46F3A`, Codex `#2BA394`.
+Reduced motion disables counter animations and chart transitions as well as board motion.
 
 ### Route Structure
 
@@ -526,6 +540,7 @@ graph TB
     Root["/"]
     Dashboard["/ (Dashboard)"]
     Kanban["/kanban"]
+    Muro["/muro"]
     Sessions["/sessions"]
     Detail["/sessions/:id"]
     Feed["/activity"]
@@ -536,7 +551,7 @@ graph TB
     Settings["/settings"]
     NF["/* (NotFound)"]
 
-    Root --> Dashboard & Kanban & Sessions & Detail & Feed & Analytics & Workflows & CcConfig & Run & Settings & NF
+    Root --> Dashboard & Kanban & Muro & Sessions & Detail & Feed & Analytics & Workflows & CcConfig & Run & Settings & NF
 
     style Dashboard fill:#3B82F6
     style Detail fill:#3B82F6
@@ -556,6 +571,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="kanban" element={<KanbanBoard />} />
+          <Route path="muro" element={<Muro />} />
           <Route path="sessions" element={<Sessions />} />
           <Route path="sessions/:id" element={<SessionDetail />} />
           <Route path="activity" element={<ActivityFeed />} />

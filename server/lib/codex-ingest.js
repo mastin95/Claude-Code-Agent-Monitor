@@ -363,6 +363,27 @@ function isWrappedUpdatePlan(item) {
   );
 }
 
+/** Extract only patch header paths, never file contents; both tool surfaces share the cap. */
+function patchFiles(input) {
+  let value = input;
+  if (typeof value === "string" && value.trimStart().startsWith("{")) {
+    try {
+      value = JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+  const patch = typeof value === "string" ? value : (value?.patch ?? value?.input);
+  if (typeof patch !== "string") return [];
+  const paths = new Set();
+  for (const match of patch.matchAll(/^\*\*\* (?:Add|Update|Delete) File:[ \t]*(.+)$/gm)) {
+    const file = match[1].trim();
+    if (file) paths.add(file);
+    if (paths.size === 50) break;
+  }
+  return [...paths];
+}
+
 function responseToolDetails(record) {
   const item = record.payload || {};
   if (
@@ -439,6 +460,9 @@ function persistEvent(sessionId, agentId, record) {
       call_id: details.callId,
       raw_tool_name: details.rawName,
       timestamp: record.timestamp,
+      ...(details.rawName === "apply_patch"
+        ? { files: patchFiles(record.payload.input ?? record.payload.arguments) }
+        : {}),
     };
   }
   const timestamp = Date.parse(record.timestamp || "")
@@ -1388,6 +1412,7 @@ function persistCodexHookEvents(sessionId, hookType, data) {
         event: "tool_call",
         raw_tool_name: rawName,
         call_id: data?.tool_use_id || null,
+        ...(rawName === "apply_patch" ? { files: patchFiles(data?.tool_input) } : {}),
       }),
     ];
   }

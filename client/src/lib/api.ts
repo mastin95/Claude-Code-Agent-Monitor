@@ -960,12 +960,19 @@ export const api = {
 
   /** Read-only Muro aggregates using the same global scope and timezone as Analytics. */
   muro: {
-    summary: (period: MuroPeriod = "today") => {
+    summary: (period: MuroPeriod = "today", agent?: "claude" | "codex") => {
       const qs = new URLSearchParams({
         period,
         tz_offset: String(new Date().getTimezoneOffset()),
       });
       applyScope(qs);
+      if (agent) {
+        const providers = qs.get("providers");
+        if (providers && !providers.split(",").includes(agent)) {
+          return Promise.reject(new Error("Agent outside current product scope"));
+        }
+        qs.set("providers", agent);
+      }
       return request<MuroSummary>(`/muro/summary?${qs.toString()}`);
     },
   },
