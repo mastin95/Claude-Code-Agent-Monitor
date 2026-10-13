@@ -119,12 +119,24 @@ export function Kpis({ summary }: { summary: MuroSummary }) {
   );
 }
 
-/** Group the thirty daily buckets in chronological, consecutive blocks of three. */
-export function rhythmBuckets(summary: MuroSummary) {
+/** Crop today to useful local hours; group thirty days in consecutive blocks of three. */
+export function rhythmBuckets(summary: MuroSummary, now = new Date()) {
+  let series = summary.series.buckets;
+  if (summary.period === "today") {
+    const first = series.find((bucket) => bucket.claude + bucket.codex > 0);
+    const firstHour = first ? Number(first.bucket.slice(11, 13)) : 8;
+    // Before 07:00, keep the eight-hour minimum within today using zero-filled hours.
+    const end = Math.max(7, now.getHours());
+    const start = Math.max(0, Math.min(firstHour, 8, end - 7));
+    series = series.filter((bucket) => {
+      const hour = Number(bucket.bucket.slice(11, 13));
+      return hour >= start && hour <= end;
+    });
+  }
   const size = summary.period === "30d" ? 3 : 1;
   const buckets: Array<MuroCounts & { start: string; end: string }> = [];
-  for (let index = 0; index < summary.series.buckets.length; index += size) {
-    const group = summary.series.buckets.slice(index, index + size);
+  for (let index = 0; index < series.length; index += size) {
+    const group = series.slice(index, index + size);
     buckets.push({
       start: group[0]!.bucket,
       end: group[group.length - 1]!.bucket,
@@ -196,6 +208,7 @@ export function Charts({
     },
   });
   const buckets = rhythmBuckets(summary);
+  const hourLabelStep = Math.ceil(buckets.length / 8);
   const max = Math.max(3, ...buckets.map((bucket) => bucket.claude + bucket.codex));
   const step = Math.max(1, Math.ceil(max / 4));
   const ceiling = Math.ceil(max / step) * step;
@@ -344,7 +357,9 @@ export function Charts({
                     </>
                   )}
                 />
-                {(summary.period !== "today" || index % 4 === 0) && (
+                {(summary.period !== "today" ||
+                  (index % hourLabelStep === 0 && index <= buckets.length - 1 - hourLabelStep) ||
+                  index === buckets.length - 1) && (
                   <text x={x + width / 2 - 2} y="166" textAnchor="middle" aria-hidden="true">
                     {bucketLabel(bucket.start, summary.period, true)}
                   </text>

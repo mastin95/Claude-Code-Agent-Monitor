@@ -87,5 +87,7 @@
     "heatHint": "Tareas completadas · hoy remarcado",
     "error": "No se pudo cargar el resumen de trabajo.",
     "loading": "Cargando el resumen de trabajo…"
-  }
+  },
+  "showMore": "Ver {{formatted}} más",
+  "showLess": "Ver menos"
 }

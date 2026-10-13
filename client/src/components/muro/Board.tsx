@@ -1,18 +1,29 @@
 /**
  * @file Board.tsx
- * @description Three session lanes with FLIP movement, completion confetti and an accessible sheet.
+ * @description Recent-first, expandable session lanes with FLIP movement, confetti and an accessible sheet.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { MuroPeriod } from "../../lib/types";
 import type { MuroAgent } from "./Mascot";
-import { getCurrentLocale } from "../../lib/format";
+import { getCurrentLocale, parseDate } from "../../lib/format";
 import { LANES, sessionLane, type Lane, type MuroSession } from "./model";
 import { PostIt } from "./PostIt";
 import { SessionSheet } from "./SessionSheet";
 import { confetti, useReducedMotion } from "./motion";
 import "./board.css";
+
+const COLUMN_PAGE_SIZE = 6;
+function laneTime(session: MuroSession, lane: Lane): number {
+  const timestamp =
+    lane === "working"
+      ? session.last_activity
+      : lane === "waiting"
+        ? session.awaiting_input_since
+        : session.ended_at;
+  return parseDate(timestamp || session.started_at).getTime() || 0;
+}
 
 export function Board({
   sessions,
@@ -35,6 +46,11 @@ export function Board({
   const animations = useRef<Animation[]>([]);
   const cleanups = useRef(new Set<() => void>());
   const [selected, setSelected] = useState<{ session: MuroSession; lane: Lane } | null>(null);
+  const [expansion, setExpansion] = useState<{
+    key: string;
+    lanes: Partial<Record<Lane, boolean>>;
+  }>({ key: filterKey, lanes: {} });
+  const expanded = expansion.key === filterKey ? expansion.lanes : {};
   const close = useCallback(() => setSelected(null), []);
   const getOrigin = useCallback(
     () => buttons.current.get(selected?.session.id ?? "") ?? root.current,
@@ -118,7 +134,14 @@ export function Board({
     <section ref={root} className="muro-board" aria-label={t("board")} tabIndex={-1}>
       <div className="muro-lanes">
         {LANES.map((lane) => {
-          const list = entries.filter((entry) => entry.lane === lane);
+          const list = entries
+            .filter((entry) => entry.lane === lane)
+            .sort(
+              (a, b) =>
+                laneTime(b.session, lane) - laneTime(a.session, lane) ||
+                a.session.id.localeCompare(b.session.id)
+            );
+          const visible = expanded[lane] ? list : list.slice(0, COLUMN_PAGE_SIZE);
           return (
             <section className="muro-lane" key={lane} aria-label={t(`lanes.${lane}`)}>
               <h2>
@@ -130,7 +153,7 @@ export function Board({
               </h2>
               <div className="muro-drop">
                 {list.length ? (
-                  list.map(({ session }) => (
+                  visible.map(({ session }) => (
                     <div
                       key={session.id}
                       data-session-id={session.id}
@@ -156,6 +179,27 @@ export function Board({
                   <p className="muro-lane-empty">{t(`laneEmpty.${lane}`)}</p>
                 )}
               </div>
+              {list.length > COLUMN_PAGE_SIZE && (
+                <button
+                  type="button"
+                  className="muro-lane-toggle btn-secondary w-full mt-5"
+                  aria-expanded={!!expanded[lane]}
+                  onClick={() =>
+                    setExpansion({
+                      key: filterKey,
+                      lanes: { ...expanded, [lane]: !expanded[lane] },
+                    })
+                  }
+                >
+                  {expanded[lane]
+                    ? t("showLess")
+                    : t("showMore", {
+                        formatted: (list.length - COLUMN_PAGE_SIZE).toLocaleString(
+                          getCurrentLocale()
+                        ),
+                      })}
+                </button>
+              )}
             </section>
           );
         })}

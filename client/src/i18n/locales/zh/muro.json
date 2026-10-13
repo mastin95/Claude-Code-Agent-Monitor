@@ -87,5 +87,7 @@
     "heatHint": "已完成任务 · 今天以边框标记",
     "error": "无法加载工作汇总。",
     "loading": "正在加载工作汇总…"
-  }
+  },
+  "showMore": "再显示 {{formatted}} 项",
+  "showLess": "收起"
 }

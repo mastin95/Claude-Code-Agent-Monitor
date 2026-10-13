@@ -512,7 +512,10 @@ for speech bubbles and post-it titles.
 
 Below the stage, the three post-it lanes show working sessions, sessions waiting
 for input, and completed sessions whose end time falls within the selected local
-calendar period. Lists include real task progress and effective token totals;
+calendar period. Each lane starts with its six newest notes, sorted descending by
+`last_activity`, `awaiting_input_since` or `ended_at` respectively (falling back
+to `started_at`). Show N more / Show less expands or collapses each lane
+independently; the heading count always includes hidden notes. Lists include real task progress and effective token totals;
 there is no drag-and-drop. Live lane changes use FLIP movement and completion
 confetti, both disabled with reduced motion. A post-it opens a native modal
 dialog with a zoom transition, on-demand session statistics, tool counts and up
@@ -527,8 +530,10 @@ selected-period summary refreshes on period, agent and live-data changes; the
 stage keeps its separate today summary. The streak share bar uses completions
 from streak days visible in the 35-day heatmap, without capping the streak count.
 To the right, a completion donut shares the stage agent filter; hovering or
-focusing its legend dims the other agent’s notes. Stacked rhythm bars use 24
-hours, 7 days or ten three-day groups, with breakdown tooltips. The Monday–Sunday
+focusing its legend dims the other agent’s notes. Today’s rhythm crops the API’s
+24 hourly buckets from the earlier of the first active hour and 08:00 to the
+current local hour, extending backwards to at least eight bars (00:00–07:00
+before 07:00). The 7-day and ten three-day groups remain unchanged, with breakdown tooltips. The Monday–Sunday
 heatmap covers the last 35 dates (up to six partial calendar columns), marks
 today and exposes date/count tooltips. Claude is `#D46F3A`, Codex `#2BA394`.
 Reduced motion disables counter animations and chart transitions as well as board motion.
