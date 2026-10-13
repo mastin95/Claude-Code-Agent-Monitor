@@ -1,14 +1,13 @@
 /**
  * @file Muro.tsx
  * @description Live Muro stage with scoped sessions, today's agent totals, and
- * page-owned period and agent filters for the upcoming board and charts.
+ * page-owned filters, illustrated session lanes and an on-demand session sheet.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, StickyNote } from "lucide-react";
-import { EmptyState } from "../components/EmptyState";
+import { AlertCircle } from "lucide-react";
 import { Skeleton } from "../components/Skeleton";
 import { eventBus } from "../lib/eventBus";
 import { api } from "../lib/api";
@@ -17,14 +16,19 @@ import { getCurrentLocale } from "../lib/format";
 import { isRemoteDataRefreshMessage } from "../lib/remoteDataEvents";
 import { isSessionAwaitingInput, type MuroSummary, type Session } from "../lib/types";
 import { Mascot, type MuroAgent } from "../components/muro/Mascot";
+import { Board } from "../components/muro/Board";
+import { isMuroSession, sessionTitle } from "../components/muro/model";
+import { mergeFreshestById } from "../lib/merge-by-id";
 import "@fontsource/caveat/latin-400.css";
 import "@fontsource/caveat/latin-ext-400.css";
+import "@fontsource/caveat/latin-700.css";
+import "@fontsource/caveat/latin-ext-700.css";
 import "../components/muro/stage.css";
 
 const PERIODS = ["today", "7d", "30d"] as const;
 type Period = (typeof PERIODS)[number];
 
-/** Renders the team stage; filters stay here so later Muro sections can share them. */
+/** Stage and board share the local agent filter and the global source/product scope. */
 export function Muro() {
   const { t } = useTranslation("muro");
   const [dataScope] = useDataScope();
@@ -34,6 +38,11 @@ export function Muro() {
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
   const wsConnected = useSyncExternalStore(eventBus.onConnection, () => eventBus.connected);
+  const product = dataScope.provider || "claude";
+  const effectiveFilter = product === "both" || product === agentFilter ? agentFilter : null;
+  useEffect(() => {
+    if (product !== "both") setAgentFilter(null);
+  }, [product]);
 
   useEffect(() => {
     let disposed = false;
@@ -44,12 +53,34 @@ export function Muro() {
     const load = async () => {
       const current = ++request;
       try {
-        const [summary, result] = await Promise.all([
+        const list = async (status: "active" | "completed") => {
+          const sessions: Session[] = [];
+          let offset = 0;
+          let total = Infinity;
+          while (offset < total && !disposed && current === request) {
+            const result = await api.sessions.list({
+              status,
+              limit: 10000,
+              ...(offset ? { offset } : {}),
+              include_transient: status === "active",
+              include_task_progress: true,
+            });
+            sessions.push(...result.sessions);
+            total = result.total;
+            if (!result.sessions.length) break;
+            offset += result.limit;
+          }
+          return sessions;
+        };
+        const [summary, active, completed] = await Promise.all([
           api.muro.summary("today"),
-          api.sessions.list({ status: "active", limit: 10000, include_transient: true }),
+          list("active"),
+          list("completed"),
         ]);
         if (disposed || current !== request) return;
-        setData({ summary, sessions: result.sessions });
+        // A completion can arrive between the two requests without a newer event timestamp.
+        // Prefer the completed copy on a tie; genuinely newer resumed activity still wins.
+        setData({ summary, sessions: mergeFreshestById(completed, active) });
         setError(false);
       } catch {
         if (!disposed && current === request) setError(true);
@@ -88,8 +119,9 @@ export function Muro() {
     notation: "compact",
     maximumFractionDigits: 1,
   });
-  const working = data?.sessions
-    .filter((session) => session.status === "active" && !isSessionAwaitingInput(session))
+  const sessions = (data?.sessions ?? [])
+    .filter(isMuroSession)
+    .filter((session) => product === "both" || session.provider === product)
     .sort((a, b) =>
       (b.last_activity || b.started_at).localeCompare(a.last_activity || a.started_at)
     );
@@ -97,7 +129,7 @@ export function Muro() {
   return (
     <div
       className="muro-page animate-fade-in flex flex-col min-h-[60vh]"
-      data-agent-filter={agentFilter ?? "all"}
+      data-agent-filter={effectiveFilter ?? "all"}
     >
       <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
         <div className="flex items-center gap-2">
@@ -165,25 +197,37 @@ export function Muro() {
             className="grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
           >
             {(["claude", "codex"] as const).map((agent) => {
-              const session = working?.find((candidate) => candidate.provider === agent);
-              // The sessions API exposes card_prompt_preview as prompt_preview.
-              const title =
-                session?.name?.trim() ||
-                session?.prompt_preview?.trim().slice(0, 40) ||
-                t("stage.untitled");
+              const excluded = product !== "both" && product !== agent;
+              const working = sessions.find(
+                (candidate) =>
+                  candidate.provider === agent &&
+                  candidate.status === "active" &&
+                  !isSessionAwaitingInput(candidate)
+              );
+              const waiting = sessions.find(
+                (candidate) => candidate.provider === agent && isSessionAwaitingInput(candidate)
+              );
+              const session = working || waiting;
+              const title = session ? sessionTitle(session, t("stage.untitled")) : "";
               const totals = data.summary.totals[agent];
               const name = agent === "claude" ? "Claude" : "Codex";
               return (
                 <button
                   key={agent}
                   type="button"
-                  aria-pressed={agentFilter === agent}
+                  aria-pressed={effectiveFilter === agent}
+                  disabled={excluded}
                   aria-label={t("stage.filter", { agent: name })}
                   onClick={() => setAgentFilter((current) => (current === agent ? null : agent))}
-                  className={`muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${agentFilter === agent ? "border-accent" : "border-border hover:border-border-light"} ${agentFilter && agentFilter !== agent ? "opacity-[0.45]" : ""}`}
+                  className={`muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default ${effectiveFilter === agent ? "border-accent" : "border-border hover:border-border-light"} ${excluded || (effectiveFilter && effectiveFilter !== agent) ? "opacity-[0.45]" : ""}`}
                 >
                   <span className="muro-floor" aria-hidden="true" />
-                  <Mascot agent={agent} mode={session ? "work" : "wait"} size={104} />
+                  <Mascot
+                    agent={agent}
+                    mode={working ? "work" : "wait"}
+                    size={104}
+                    reducedMotion={excluded}
+                  />
                   <span className="relative flex flex-col gap-1.5 min-w-0">
                     <span className="flex items-center gap-2 text-[17px] font-bold text-gray-100">
                       <span
@@ -193,44 +237,41 @@ export function Muro() {
                       {name}
                     </span>
                     <span className="muro-bubble">
-                      {session ? t(`stage.${agent}`, { title }) : t("stage.waiting")}
+                      {excluded
+                        ? t("stage.excluded")
+                        : working
+                          ? t(`stage.${agent}`, { title })
+                          : waiting
+                            ? t("stage.awaiting", { title })
+                            : t("stage.waiting")}
                     </span>
-                    <span className="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400">
-                      <span>
-                        {t("stage.completed", {
-                          count: totals.tasks_completed,
-                          formatted: number.format(totals.tasks_completed),
-                        })}
+                    {!excluded && (
+                      <span className="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400">
+                        <span>
+                          {t("stage.completed", {
+                            count: totals.tasks_completed,
+                            formatted: number.format(totals.tasks_completed),
+                          })}
+                        </span>
+                        <span
+                          title={t("stage.tokens", { formatted: number.format(totals.tokens) })}
+                        >
+                          {t("stage.tokens", { formatted: tokens.format(totals.tokens) })}
+                        </span>
                       </span>
-                      <span title={t("stage.tokens", { formatted: number.format(totals.tokens) })}>
-                        {t("stage.tokens", { formatted: tokens.format(totals.tokens) })}
-                      </span>
-                    </span>
+                    )}
                   </span>
                 </button>
               );
             })}
           </section>
-          {!data.sessions.some(
-            (session) =>
-              (session.provider === "claude" || session.provider === "codex") &&
-              (!agentFilter || session.provider === agentFilter)
-          ) &&
-            (["claude", "codex"] as const)
-              .filter((agent) => !agentFilter || agent === agentFilter)
-              .every(
-                (agent) =>
-                  data.summary.totals[agent].tokens === 0 &&
-                  data.summary.totals[agent].tasks_completed === 0
-              ) && (
-              <div className="flex-1 flex items-center justify-center">
-                <EmptyState
-                  icon={StickyNote}
-                  title={t("empty.title")}
-                  description={t("empty.description")}
-                />
-              </div>
+          <Board
+            sessions={sessions.filter(
+              (session) => !effectiveFilter || session.provider === effectiveFilter
             )}
+            period={period}
+            filterKey={`${period}:${effectiveFilter}:${product}:${dataScope.mode}:${dataScope.selected.join(",")}`}
+          />
         </>
       )}
     </div>

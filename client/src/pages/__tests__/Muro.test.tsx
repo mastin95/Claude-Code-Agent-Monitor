@@ -75,7 +75,7 @@ describe("Muro", () => {
       "aria-busy",
       "true"
     );
-    expect(await screen.findByText("Aún no hay nada en el Muro")).toBeVisible();
+    expect(await screen.findByText("Aún no hay nada hecho")).toBeVisible();
     expect(screen.getByRole("button", { name: "Hoy" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getAllByText("Esperando trabajo…")).toHaveLength(2);
     expect(screen.getAllByText("0 hechas hoy")).toHaveLength(2);
@@ -84,6 +84,7 @@ describe("Muro", () => {
       status: "active",
       limit: 10000,
       include_transient: true,
+      include_task_progress: true,
     });
   });
 
@@ -110,7 +111,7 @@ describe("Muro", () => {
     render(<Muro />);
     expect(await screen.findByText("Limpiando: Revisar diseño")).toBeVisible();
     expect(screen.getByText("Construyendo: Crear endpoint")).toBeVisible();
-    expect(screen.queryByText(/Cursor must never appear|Old task/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Cursor must never appear/)).not.toBeInTheDocument();
     const claude = within(screen.getByRole("button", { name: "Filtrar por Claude" }));
     expect(claude.getByText("3 hechas hoy")).toBeVisible();
     expect(claude.getByTitle("150.000 tokens")).toBeVisible();
@@ -122,7 +123,7 @@ describe("Muro", () => {
     expect(api.muro.summary).toHaveBeenCalledTimes(1);
   });
 
-  it("ignores waiting and terminal sessions, and falls back to a shortened prompt", async () => {
+  it("shows waiting context and falls back to a shortened prompt", async () => {
     vi.mocked(api.sessions.list).mockResolvedValue(
       list([
         session("claude", {
@@ -134,25 +135,38 @@ describe("Muro", () => {
       ])
     );
     const { container } = render(<Muro />);
-    expect(await screen.findByText("Esperando trabajo…")).toBeVisible();
+    expect(await screen.findByText("Esperando tu OK: Task claude")).toBeVisible();
     expect(screen.getByText(`Construyendo: ${"a".repeat(40)}`)).toBeVisible();
     expect(container.querySelector('[data-agent="claude"]')).toHaveAttribute("data-mode", "wait");
     expect(container.querySelector('[data-agent="codex"]')).toHaveAttribute("data-mode", "work");
   });
 
   it("toggles the page-owned agent filter with mouse and keyboard", async () => {
+    vi.mocked(api.sessions.list).mockResolvedValue(list([session("claude"), session("codex")]));
     const user = userEvent.setup();
     const { container } = render(<Muro />);
     const claude = await screen.findByRole("button", { name: "Filtrar por Claude" });
     const codex = screen.getByRole("button", { name: "Filtrar por Codex" });
     await user.click(claude);
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).getAllByRole("button")
+    ).toHaveLength(1);
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).getByRole("button")
+    ).toHaveTextContent("Task claude");
     expect(claude).toHaveAttribute("aria-pressed", "true");
     expect(container.firstChild).toHaveAttribute("data-agent-filter", "claude");
     await user.click(codex);
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).getByRole("button")
+    ).toHaveTextContent("Task codex");
     expect(claude).toHaveAttribute("aria-pressed", "false");
     expect(container.firstChild).toHaveAttribute("data-agent-filter", "codex");
     await user.keyboard("{Enter}");
     expect(codex).toHaveAttribute("aria-pressed", "false");
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).getAllByRole("button")
+    ).toHaveLength(2);
     expect(container.firstChild).toHaveAttribute("data-agent-filter", "all");
     expect(api.muro.summary).toHaveBeenCalledTimes(1);
   });
@@ -164,9 +178,60 @@ describe("Muro", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("No se pudo cargar el Muro.");
     await user.click(screen.getByRole("button", { name: "7 días" }));
     await user.click(screen.getByRole("button", { name: i18n.t("common:retry") }));
-    expect(await screen.findByText("Aún no hay nada en el Muro")).toBeVisible();
+    expect(await screen.findByText("Aún no hay nada hecho")).toBeVisible();
     expect(screen.getByRole("button", { name: "7 días" })).toHaveAttribute("aria-pressed", "true");
   });
+
+  it("uses the most recent waiting session when no session is working", async () => {
+    vi.mocked(api.sessions.list).mockResolvedValue(
+      list([
+        session("claude", {
+          id: "old",
+          name: "Old request",
+          awaiting_input_since: "2026-10-13T11:00:00Z",
+        }),
+        session("claude", {
+          name: "New request",
+          awaiting_input_since: "2026-10-13T12:00:00Z",
+          last_activity: "2026-10-13T12:00:00Z",
+        }),
+      ])
+    );
+    render(<Muro />);
+    expect(await screen.findByText("Esperando tu OK: New request")).toBeVisible();
+    expect(
+      within(screen.getByRole("button", { name: "Filtrar por Codex" })).getByText(
+        "Esperando trabajo…"
+      )
+    ).toBeVisible();
+  });
+
+  it.each(["claude", "codex"] as const)(
+    "disables the other stage card for the %s product scope, without numbers",
+    async (provider) => {
+      // Return both providers to also verify the UI cannot expose stale excluded data.
+      vi.mocked(api.sessions.list).mockResolvedValue(list([session("claude"), session("codex")]));
+      const user = userEvent.setup();
+      const { container } = render(<Muro />);
+      await user.click(
+        await screen.findByRole("button", {
+          name: `Filtrar por ${provider === "claude" ? "Codex" : "Claude"}`,
+        })
+      );
+      act(() => setScope({ mode: "all", selected: [], provider }));
+      const excluded = await screen.findByRole("button", {
+        name: `Filtrar por ${provider === "claude" ? "Codex" : "Claude"}`,
+      });
+      expect(excluded).toBeDisabled();
+      expect(excluded).toHaveClass("opacity-[0.45]");
+      expect(excluded).toHaveTextContent("Fuera del filtro de producto");
+      expect(within(excluded).queryByText(/hechas hoy|tokens/)).not.toBeInTheDocument();
+      expect(container.firstChild).toHaveAttribute("data-agent-filter", "all");
+      expect(
+        within(screen.getByRole("region", { name: "Trabajando" })).getAllByRole("button")
+      ).toHaveLength(1);
+    }
+  );
 
   it("debounces live events, refreshes on reconnect, and cleans up on unmount", async () => {
     vi.useFakeTimers();
@@ -212,10 +277,31 @@ describe("Muro", () => {
     );
     render(<Muro />);
     act(() => setScope({ mode: "local", selected: [], provider: "codex" }));
-    await screen.findByText("Aún no hay nada en el Muro");
+    await screen.findByText("Aún no hay nada hecho");
     await act(async () => resolve(list([session("claude", { name: "Stale scope" })])));
     expect(screen.queryByText(/Stale scope/)).not.toBeInTheDocument();
     expect(api.muro.summary).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps a completion caught between active/completed requests in Done", async () => {
+    vi.mocked(api.sessions.list).mockImplementation(async (params) =>
+      list([
+        session(
+          "codex",
+          params?.status === "completed"
+            ? { status: "completed", ended_at: new Date().toISOString() }
+            : {}
+        ),
+      ])
+    );
+    render(<Muro />);
+    await screen.findByRole("region", { name: "Hecho" });
+    expect(
+      within(screen.getByRole("region", { name: "Hecho" })).getAllByRole("button")
+    ).toHaveLength(1);
+    expect(
+      within(screen.getByRole("region", { name: "Trabajando" })).queryByRole("button")
+    ).not.toBeInTheDocument();
   });
 
   it.each(["en", "es", "zh", "vi", "ko"])("renders stage translations in %s", async (language) => {

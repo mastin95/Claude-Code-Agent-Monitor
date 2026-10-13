@@ -21,6 +21,47 @@
     "untitled": "Untitled session",
     "tokens": "{{formatted}} tokens",
     "completed_one": "{{formatted}} completed today",
-    "completed_other": "{{formatted}} completed today"
+    "completed_other": "{{formatted}} completed today",
+    "awaiting": "Waiting for your OK: {{title}}",
+    "excluded": "Outside the product filter"
+  },
+  "board": "Session board",
+  "lanes": {
+    "working": "Working",
+    "waiting": "Waiting for my OK",
+    "done": "Done"
+  },
+  "laneEmpty": {
+    "working": "Nobody working right now",
+    "waiting": "Nothing waiting for your OK",
+    "done": "Nothing completed yet"
+  },
+  "note": {
+    "claude": "Cleaning",
+    "codex": "Building",
+    "done": "Done {{time}}",
+    "open": "{{title}}, {{agent}}, {{state}}. View session summary",
+    "progress": "Task progress",
+    "steps": "{{completed}}/{{total}} steps",
+    "reason": {
+      "notification": "Permission needed",
+      "interrupted": "Interrupted",
+      "stop": "Your turn",
+      "session_start": "Just opened"
+    }
+  },
+  "sheet": {
+    "ask": "What you asked:",
+    "noPrompt": "No prompt recorded.",
+    "duration": "Duration",
+    "tokens": "Tokens",
+    "files": "Files",
+    "tools": "Tools used (calls)",
+    "touched": "Files touched",
+    "noTools": "No tool calls recorded.",
+    "noFiles": "No file changes recorded.",
+    "fullSession": "View full session",
+    "loading": "Loading session summary…",
+    "error": "Could not load the session summary."
   }
 }

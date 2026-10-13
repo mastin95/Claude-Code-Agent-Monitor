@@ -21,6 +21,47 @@
     "untitled": "Sesión sin título",
     "tokens": "{{formatted}} tokens",
     "completed_one": "{{formatted}} hecha hoy",
-    "completed_other": "{{formatted}} hechas hoy"
+    "completed_other": "{{formatted}} hechas hoy",
+    "awaiting": "Esperando tu OK: {{title}}",
+    "excluded": "Fuera del filtro de producto"
+  },
+  "board": "Tablero de sesiones",
+  "lanes": {
+    "working": "Trabajando",
+    "waiting": "Esperando mi OK",
+    "done": "Hecho"
+  },
+  "laneEmpty": {
+    "working": "Nadie trabajando ahora",
+    "waiting": "Nada pendiente de tu OK",
+    "done": "Aún no hay nada hecho"
+  },
+  "note": {
+    "claude": "Limpiando",
+    "codex": "Construyendo",
+    "done": "Hecho {{time}}",
+    "open": "{{title}}, {{agent}}, {{state}}. Ver lo que hizo",
+    "progress": "Progreso de tareas",
+    "steps": "{{completed}}/{{total}} pasos",
+    "reason": {
+      "notification": "Pide permiso",
+      "interrupted": "Interrumpida",
+      "stop": "Te toca",
+      "session_start": "Recién abierta"
+    }
+  },
+  "sheet": {
+    "ask": "Lo que pediste:",
+    "noPrompt": "No hay ninguna petición registrada.",
+    "duration": "Duración",
+    "tokens": "Tokens",
+    "files": "Archivos",
+    "tools": "Herramientas usadas (veces)",
+    "touched": "Archivos tocados",
+    "noTools": "No hay llamadas a herramientas registradas.",
+    "noFiles": "No hay cambios de archivos registrados.",
+    "fullSession": "Ver sesión completa",
+    "loading": "Cargando la ficha de la sesión…",
+    "error": "No se pudo cargar la ficha de la sesión."
   }
 }

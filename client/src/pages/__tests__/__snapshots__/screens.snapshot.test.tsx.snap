@@ -5692,7 +5692,7 @@ exports[`screen snapshots > Muro 1`] = `
       <button
         aria-label="Filter by Claude"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent border-border hover:border-border-light "
+        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
         type="button"
       >
         <span
@@ -5843,7 +5843,8 @@ exports[`screen snapshots > Muro 1`] = `
       <button
         aria-label="Filter by Codex"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent border-border hover:border-border-light "
+        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light opacity-[0.45]"
+        disabled=""
         type="button"
       >
         <span
@@ -5855,7 +5856,7 @@ exports[`screen snapshots > Muro 1`] = `
           class="muro-mascot wait"
           data-agent="codex"
           data-mode="wait"
-          data-reduced="0"
+          data-reduced="1"
           focusable="false"
           height="104"
           viewBox="0 0 100 100"
@@ -5965,64 +5966,99 @@ exports[`screen snapshots > Muro 1`] = `
           <span
             class="muro-bubble"
           >
-            Waiting for work…
-          </span>
-          <span
-            class="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400"
-          >
-            <span>
-              0 completed today
-            </span>
-            <span
-              title="0 tokens"
-            >
-              0 tokens
-            </span>
+            Outside the product filter
           </span>
         </span>
       </button>
     </section>
-    <div
-      class="flex-1 flex items-center justify-center"
+    <section
+      aria-label="Session board"
+      class="muro-board"
+      tabindex="-1"
     >
       <div
-        class="flex flex-col items-center justify-center py-20 text-center"
+        class="muro-lanes"
       >
-        <div
-          class="w-14 h-14 rounded-2xl bg-surface-4 flex items-center justify-center mb-5"
+        <section
+          aria-label="Working"
+          class="muro-lane"
         >
-          <svg
-            class="lucide lucide-sticky-note w-6 h-6 text-gray-500"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
+          <h2>
+            <span
+              aria-hidden="true"
+              class="muro-lane-dot working"
+            />
+            Working
+            <span
+              class="muro-lane-count"
+            >
+              0
+            </span>
+          </h2>
+          <div
+            class="muro-drop"
           >
-            <path
-              d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
-            />
-            <path
-              d="M15 3v4a2 2 0 0 0 2 2h4"
-            />
-          </svg>
-        </div>
-        <h3
-          class="text-base font-medium text-gray-300 mb-2"
+            <p
+              class="muro-lane-empty"
+            >
+              Nobody working right now
+            </p>
+          </div>
+        </section>
+        <section
+          aria-label="Waiting for my OK"
+          class="muro-lane"
         >
-          Nothing on the Muro yet
-        </h3>
-        <p
-          class="text-sm text-gray-500 max-w-md mb-6"
+          <h2>
+            <span
+              aria-hidden="true"
+              class="muro-lane-dot waiting"
+            />
+            Waiting for my OK
+            <span
+              class="muro-lane-count"
+            >
+              0
+            </span>
+          </h2>
+          <div
+            class="muro-drop"
+          >
+            <p
+              class="muro-lane-empty"
+            >
+              Nothing waiting for your OK
+            </p>
+          </div>
+        </section>
+        <section
+          aria-label="Done"
+          class="muro-lane"
         >
-          Claude and Codex activity will appear here.
-        </p>
+          <h2>
+            <span
+              aria-hidden="true"
+              class="muro-lane-dot done"
+            />
+            Done
+            <span
+              class="muro-lane-count"
+            >
+              0
+            </span>
+          </h2>
+          <div
+            class="muro-drop"
+          >
+            <p
+              class="muro-lane-empty"
+            >
+              Nothing completed yet
+            </p>
+          </div>
+        </section>
       </div>
-    </div>
+    </section>
   </div>
 </div>
 `;
@@ -6090,7 +6126,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
       <button
         aria-label="Filter by Claude"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent border-border hover:border-border-light "
+        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
         type="button"
       >
         <span
@@ -6274,7 +6310,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
       <button
         aria-label="Filter by Codex"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent border-border hover:border-border-light "
+        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
         type="button"
       >
         <span
@@ -6283,9 +6319,9 @@ exports[`screen snapshots > Muro working stage 1`] = `
         />
         <svg
           aria-hidden="true"
-          class="muro-mascot build"
+          class="muro-mascot wait"
           data-agent="codex"
-          data-mode="work"
+          data-mode="wait"
           data-reduced="0"
           focusable="false"
           height="104"
@@ -6299,35 +6335,6 @@ exports[`screen snapshots > Muro working stage 1`] = `
             rx="26"
             ry="4"
           />
-          <g>
-            <rect
-              fill="#c0603c"
-              height="8"
-              rx="1"
-              width="16"
-              x="78"
-              y="88"
-            />
-            <rect
-              class="brick-new"
-              fill="#c96a45"
-              height="8"
-              rx="1"
-              width="16"
-              x="80"
-              y="80"
-            />
-          </g>
-          <g
-            class="spark"
-          >
-            <path
-              d="M86 86 l-6 -6 M86 86 l0 -9 M86 86 l7 -5"
-              stroke="#F2C14E"
-              stroke-linecap="round"
-              stroke-width="2.5"
-            />
-          </g>
           <g
             class="body-g"
           >
@@ -6368,7 +6375,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
               />
             </g>
             <path
-              d="M42 78 Q50 84 58 78"
+              d="M43 80 H57"
               fill="none"
               stroke="#123a35"
               stroke-linecap="round"
@@ -6395,29 +6402,20 @@ exports[`screen snapshots > Muro working stage 1`] = `
               y="24"
             />
           </g>
-          <g
-            class="tool"
-            data-tool="hammer"
+          <text
+            class="zz"
+            x="74"
+            y="22"
           >
-            <line
-              stroke="#6b4a2b"
-              stroke-linecap="round"
-              stroke-width="3.5"
-              x1="66"
-              x2="86"
-              y1="58"
-              y2="74"
-            />
-            <rect
-              fill="#5b6470"
-              height="9"
-              rx="2"
-              transform="rotate(38 87 70)"
-              width="14"
-              x="80"
-              y="66"
-            />
-          </g>
+            z
+          </text>
+          <text
+            class="zz zz-small"
+            x="82"
+            y="12"
+          >
+            z
+          </text>
         </svg>
         <span
           class="relative flex flex-col gap-1.5 min-w-0"
@@ -6434,7 +6432,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
           <span
             class="muro-bubble"
           >
-            Building: codex task
+            Waiting for your OK: codex task
           </span>
           <span
             class="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400"
@@ -6450,6 +6448,556 @@ exports[`screen snapshots > Muro working stage 1`] = `
           </span>
         </span>
       </button>
+    </section>
+    <section
+      aria-label="Session board"
+      class="muro-board"
+      tabindex="-1"
+    >
+      <div
+        class="muro-lanes"
+      >
+        <section
+          aria-label="Working"
+          class="muro-lane"
+        >
+          <h2>
+            <span
+              aria-hidden="true"
+              class="muro-lane-dot working"
+            />
+            Working
+            <span
+              class="muro-lane-count"
+            >
+              1
+            </span>
+          </h2>
+          <div
+            class="muro-drop"
+          >
+            <div
+              data-session-id="claude"
+            >
+              <button
+                aria-label="claude task, Claude, Cleaning. View session summary"
+                class="muro-note muro-mascot-hover"
+                style="--paper: #FFCFB0; --rotation: 2.4000000000000004deg;"
+                type="button"
+              >
+                <span
+                  class="muro-scene"
+                >
+                  <span
+                    class="muro-tag "
+                  >
+                    Cleaning
+                  </span>
+                  <svg
+                    aria-hidden="true"
+                    class="muro-mascot sweep"
+                    data-agent="claude"
+                    data-mode="work"
+                    data-reduced="0"
+                    focusable="false"
+                    height="98"
+                    viewBox="0 0 100 100"
+                    width="98"
+                  >
+                    <ellipse
+                      cx="50"
+                      cy="96"
+                      fill="rgba(0,0,0,.18)"
+                      rx="26"
+                      ry="4"
+                    />
+                    <g
+                      class="dust"
+                    >
+                      <circle
+                        cx="82"
+                        cy="92"
+                        fill="#c9b8a6"
+                        r="4"
+                      />
+                      <circle
+                        cx="86"
+                        cy="94"
+                        fill="#c9b8a6"
+                        r="3"
+                      />
+                      <circle
+                        cx="78"
+                        cy="94"
+                        fill="#c9b8a6"
+                        r="3.5"
+                      />
+                    </g>
+                    <g
+                      class="body-g"
+                    >
+                      <path
+                        d="M24 70 Q22 36 50 34 Q78 36 76 70 Q76 94 50 94 Q24 94 24 70Z"
+                        fill="#D46F3A"
+                      />
+                      <path
+                        d="M30 50 Q50 40 70 50"
+                        fill="none"
+                        opacity=".6"
+                        stroke="#e99a6f"
+                        stroke-linecap="round"
+                        stroke-width="3"
+                      />
+                      <path
+                        d="M44 34 Q50 20 56 34"
+                        fill="#D46F3A"
+                      />
+                      <circle
+                        cx="50"
+                        cy="22"
+                        fill="#F2C14E"
+                        r="4.5"
+                      />
+                      <g
+                        class="eyes"
+                      >
+                        <ellipse
+                          cx="41"
+                          cy="58"
+                          fill="#fff"
+                          rx="6"
+                          ry="7"
+                        />
+                        <ellipse
+                          cx="59"
+                          cy="58"
+                          fill="#fff"
+                          rx="6"
+                          ry="7"
+                        />
+                        <circle
+                          cx="42.5"
+                          cy="59"
+                          fill="#1b1a24"
+                          r="3.2"
+                        />
+                        <circle
+                          cx="60.5"
+                          cy="59"
+                          fill="#1b1a24"
+                          r="3.2"
+                        />
+                      </g>
+                      <circle
+                        cx="34"
+                        cy="70"
+                        fill="#f59e7a"
+                        opacity=".7"
+                        r="3.5"
+                      />
+                      <circle
+                        cx="66"
+                        cy="70"
+                        fill="#f59e7a"
+                        opacity=".7"
+                        r="3.5"
+                      />
+                      <path
+                        d="M44 72 Q50 78 56 72"
+                        fill="none"
+                        stroke="#1b1a24"
+                        stroke-linecap="round"
+                        stroke-width="2.5"
+                      />
+                    </g>
+                    <g
+                      class="tool"
+                      data-tool="broom"
+                    >
+                      <line
+                        stroke="#6b4a2b"
+                        stroke-linecap="round"
+                        stroke-width="3.5"
+                        x1="64"
+                        x2="84"
+                        y1="62"
+                        y2="90"
+                      />
+                      <path
+                        d="M76 88 L92 86 L95 97 L78 99 Z"
+                        fill="#E8C35A"
+                        stroke="#a8862c"
+                        stroke-width="1.5"
+                      />
+                      <path
+                        d="M80 91 L81 98 M85 90 L86 98 M90 89 L91 97"
+                        stroke="#a8862c"
+                        stroke-width="1.2"
+                      />
+                    </g>
+                  </svg>
+                </span>
+                <span
+                  class="muro-note-title"
+                >
+                  claude task
+                </span>
+                <span
+                  class="muro-meta"
+                >
+                  <span>
+                    Claude
+                  </span>
+                  <span>
+                    1h 0m
+                  </span>
+                  <span>
+                    150K tokens
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
+        <section
+          aria-label="Waiting for my OK"
+          class="muro-lane"
+        >
+          <h2>
+            <span
+              aria-hidden="true"
+              class="muro-lane-dot waiting"
+            />
+            Waiting for my OK
+            <span
+              class="muro-lane-count"
+            >
+              1
+            </span>
+          </h2>
+          <div
+            class="muro-drop"
+          >
+            <div
+              data-session-id="codex"
+            >
+              <button
+                aria-label="codex task, Codex, Permission needed. View session summary"
+                class="muro-note muro-mascot-hover"
+                style="--paper: #F6E7A6; --rotation: 2.4000000000000004deg;"
+                type="button"
+              >
+                <span
+                  class="muro-scene"
+                >
+                  <span
+                    class="muro-tag muro-urgent"
+                  >
+                    Permission needed
+                  </span>
+                  <svg
+                    aria-hidden="true"
+                    class="muro-mascot wait"
+                    data-agent="codex"
+                    data-mode="wait"
+                    data-reduced="0"
+                    focusable="false"
+                    height="98"
+                    viewBox="0 0 100 100"
+                    width="98"
+                  >
+                    <ellipse
+                      cx="50"
+                      cy="96"
+                      fill="rgba(0,0,0,.18)"
+                      rx="26"
+                      ry="4"
+                    />
+                    <g
+                      class="body-g"
+                    >
+                      <rect
+                        fill="#2BA394"
+                        height="52"
+                        rx="12"
+                        width="48"
+                        x="26"
+                        y="40"
+                      />
+                      <rect
+                        fill="#123a35"
+                        height="20"
+                        rx="7"
+                        width="36"
+                        x="32"
+                        y="50"
+                      />
+                      <g
+                        class="eyes"
+                      >
+                        <rect
+                          fill="#AEE8DE"
+                          height="8"
+                          rx="2"
+                          width="8"
+                          x="38"
+                          y="56"
+                        />
+                        <rect
+                          fill="#AEE8DE"
+                          height="8"
+                          rx="2"
+                          width="8"
+                          x="54"
+                          y="56"
+                        />
+                      </g>
+                      <path
+                        d="M43 80 H57"
+                        fill="none"
+                        stroke="#123a35"
+                        stroke-linecap="round"
+                        stroke-width="2.5"
+                      />
+                      <path
+                        d="M24 42 Q24 24 50 24 Q76 24 76 42 Z"
+                        fill="#F2C14E"
+                      />
+                      <rect
+                        fill="#d9a83a"
+                        height="6"
+                        rx="3"
+                        width="60"
+                        x="20"
+                        y="40"
+                      />
+                      <rect
+                        fill="#d9a83a"
+                        height="16"
+                        rx="3"
+                        width="8"
+                        x="46"
+                        y="24"
+                      />
+                    </g>
+                    <text
+                      class="zz"
+                      x="74"
+                      y="22"
+                    >
+                      z
+                    </text>
+                    <text
+                      class="zz zz-small"
+                      x="82"
+                      y="12"
+                    >
+                      z
+                    </text>
+                  </svg>
+                </span>
+                <span
+                  class="muro-note-title"
+                >
+                  codex task
+                </span>
+                <span
+                  class="muro-meta"
+                >
+                  <span>
+                    Codex
+                  </span>
+                  <span>
+                    1h 0m
+                  </span>
+                  <span>
+                    299K tokens
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
+        <section
+          aria-label="Done"
+          class="muro-lane"
+        >
+          <h2>
+            <span
+              aria-hidden="true"
+              class="muro-lane-dot done"
+            />
+            Done
+            <span
+              class="muro-lane-count"
+            >
+              1
+            </span>
+          </h2>
+          <div
+            class="muro-drop"
+          >
+            <div
+              data-session-id="done"
+            >
+              <button
+                aria-label="Completed design, Claude, Done 11:00 AM. View session summary"
+                class="muro-note muro-mascot-hover"
+                style="--paper: #FFCFB0; --rotation: -0.8deg;"
+                type="button"
+              >
+                <span
+                  class="muro-scene"
+                >
+                  <span
+                    class="muro-tag "
+                  >
+                    Done 11:00 AM
+                  </span>
+                  <svg
+                    aria-hidden="true"
+                    class="muro-mascot done"
+                    data-agent="claude"
+                    data-mode="done"
+                    data-reduced="0"
+                    focusable="false"
+                    height="98"
+                    viewBox="0 0 100 100"
+                    width="98"
+                  >
+                    <ellipse
+                      cx="50"
+                      cy="96"
+                      fill="rgba(0,0,0,.18)"
+                      rx="26"
+                      ry="4"
+                    />
+                    <g
+                      class="body-g"
+                    >
+                      <path
+                        d="M24 70 Q22 36 50 34 Q78 36 76 70 Q76 94 50 94 Q24 94 24 70Z"
+                        fill="#D46F3A"
+                      />
+                      <path
+                        d="M30 50 Q50 40 70 50"
+                        fill="none"
+                        opacity=".6"
+                        stroke="#e99a6f"
+                        stroke-linecap="round"
+                        stroke-width="3"
+                      />
+                      <path
+                        d="M44 34 Q50 20 56 34"
+                        fill="#D46F3A"
+                      />
+                      <circle
+                        cx="50"
+                        cy="22"
+                        fill="#F2C14E"
+                        r="4.5"
+                      />
+                      <g
+                        class="eyes"
+                      >
+                        <ellipse
+                          cx="41"
+                          cy="58"
+                          fill="#fff"
+                          rx="6"
+                          ry="7"
+                        />
+                        <ellipse
+                          cx="59"
+                          cy="58"
+                          fill="#fff"
+                          rx="6"
+                          ry="7"
+                        />
+                        <circle
+                          cx="42.5"
+                          cy="59"
+                          fill="#1b1a24"
+                          r="3.2"
+                        />
+                        <circle
+                          cx="60.5"
+                          cy="59"
+                          fill="#1b1a24"
+                          r="3.2"
+                        />
+                      </g>
+                      <circle
+                        cx="34"
+                        cy="70"
+                        fill="#f59e7a"
+                        opacity=".7"
+                        r="3.5"
+                      />
+                      <circle
+                        cx="66"
+                        cy="70"
+                        fill="#f59e7a"
+                        opacity=".7"
+                        r="3.5"
+                      />
+                      <path
+                        d="M44 72 Q50 78 56 72"
+                        fill="none"
+                        stroke="#1b1a24"
+                        stroke-linecap="round"
+                        stroke-width="2.5"
+                      />
+                      <path
+                        d="M26 64 L14 48"
+                        stroke="#D46F3A"
+                        stroke-linecap="round"
+                        stroke-width="7"
+                      />
+                    </g>
+                    <g
+                      class="tool"
+                      data-tool="brush"
+                    >
+                      <line
+                        stroke="#6b4a2b"
+                        stroke-linecap="round"
+                        stroke-width="3.5"
+                        x1="64"
+                        x2="80"
+                        y1="62"
+                        y2="44"
+                      />
+                      <path
+                        d="M78 40 q6 -6 10 0 q-4 6 -10 0z"
+                        fill="#D46F3A"
+                      />
+                    </g>
+                  </svg>
+                </span>
+                <span
+                  class="muro-note-title"
+                >
+                  Completed design
+                </span>
+                <span
+                  class="muro-meta"
+                >
+                  <span>
+                    Claude
+                  </span>
+                  <span>
+                    1h 0m
+                  </span>
+                  <span>
+                    12K tokens
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
     </section>
   </div>
 </div>

@@ -400,6 +400,14 @@ GET /api/sessions/:id/stats
 
 Returns aggregated counts powering the Session Detail overview panel. All aggregation runs in SQL — the response is cheap to compute even for sessions with tens of thousands of events.
 
+`files_touched` contains up to 50 unique, alphabetically sorted nonempty
+`tool_input.file_path` strings from this session's `PreToolUse` events for `Edit`,
+`Write` and `MultiEdit`. Invalid JSON and non-string paths are ignored; no matching
+events returns `[]`. The existing source/provider scope applies. Other stats
+fields keep their existing semantics. Session list rows additionally expose
+`total_tokens` (input + output + cache read + cache write, including baselines),
+reusing the pricing query; transient rows return zero.
+
 **Path Parameters:**
 
 | Parameter | Type | Description |
@@ -427,6 +435,7 @@ curl http://localhost:4820/api/sessions/sess_abc123/stats
     { "tool_name": "Read", "count": 1340 }
   ],
   "error_count": 12,
+    "files_touched": ["client/src/App.tsx", "server/routes/sessions.js"],
   "first_event_at": "2026-04-26T18:59:00.000Z",
   "last_event_at": "2026-04-29T21:30:14.000Z",
   "agents": {

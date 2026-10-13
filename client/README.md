@@ -501,12 +501,23 @@ useEffect(() => {
 The `/muro` page includes a live Claude/Codex stage. Each card shows the most
 recent working session and today's completed tasks and tokens from
 `api.muro.summary("today")`, following the global machine/provider scope. Waiting
-sessions use the idle mascot; Cursor sessions are excluded. Clicking a card
+sessions use the idle mascot and the most recent waiting title when no work is
+active. A product excluded by the global filter is dimmed, has no counters and
+cannot be selected; Cursor sessions are excluded. Clicking an enabled card
 toggles the page-owned agent filter, independently of the period selector.
 Session/agent updates and remote refreshes reload both requests after 300 ms;
 reconnection and a minute timer also refresh the data. The SVG mascots animate
 only through scoped CSS, respect reduced motion, and use locally bundled Caveat
-for the speech bubbles. The kanban and charts are subsequent Muro steps.
+for speech bubbles and post-it titles.
+
+Below the stage, the three post-it lanes show working sessions, sessions waiting
+for input, and completed sessions whose end time falls within the selected local
+calendar period. Lists include real task progress and effective token totals;
+there is no drag-and-drop. Live lane changes use FLIP movement and completion
+confetti, both disabled with reduced motion. A post-it opens a native modal
+dialog with a zoom transition, on-demand session statistics, tool counts and up
+to 50 touched paths. Escape, the close button or the backdrop close it and return
+focus to the post-it. Charts are a subsequent Muro step.
 
 ### Route Structure
 

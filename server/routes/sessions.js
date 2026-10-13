@@ -1,7 +1,8 @@
 /**
  * @file Express router for session endpoints, allowing creation, retrieval, and
  * updating of sessions with pagination plus status, search, and multi-directory
- * filtering. It computes costs, derives optional owner-aware task progress,
+ * filtering. It computes costs and effective list tokens, returns bounded touched
+ * file paths in session stats, derives optional owner-aware task progress,
  * adds card-ready prompt context, reads Claude/Cursor/Codex conversations,
  * safely exposes transcript images, and broadcasts live changes.
  * @author Son Nguyen <hoangson091104@gmail.com>
@@ -351,6 +352,7 @@ router.get("/", (req, res) => {
                 .total_cost
             : 0;
           row.has_token_usage = Boolean(sessionTokens);
+          row.total_tokens = sumSessionTokens(sessionTokens);
         }
       }
 
@@ -415,6 +417,7 @@ router.get("/", (req, res) => {
               .total_cost
           : 0;
         row.has_token_usage = Boolean(sessionTokens);
+        row.total_tokens = sumSessionTokens(sessionTokens);
       }
     }
   }
@@ -450,12 +453,24 @@ router.get("/", (req, res) => {
     // Durable rows are enriched with this explicit boolean above. Preserve
     // the response contract for in-memory process-overlay rows as well: they
     // cannot have durable token_usage records by construction.
-    rows = [...transient.map((session) => ({ ...session, has_token_usage: false })), ...rows];
+    rows = [
+      ...transient.map((session) => ({ ...session, has_token_usage: false, total_tokens: 0 })),
+      ...rows,
+    ];
   }
 
   if (includeTaskProgress) attachTaskSummaries(rows);
   res.json({ sessions: rows, limit, offset, total });
 });
+
+/** Effective totals reuse the token rows already loaded for list pricing. */
+function sumSessionTokens(rows = []) {
+  return rows.reduce(
+    (total, row) =>
+      total + row.input_tokens + row.output_tokens + row.cache_read_tokens + row.cache_write_tokens,
+    0
+  );
+}
 
 router.get("/facets", (req, res) => {
   const sourceFilter = sourceColumnClause(parseSources(req), "s.source");
@@ -533,6 +548,22 @@ router.get("/:id/stats", (req, res) => {
   const totalEvents = stmts.sessionEventCount.get(sessionId)?.count ?? 0;
   const eventsByType = stmts.sessionEventTypeCounts.all(sessionId);
   const tools = stmts.sessionToolUsageCounts.all(sessionId);
+  // CASE shields JSON extraction from malformed legacy/imported event payloads.
+  // Filter before DISTINCT/LIMIT so duplicates and invalid paths don't consume slots.
+  const filesTouched = db
+    .prepare(
+      `
+    SELECT DISTINCT json_extract(CASE WHEN json_valid(data) THEN data ELSE '{}' END, '$.tool_input.file_path') AS path
+    FROM events
+    WHERE session_id = ? AND event_type = 'PreToolUse'
+      AND tool_name IN ('Edit', 'Write', 'MultiEdit')
+      AND json_type(CASE WHEN json_valid(data) THEN data ELSE '{}' END, '$.tool_input.file_path') = 'text'
+      AND length(trim(json_extract(CASE WHEN json_valid(data) THEN data ELSE '{}' END, '$.tool_input.file_path'))) > 0
+    ORDER BY path LIMIT 50
+  `
+    )
+    .all(sessionId)
+    .map((row) => row.path);
   const errors = stmts.sessionErrorCount.get(sessionId)?.count ?? 0;
   const timeRange = stmts.sessionEventTimeRange.get(sessionId) || {};
   const subagentTypes = stmts.sessionAgentTypeCounts.all(sessionId);
@@ -573,6 +604,7 @@ router.get("/:id/stats", (req, res) => {
     total_events: totalEvents,
     events_by_type: eventsByType,
     tools_used: tools,
+    files_touched: filesTouched,
     error_count: errors,
     first_event_at: timeRange.first_at ?? null,
     last_event_at: timeRange.last_at ?? null,

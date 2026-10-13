@@ -688,6 +688,8 @@ export interface Session {
    *  active pricing rules. Only present on responses that attach pricing.
    *  Absolute dollars (e.g. `0.42`), already summed across all buckets. */
   cost?: number;
+  /** Effective input/output/cache tokens from list pricing rows, including baselines. */
+  total_tokens?: number;
   /** ISO timestamp set when an agent CLI is blocked waiting for the user
    * (permission prompt or "waiting for your input" notice). Cleared when the
    * source reports that work has resumed. Null when the session is not waiting.
@@ -1976,6 +1978,8 @@ export interface SessionStats {
   events_by_type: Array<{ event_type: string; count: number }>;
   /** Tool invocation counts within this session, most-used first. */
   tools_used: Array<{ tool_name: string; count: number }>;
+  /** Unique Edit/Write/MultiEdit PreToolUse paths, sorted and capped at 50. */
+  files_touched?: string[];
   /** Count of events representing an error (APIError, error-summary Stop) in
    *  this session. Drives the "N errors" badge on the detail page. */
   error_count: number;
