@@ -38,6 +38,7 @@ describe("Sidebar", () => {
     renderSidebar(true);
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Kanban Board")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Muro" })).toHaveAttribute("href", "/muro");
     expect(screen.getByText("Sessions")).toBeInTheDocument();
     expect(screen.getByText("Activity Feed")).toBeInTheDocument();
   });
@@ -66,6 +67,7 @@ describe("Sidebar", () => {
     const hrefs = links.map((link) => link.getAttribute("href"));
     expect(hrefs).toContain("/");
     expect(hrefs).toContain("/kanban");
+    expect(hrefs[hrefs.indexOf("/kanban") + 1]).toBe("/muro");
     expect(hrefs).toContain("/sessions");
     expect(hrefs).toContain("/activity");
   });
@@ -125,6 +127,7 @@ describe("Sidebar", () => {
     await waitFor(() => {
       expect(screen.getByTitle("Panel")).toBeInTheDocument();
       expect(screen.getByTitle("Tablero Kanban")).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Muro" })).toHaveAttribute("href", "/muro");
     });
   });
 });

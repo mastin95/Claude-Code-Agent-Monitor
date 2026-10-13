@@ -61,6 +61,7 @@ import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   Columns3,
+  StickyNote,
   FolderOpen,
   Activity,
   BarChart3,
@@ -104,6 +105,7 @@ function isUpdatePayload(x: unknown): x is UpdateStatusPayload {
 const NAV_KEYS = [
   { to: "/", icon: LayoutDashboard, key: "nav:dashboard" },
   { to: "/kanban", icon: Columns3, key: "nav:agentBoard" },
+  { to: "/muro", icon: StickyNote, key: "nav:muro" },
   { to: "/sessions", icon: FolderOpen, key: "nav:sessions" },
   { to: "/activity", icon: Activity, key: "nav:activityFeed" },
   { to: "/analytics", icon: BarChart3, key: "nav:analytics" },

@@ -1,0 +1,15 @@
+{
+  "title": "Muro",
+  "period": {
+    "label": "Khoảng thời gian",
+    "today": "Hôm nay",
+    "7d": "7 ngày",
+    "30d": "30 ngày"
+  },
+  "loading": "Đang tải Muro…",
+  "empty": {
+    "title": "Chưa có gì trên Muro",
+    "description": "Hoạt động của Claude và Codex sẽ xuất hiện ở đây."
+  },
+  "error": "Không thể tải Muro."
+}

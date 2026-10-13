@@ -26,8 +26,11 @@ process.env.DASHBOARD_DB_PATH = path.join(TMP_ROOT, "dashboard.db");
 
 const { codexHomeChangeTriggersSweep } = require("../index");
 const { findCodexTranscripts } = require("../lib/codex-ingest");
+const { db } = require("../db");
 
 after(() => {
+  // Windows cannot remove the fixture while SQLite still holds its files open.
+  db.close();
   fs.rmSync(TMP_ROOT, { recursive: true, force: true });
 });
 
