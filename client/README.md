@@ -498,6 +498,16 @@ useEffect(() => {
 
 ## Routing
 
+The `/muro` page includes a live Claude/Codex stage. Each card shows the most
+recent working session and today's completed tasks and tokens from
+`api.muro.summary("today")`, following the global machine/provider scope. Waiting
+sessions use the idle mascot; Cursor sessions are excluded. Clicking a card
+toggles the page-owned agent filter, independently of the period selector.
+Session/agent updates and remote refreshes reload both requests after 300 ms;
+reconnection and a minute timer also refresh the data. The SVG mascots animate
+only through scoped CSS, respect reduced motion, and use locally bundled Caveat
+for the speech bubbles. The kanban and charts are subsequent Muro steps.
+
 ### Route Structure
 
 ```mermaid

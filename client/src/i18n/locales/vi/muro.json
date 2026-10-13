@@ -11,5 +11,16 @@
     "title": "Chưa có gì trên Muro",
     "description": "Hoạt động của Claude và Codex sẽ xuất hiện ở đây."
   },
-  "error": "Không thể tải Muro."
+  "error": "Không thể tải Muro.",
+  "stage": {
+    "label": "Đội ngũ",
+    "filter": "Lọc theo {{agent}}",
+    "claude": "Đang dọn dẹp: {{title}}",
+    "codex": "Đang xây dựng: {{title}}",
+    "waiting": "Đang chờ việc…",
+    "untitled": "Phiên chưa đặt tên",
+    "tokens": "{{formatted}} token",
+    "completed_one": "Đã xong {{formatted}} hôm nay",
+    "completed_other": "Đã xong {{formatted}} hôm nay"
+  }
 }
