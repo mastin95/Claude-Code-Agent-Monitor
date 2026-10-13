@@ -1,0 +1,365 @@
+/**
+ * @file board.css
+ * @description Prototype paper board, illustrated notes and zooming session sheet.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+.muro-board {
+  @apply bg-surface-1 border border-border;
+  background-image: radial-gradient(circle at 1px 1px, #ffffff0f 1px, transparent 0);
+  background-size: 22px 22px;
+  border-radius: 18px;
+  padding: 18px;
+}
+.muro-lanes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.muro-lane {
+  min-width: 0;
+}
+.muro-lane h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 4px 2px 24px;
+}
+.muro-lane-count {
+  @apply bg-surface-3 text-gray-400 font-mono;
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 1px 8px;
+}
+.muro-lane-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.muro-lane-dot.working {
+  background: #38bdf8;
+}
+.muro-lane-dot.waiting {
+  background: #facc15;
+}
+.muro-lane-dot.done {
+  background: #34d399;
+}
+.muro-drop {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.muro-lane-empty {
+  @apply border border-dashed border-border-light text-gray-500;
+  border-radius: 14px;
+  padding: 26px 8px;
+  font-size: 13px;
+  text-align: center;
+}
+.muro-note {
+  position: relative;
+  transform: rotate(var(--rotation));
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.25s;
+  background: var(--paper);
+  color: #1b1a24;
+  border-radius: 3px 3px 14px 3px;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow:
+    0 1px 0 #0003,
+    0 10px 18px -8px #0009;
+  cursor: pointer;
+  border: 0;
+  text-align: left;
+  width: 100%;
+}
+.muro-note::before {
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 64px;
+  height: 18px;
+  margin-left: -32px;
+  background: #ffffff61;
+  transform: rotate(calc(var(--rotation) * -1.5));
+  border-radius: 2px;
+}
+.muro-note:hover,
+.muro-note:focus-visible {
+  transform: rotate(0) translateY(-6px) scale(1.03);
+  box-shadow:
+    0 2px 0 #0003,
+    0 22px 30px -10px #000b;
+  z-index: 2;
+}
+.muro-note:focus-visible {
+  outline: 3px solid #818cf8;
+  outline-offset: 4px;
+}
+.muro-scene {
+  height: 90px;
+  border-radius: 8px;
+  background: #ffffff59;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.muro-scene svg {
+  margin-bottom: -6px;
+}
+.muro-tag {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #1b1a24;
+  color: var(--paper);
+  border-radius: 6px;
+  padding: 2px 6px;
+  z-index: 1;
+}
+.muro-tag.muro-urgent {
+  background: #b91c1c;
+  color: white;
+}
+.muro-note-title {
+  font-family: "Caveat", cursive;
+  font-size: 22px;
+  line-height: 1.02;
+  font-weight: 700;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.muro-meta {
+  @apply font-mono;
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: #4b4650;
+  flex-wrap: wrap;
+}
+.muro-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: #0000001f;
+  overflow: hidden;
+}
+.muro-progress > span {
+  display: block;
+  height: 100%;
+  background: #1b1a24;
+  border-radius: 3px;
+  transition: width 0.6s;
+}
+.muro-dialog {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  border: 0;
+  padding: 20px 16px;
+  background: transparent;
+  overflow: hidden;
+}
+.muro-dialog[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.muro-dialog::backdrop {
+  background: #04040899;
+  backdrop-filter: blur(6px);
+}
+.muro-sheet {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  background: var(--paper);
+  color: #1b1a24;
+  border-radius: 6px 6px 22px 6px;
+  padding: 24px;
+  box-shadow: 0 40px 80px #000b;
+  transform-origin: top left;
+}
+.muro-sheet-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: 0;
+  background: #00000014;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+.muro-sheet-hero {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding-right: 24px;
+}
+.muro-sheet-hero svg {
+  background: #ffffff59;
+  border-radius: 16px;
+}
+.muro-eyebrow,
+.muro-sheet h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #4b4650;
+}
+.muro-sheet h2 {
+  font-family: "Caveat", cursive;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+.muro-ask {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #4b4650;
+  background: #ffffff66;
+  border-radius: 10px;
+  padding: 8px 10px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.muro-sheet-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.muro-sheet-stats > div {
+  background: #ffffff73;
+  border-radius: 12px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+.muro-sheet-stats b {
+  display: block;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.muro-sheet-stats span {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #4b4650;
+}
+.muro-sheet h3 {
+  margin: 14px 0 8px;
+}
+.muro-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+}
+.muro-tool {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 40px;
+  gap: 8px;
+  align-items: center;
+}
+.muro-tool > :first-child {
+  overflow-wrap: anywhere;
+}
+.muro-tool > :last-child {
+  text-align: right;
+}
+.muro-tool-track > span {
+  display: block;
+  height: 12px;
+  background: #1b1a24;
+  border-radius: 4px;
+}
+.muro-files {
+  @apply font-mono;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.muro-files > span {
+  border-radius: 6px;
+  padding: 5px 8px;
+  background: #ffffff66;
+}
+.muro-session-link {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.muro-sheet-message {
+  margin: 20px 0;
+  font-size: 14px;
+}
+.muro-sheet-message button {
+  margin-top: 8px;
+  text-decoration: underline;
+}
+.muro-confetti {
+  position: fixed;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  z-index: 60;
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .muro-lanes {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+@media (max-width: 480px) {
+  .muro-sheet-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .muro-sheet-stats {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .muro-board *,
+  .muro-dialog *,
+  .muro-confetti {
+    animation: none !important;
+    transition: none !important;
+  }
+  .muro-note:hover,
+  .muro-note:focus-visible {
+    transform: rotate(var(--rotation));
+  }
+  .muro-confetti {
+    display: none;
+  }
+}

@@ -447,6 +447,10 @@ components:
           type: boolean
           nullable: true
           description: True when durable token-usage buckets exist for this session. It is independent of cost, which may be zero for genuinely empty or unpriced usage.
+        total_tokens:
+          type: integer
+          minimum: 0
+          description: Effective input, output, cache-read and cache-write tokens (including baselines). Included in session list responses, including zero for transient sessions.
         awaiting_input_since:
           type: string
           format: date-time
@@ -831,6 +835,7 @@ components:
         - total_events
         - events_by_type
         - tools_used
+        - files_touched
         - error_count
         - first_event_at
         - last_event_at
@@ -870,6 +875,13 @@ components:
               count:
                 type: integer
                 minimum: 0
+        files_touched:
+          type: array
+          maxItems: 50
+          uniqueItems: true
+          description: Alphabetically sorted unique nonempty tool_input.file_path strings from PreToolUse events for Edit, Write and MultiEdit. Invalid JSON and non-string paths are ignored.
+          items:
+            type: string
         error_count:
           type: integer
           minimum: 0

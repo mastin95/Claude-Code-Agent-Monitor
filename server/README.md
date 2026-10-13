@@ -460,6 +460,7 @@ The OpenAPI spec is generated from `server/openapi.js` (`createOpenApiSpec()`), 
 | `GET`   | `/api/health`       | Server health check (`status`, `version`, `timestamp`) |
 | `GET`   | `/api/sessions`     | List sessions (`status`, repeatable `cwd`, `sort_by`, `sort_desc`, `include_transient`, `include_task_progress`, `limit`, `offset`) |
 | `GET`   | `/api/sessions/:id` | Session detail (includes `agents` + `events`)   |
+| `GET`   | `/api/sessions/:id/stats` | Scoped session statistics plus up to 50 unique Edit/Write/MultiEdit `PreToolUse` file paths in `files_touched` |
 | `POST`  | `/api/sessions`     | Create session (idempotent by `id`)             |
 | `PATCH` | `/api/sessions/:id` | Update session                                   |
 | `GET`   | `/api/sessions/:id/transcripts` | List the session's transcript files (main + sub-agents) |

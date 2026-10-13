@@ -21,6 +21,47 @@
     "untitled": "未命名会话",
     "tokens": "{{formatted}} 令牌",
     "completed_one": "今天已完成 {{formatted}} 项",
-    "completed_other": "今天已完成 {{formatted}} 项"
+    "completed_other": "今天已完成 {{formatted}} 项",
+    "awaiting": "等待你确认：{{title}}",
+    "excluded": "已被产品筛选排除"
+  },
+  "board": "会话看板",
+  "lanes": {
+    "working": "工作中",
+    "waiting": "等待我确认",
+    "done": "已完成"
+  },
+  "laneEmpty": {
+    "working": "当前没有正在进行的工作",
+    "waiting": "没有等待你确认的事项",
+    "done": "尚无已完成的任务"
+  },
+  "note": {
+    "claude": "清扫中",
+    "codex": "建造中",
+    "done": "完成于 {{time}}",
+    "open": "{{title}}，{{agent}}，{{state}}。查看会话摘要",
+    "progress": "任务进度",
+    "steps": "{{completed}}/{{total}} 步",
+    "reason": {
+      "notification": "请求权限",
+      "interrupted": "已中断",
+      "stop": "轮到你了",
+      "session_start": "刚刚打开"
+    }
+  },
+  "sheet": {
+    "ask": "你的请求：",
+    "noPrompt": "没有记录请求。",
+    "duration": "时长",
+    "tokens": "令牌",
+    "files": "文件",
+    "tools": "工具使用次数",
+    "touched": "修改的文件",
+    "noTools": "没有工具调用记录。",
+    "noFiles": "没有文件修改记录。",
+    "fullSession": "查看完整会话",
+    "loading": "正在加载会话摘要…",
+    "error": "无法加载会话摘要。"
   }
 }

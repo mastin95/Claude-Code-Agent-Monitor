@@ -18,7 +18,7 @@ if (nodeProcess) nodeProcess.env.TZ = "UTC";
 
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
 import type { ReactNode } from "react";
-import { render, act, fireEvent, screen, within } from "@testing-library/react";
+import { render, act, fireEvent, screen, within, cleanup } from "@testing-library/react";
 import { MemoryRouter, Routes, Route, useLocation } from "react-router";
 import i18n from "i18next";
 
@@ -446,6 +446,7 @@ import { Run } from "../Run";
 import { Settings } from "../Settings";
 import { NotFound } from "../NotFound";
 import { api } from "../../lib/api";
+import { getScope, setScope } from "../../lib/dataScope";
 
 // jsdom lacks these browser APIs that chart / responsive components rely on.
 class ObserverStub {
@@ -555,12 +556,17 @@ describe("screen snapshots", () => {
     await snapshot(<Muro />, "/muro");
   });
   it("Muro working stage", async () => {
+    const previousScope = getScope();
+    setScope({ mode: "all", selected: [], provider: "both" });
     vi.mocked(api.sessions.list).mockResolvedValueOnce({
       sessions: (["claude", "codex"] as const).map((provider) => ({
         id: provider,
         provider,
         name: `${provider} task`,
         status: "active" as const,
+        awaiting_input_since: provider === "codex" ? "2026-06-10T12:30:00Z" : null,
+        awaiting_reason: provider === "codex" ? "notification" : null,
+        total_tokens: provider === "claude" ? 150000 : 299000,
         cwd: null,
         model: null,
         metadata: null,
@@ -568,6 +574,25 @@ describe("screen snapshots", () => {
         ended_at: null,
       })),
       total: 2,
+      limit: 10000,
+      offset: 0,
+    });
+    vi.mocked(api.sessions.list).mockResolvedValueOnce({
+      sessions: [
+        {
+          id: "done",
+          provider: "claude",
+          name: "Completed design",
+          status: "completed",
+          cwd: null,
+          model: null,
+          metadata: null,
+          started_at: "2026-06-10T10:00:00Z",
+          ended_at: "2026-06-10T11:00:00Z",
+          total_tokens: 12000,
+        },
+      ],
+      total: 1,
       limit: 10000,
       offset: 0,
     });
@@ -582,6 +607,9 @@ describe("screen snapshots", () => {
       streak_days: 1,
     });
     await snapshot(<Muro />, "/muro");
+    // Scope is restored after the snapshot so unrelated screen baselines keep their defaults.
+    cleanup();
+    setScope({ ...previousScope, provider: previousScope.provider || "claude" });
   });
   it("Sessions", async () => {
     await snapshot(<Sessions />, "/sessions");

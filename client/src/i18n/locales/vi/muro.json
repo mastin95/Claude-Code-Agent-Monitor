@@ -21,6 +21,47 @@
     "untitled": "Phiên chưa đặt tên",
     "tokens": "{{formatted}} token",
     "completed_one": "Đã xong {{formatted}} hôm nay",
-    "completed_other": "Đã xong {{formatted}} hôm nay"
+    "completed_other": "Đã xong {{formatted}} hôm nay",
+    "awaiting": "Đang chờ bạn xác nhận: {{title}}",
+    "excluded": "Nằm ngoài bộ lọc sản phẩm"
+  },
+  "board": "Bảng phiên",
+  "lanes": {
+    "working": "Đang làm việc",
+    "waiting": "Chờ tôi xác nhận",
+    "done": "Đã xong"
+  },
+  "laneEmpty": {
+    "working": "Hiện không có ai đang làm việc",
+    "waiting": "Không có gì cần bạn xác nhận",
+    "done": "Chưa có việc nào hoàn thành"
+  },
+  "note": {
+    "claude": "Đang dọn dẹp",
+    "codex": "Đang xây dựng",
+    "done": "Xong lúc {{time}}",
+    "open": "{{title}}, {{agent}}, {{state}}. Xem tóm tắt phiên",
+    "progress": "Tiến độ công việc",
+    "steps": "{{completed}}/{{total}} bước",
+    "reason": {
+      "notification": "Xin quyền",
+      "interrupted": "Bị gián đoạn",
+      "stop": "Đến lượt bạn",
+      "session_start": "Vừa mở"
+    }
+  },
+  "sheet": {
+    "ask": "Yêu cầu của bạn:",
+    "noPrompt": "Chưa ghi nhận yêu cầu.",
+    "duration": "Thời lượng",
+    "tokens": "Token",
+    "files": "Tệp",
+    "tools": "Số lần dùng công cụ",
+    "touched": "Tệp đã chỉnh sửa",
+    "noTools": "Chưa ghi nhận lần gọi công cụ nào.",
+    "noFiles": "Chưa ghi nhận thay đổi tệp nào.",
+    "fullSession": "Xem toàn bộ phiên",
+    "loading": "Đang tải tóm tắt phiên…",
+    "error": "Không thể tải tóm tắt phiên."
   }
 }
