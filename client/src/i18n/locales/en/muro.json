@@ -87,5 +87,7 @@
     "heatHint": "Completed tasks · today outlined",
     "error": "Could not load the work summary.",
     "loading": "Loading work summary…"
-  }
+  },
+  "showMore": "Show {{formatted}} more",
+  "showLess": "Show less"
 }

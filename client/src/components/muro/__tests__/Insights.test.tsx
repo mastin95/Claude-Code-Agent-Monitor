@@ -122,10 +122,11 @@ describe("Muro insights", () => {
     expect(container.textContent).not.toContain("-0");
   });
   it.each([
-    ["today", 24],
+    ["today", 17],
     ["7d", 7],
     ["30d", 10],
   ] as const)("renders %s buckets including zero gaps and totals", (period, length) => {
+    vi.useFakeTimers({ toFake: ["Date"], now: new Date(2026, 9, 13, 16) });
     const data = summary(period),
       buckets = rhythmBuckets(data);
     expect(buckets).toHaveLength(length);
@@ -148,6 +149,31 @@ describe("Muro insights", () => {
     expect(screen.getByRole("tooltip")).toHaveTextContent("Claude 3");
     fireEvent.keyDown(within(chart).getAllByRole("img")[0]!, { key: "Escape" });
     expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+  });
+  it.each([
+    [18, 10, 8, 18], // Starts at 08:00 when activity begins later.
+    [18, 5, 5, 18], // Preserves early activity.
+    [12, 10, 5, 12], // Extends backwards to keep eight bars.
+    [18, null, 8, 18], // An empty day uses the same morning baseline.
+    [9, null, 2, 9],
+    [0, null, 0, 7], // Midnight stays inside today with eight zero-filled hours.
+    [3, 1, 0, 7],
+    [23, 8, 8, 23],
+  ])("crops today at hour %s with first activity %s to %s–%s", (hour, first, start, end) => {
+    const data = summary();
+    data.series.buckets = data.series.buckets.map((bucket, index) => ({
+      ...bucket,
+      claude: index === first ? 2 : 0,
+      codex: index === first ? 3 : 0,
+    }));
+    const buckets = rhythmBuckets(data, new Date(2026, 9, 13, hour!));
+    expect(buckets.map((bucket) => Number(bucket.start.slice(11, 13)))).toEqual(
+      Array.from({ length: end! - start! + 1 }, (_, index) => start! + index)
+    );
+    expect(buckets.length).toBeGreaterThanOrEqual(8);
+    expect(buckets.reduce((sum, bucket) => sum + bucket.claude + bucket.codex, 0)).toBe(
+      first === null ? 0 : 5
+    );
   });
   it("shows 35 actual heatmap dates, highlights today, and describes zero days", () => {
     const data = summary();

@@ -5,7 +5,7 @@
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -331,10 +331,10 @@ describe("Muro", () => {
     const legend = await screen.findByRole("button", {
       name: "Filtrar gráficas y muro por Claude",
     });
-    fireEvent.mouseEnter(legend);
+    await user.hover(legend);
     expect(container.querySelector('[data-session-id="codex-1"]')).toHaveClass("muro-dimmed");
     expect(container.querySelector('[data-session-id="claude-1"]')).not.toHaveClass("muro-dimmed");
-    fireEvent.mouseLeave(legend);
+    await user.unhover(legend);
     expect(container.querySelector(".muro-dimmed")).toBeNull();
     await user.click(legend);
     await waitFor(() => expect(api.muro.summary).toHaveBeenCalledWith("today", "claude"));

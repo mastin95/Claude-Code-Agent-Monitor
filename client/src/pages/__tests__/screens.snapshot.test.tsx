@@ -563,6 +563,8 @@ describe("screen snapshots", () => {
     media.mockRestore();
   });
   it("Muro working stage", async () => {
+    // Chart hours are browser-local; keep this visual baseline identical in every timezone.
+    const hour = vi.spyOn(Date.prototype, "getHours").mockReturnValue(13);
     const original = window.matchMedia;
     const media = vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
       ...original(query),
@@ -634,6 +636,7 @@ describe("screen snapshots", () => {
     cleanup();
     setScope({ ...previousScope, provider: previousScope.provider || "claude" });
     media.mockRestore();
+    hour.mockRestore();
   });
   it("Sessions", async () => {
     await snapshot(<Sessions />, "/sessions");

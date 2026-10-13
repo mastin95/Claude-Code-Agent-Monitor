@@ -87,5 +87,7 @@
     "heatHint": "완료 작업 · 오늘은 테두리로 표시",
     "error": "작업 요약을 불러올 수 없습니다.",
     "loading": "작업 요약 불러오는 중…"
-  }
+  },
+  "showMore": "{{formatted}}개 더 보기",
+  "showLess": "접기"
 }

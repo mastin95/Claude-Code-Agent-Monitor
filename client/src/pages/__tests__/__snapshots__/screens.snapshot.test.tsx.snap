@@ -7770,7 +7770,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
+                width="31"
                 x="32"
                 y="146"
               />
@@ -7778,198 +7778,8 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
+                width="31"
                 x="32"
-                y="146"
-              />
-              <rect
-                aria-label="00:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="30"
-                y="0"
-              />
-              <text
-                aria-hidden="true"
-                text-anchor="middle"
-                x="35.833333333333336"
-                y="166"
-              >
-                00:00
-              </text>
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="43.666666666666664"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="43.666666666666664"
-                y="146"
-              />
-              <rect
-                aria-label="01:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="41.666666666666664"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="55.33333333333333"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="55.33333333333333"
-                y="146"
-              />
-              <rect
-                aria-label="02:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="53.33333333333333"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="67"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="67"
-                y="146"
-              />
-              <rect
-                aria-label="03:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="65"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="78.66666666666666"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="78.66666666666666"
-                y="146"
-              />
-              <rect
-                aria-label="04:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="76.66666666666666"
-                y="0"
-              />
-              <text
-                aria-hidden="true"
-                text-anchor="middle"
-                x="82.49999999999999"
-                y="166"
-              >
-                04:00
-              </text>
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="90.33333333333333"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="90.33333333333333"
-                y="146"
-              />
-              <rect
-                aria-label="05:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="88.33333333333333"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="102"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="102"
                 y="146"
               />
               <rect
@@ -7979,26 +7789,34 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="100"
+                width="35"
+                x="30"
                 y="0"
               />
+              <text
+                aria-hidden="true"
+                text-anchor="middle"
+                x="47.5"
+                y="166"
+              >
+                06:00
+              </text>
             </g>
             <g>
               <rect
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="113.66666666666666"
+                width="31"
+                x="67"
                 y="146"
               />
               <rect
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="113.66666666666666"
+                width="31"
+                x="67"
                 y="146"
               />
               <rect
@@ -8008,26 +7826,34 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="111.66666666666666"
+                width="35"
+                x="65"
                 y="0"
               />
+              <text
+                aria-hidden="true"
+                text-anchor="middle"
+                x="82.5"
+                y="166"
+              >
+                07:00
+              </text>
             </g>
             <g>
               <rect
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="125.33333333333333"
+                width="31"
+                x="102"
                 y="146"
               />
               <rect
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="125.33333333333333"
+                width="31"
+                x="102"
                 y="146"
               />
               <rect
@@ -8037,14 +7863,14 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="123.33333333333333"
+                width="35"
+                x="100"
                 y="0"
               />
               <text
                 aria-hidden="true"
                 text-anchor="middle"
-                x="129.16666666666666"
+                x="117.5"
                 y="166"
               >
                 08:00
@@ -8055,7 +7881,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
+                width="31"
                 x="137"
                 y="146"
               />
@@ -8063,7 +7889,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
+                width="31"
                 x="137"
                 y="146"
               />
@@ -8074,26 +7900,34 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
+                width="35"
                 x="135"
                 y="0"
               />
+              <text
+                aria-hidden="true"
+                text-anchor="middle"
+                x="152.5"
+                y="166"
+              >
+                09:00
+              </text>
             </g>
             <g>
               <rect
                 fill="#D46F3A"
                 height="65"
                 rx="2"
-                width="7.666666666666666"
-                x="148.66666666666666"
+                width="31"
+                x="172"
                 y="81"
               />
               <rect
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="148.66666666666666"
+                width="31"
+                x="172"
                 y="81"
               />
               <rect
@@ -8103,26 +7937,34 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="146.66666666666666"
+                width="35"
+                x="170"
                 y="0"
               />
+              <text
+                aria-hidden="true"
+                text-anchor="middle"
+                x="187.5"
+                y="166"
+              >
+                10:00
+              </text>
             </g>
             <g>
               <rect
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="160.33333333333331"
+                width="31"
+                x="207"
                 y="146"
               />
               <rect
                 fill="#2BA394"
                 height="108.33333333333334"
                 rx="2"
-                width="7.666666666666666"
-                x="160.33333333333331"
+                width="31"
+                x="207"
                 y="37.66666666666666"
               />
               <rect
@@ -8132,26 +7974,34 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="158.33333333333331"
+                width="35"
+                x="205"
                 y="0"
               />
+              <text
+                aria-hidden="true"
+                text-anchor="middle"
+                x="222.5"
+                y="166"
+              >
+                11:00
+              </text>
             </g>
             <g>
               <rect
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="172"
+                width="31"
+                x="242"
                 y="146"
               />
               <rect
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="172"
+                width="31"
+                x="242"
                 y="146"
               />
               <rect
@@ -8161,14 +8011,14 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="170"
+                width="35"
+                x="240"
                 y="0"
               />
               <text
                 aria-hidden="true"
                 text-anchor="middle"
-                x="175.83333333333334"
+                x="257.5"
                 y="166"
               >
                 12:00
@@ -8179,16 +8029,16 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 fill="#D46F3A"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="183.66666666666666"
+                width="31"
+                x="277"
                 y="146"
               />
               <rect
                 fill="#2BA394"
                 height="0"
                 rx="2"
-                width="7.666666666666666"
-                x="183.66666666666666"
+                width="31"
+                x="277"
                 y="146"
               />
               <rect
@@ -8198,316 +8048,18 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 height="148"
                 role="img"
                 tabindex="0"
-                width="11.666666666666666"
-                x="181.66666666666666"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="195.33333333333331"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="195.33333333333331"
-                y="146"
-              />
-              <rect
-                aria-label="14:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="193.33333333333331"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="207"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="207"
-                y="146"
-              />
-              <rect
-                aria-label="15:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="205"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="218.66666666666666"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="218.66666666666666"
-                y="146"
-              />
-              <rect
-                aria-label="16:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="216.66666666666666"
-                y="0"
-              />
-              <text
-                aria-hidden="true"
-                text-anchor="middle"
-                x="222.5"
-                y="166"
-              >
-                16:00
-              </text>
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="230.33333333333331"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="230.33333333333331"
-                y="146"
-              />
-              <rect
-                aria-label="17:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="228.33333333333331"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="242"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="242"
-                y="146"
-              />
-              <rect
-                aria-label="18:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="240"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="253.66666666666666"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="253.66666666666666"
-                y="146"
-              />
-              <rect
-                aria-label="19:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="251.66666666666666"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="265.3333333333333"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="265.3333333333333"
-                y="146"
-              />
-              <rect
-                aria-label="20:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="263.3333333333333"
-                y="0"
-              />
-              <text
-                aria-hidden="true"
-                text-anchor="middle"
-                x="269.16666666666663"
-                y="166"
-              >
-                20:00
-              </text>
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="277"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="277"
-                y="146"
-              />
-              <rect
-                aria-label="21:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
+                width="35"
                 x="275"
                 y="0"
               />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="288.66666666666663"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="288.66666666666663"
-                y="146"
-              />
-              <rect
-                aria-label="22:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="286.66666666666663"
-                y="0"
-              />
-            </g>
-            <g>
-              <rect
-                fill="#D46F3A"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="300.3333333333333"
-                y="146"
-              />
-              <rect
-                fill="#2BA394"
-                height="0"
-                rx="2"
-                width="7.666666666666666"
-                x="300.3333333333333"
-                y="146"
-              />
-              <rect
-                aria-label="23:00 · Claude 0 · Codex 0"
-                class="muro-chart-hit"
-                fill="transparent"
-                height="148"
-                role="img"
-                tabindex="0"
-                width="11.666666666666666"
-                x="298.3333333333333"
-                y="0"
-              />
+              <text
+                aria-hidden="true"
+                text-anchor="middle"
+                x="292.5"
+                y="166"
+              >
+                13:00
+              </text>
             </g>
           </svg>
         </section>

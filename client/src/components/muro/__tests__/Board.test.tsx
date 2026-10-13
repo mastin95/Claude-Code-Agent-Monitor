@@ -62,6 +62,88 @@ afterEach(() => {
 });
 
 describe("Muro column rules", () => {
+  it("caps each lane at six newest notes, expands independently and keeps the total count", () => {
+    const sessions = (["working", "waiting", "done"] as const).flatMap((lane) =>
+      [2, 6, 0, 7, 4, 1, 5, 3].map((index): MuroSession => {
+        const timestamp = new Date(2026, 9, 6 + index, 11).toISOString();
+        return {
+          ...row,
+          id: `${lane}-${index}`,
+          name: `${lane} ${index}`,
+          // Start order deliberately disagrees with the lane-specific activity order.
+          started_at: new Date(2026, 8, 30 - index).toISOString(),
+          last_activity: lane === "working" ? timestamp : row.started_at,
+          awaiting_input_since: lane === "waiting" ? timestamp : null,
+          status: lane === "done" ? "completed" : "active",
+          ended_at: lane === "done" ? timestamp : null,
+        };
+      })
+    );
+    const { rerender } = render(board(sessions, "30d"));
+    const lanes = ["Working", "Waiting for my OK", "Done"].map((name) =>
+      screen.getByRole("region", { name })
+    );
+    const ids = (lane: HTMLElement) =>
+      Array.from(lane.querySelectorAll("[data-session-id]"), (note) =>
+        note.getAttribute("data-session-id")
+      );
+    lanes.forEach((lane, index) => {
+      const key = ["working", "waiting", "done"][index];
+      expect(ids(lane)).toEqual([7, 6, 5, 4, 3, 2].map((n) => `${key}-${n}`));
+      expect(within(lane).getByRole("heading")).toHaveTextContent("8");
+      expect(within(lane).getByRole("button", { name: "Show 2 more" })).toHaveAttribute(
+        "aria-expanded",
+        "false"
+      );
+    });
+    const done = lanes[2]!;
+    fireEvent.click(within(done).getByRole("button", { name: "Show 2 more" }));
+    expect(ids(done)).toEqual([7, 6, 5, 4, 3, 2, 1, 0].map((n) => `done-${n}`));
+    expect(within(done).getByRole("heading")).toHaveTextContent("8");
+    expect(within(done).getByRole("button", { name: "Show less" })).toHaveAttribute(
+      "aria-expanded",
+      "true"
+    );
+    expect(ids(lanes[0]!)).toHaveLength(6);
+    expect(ids(lanes[1]!)).toHaveLength(6);
+    // Refreshing data preserves expansion; collapsing restores the newest six.
+    rerender(board([...sessions], "30d"));
+    expect(ids(done)).toHaveLength(8);
+    fireEvent.click(within(done).getByRole("button", { name: "Show less" }));
+    expect(ids(done)).toHaveLength(6);
+    fireEvent.click(within(done).getByRole("button", { name: "Show 2 more" }));
+    rerender(board(sessions, "7d"));
+    expect(ids(done)).toHaveLength(6);
+    expect(within(done).getByRole("button", { name: "Show 1 more" })).toBeVisible();
+  });
+  it("has no expansion control at six notes and normalizes SQLite UTC timestamps when sorting", () => {
+    const timestamps = [
+      "2026-10-13T08:00:00Z",
+      "2026-10-13 09:00:00",
+      "2026-10-13T11:00:00+01:00",
+      "2026-10-13T07:00:00Z",
+      "2026-10-13T06:00:00Z",
+      "2026-10-13T05:00:00Z",
+    ];
+    render(
+      board(
+        timestamps.map((last_activity, index) => ({
+          ...row,
+          id: String(index),
+          name: `Task ${index}`,
+          last_activity,
+        }))
+      )
+    );
+    const lane = screen.getByRole("region", { name: "Working" });
+    expect(within(lane).getAllByRole("button")).toHaveLength(6);
+    expect(
+      Array.from(lane.querySelectorAll("[data-session-id]"), (note) =>
+        note.getAttribute("data-session-id")
+      )
+    ).toEqual(["2", "1", "0", "3", "4", "5"]);
+    expect(screen.queryByRole("button", { name: /Show/ })).not.toBeInTheDocument();
+  });
   it("excludes Cursor and terminal failures, and waiting requires an active session", () => {
     expect(sessionLane(row, "today", now)).toBe("working");
     expect(sessionLane({ ...row, awaiting_input_since: row.started_at }, "today", now)).toBe(
@@ -232,7 +314,7 @@ it("suppresses FLIP and completion confetti with reduced motion", async () => {
   delete (HTMLElement.prototype as unknown as { animate?: unknown }).animate;
 });
 
-it("FLIPs a moved note and celebrates only its transition to done", async () => {
+it("FLIPs a moved note into an expanded column and celebrates only its transition to done", async () => {
   vi.useRealTimers();
   vi.useFakeTimers({ now });
   const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "animate");
@@ -244,10 +326,23 @@ it("FLIPs a moved note and celebrates only its transition to done", async () => 
     return new DOMRect(this.closest('[aria-label="Done"]') ? 500 : 0, 100, 200, 250);
   });
   try {
-    const { rerender, unmount } = render(board([row]));
+    const earlier = Array.from(
+      { length: 7 },
+      (_, index): MuroSession => ({
+        ...row,
+        id: `done-${index}`,
+        status: "completed",
+        ended_at: row.started_at,
+      })
+    );
+    const { rerender, unmount } = render(board([row, ...earlier]));
     expect(animate).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "Show 1 more" }));
     const completed = { ...row, status: "completed" as const, ended_at: now.toISOString() };
-    rerender(board([completed]));
+    rerender(board([completed, ...earlier]));
+    expect(
+      screen.getByRole("region", { name: "Done" }).querySelectorAll("[data-session-id]")
+    ).toHaveLength(8);
     expect(animate).toHaveBeenCalledWith(
       [{ transform: "translate(-500px,0px)" }, { transform: "none" }],
       { duration: 550, easing: "cubic-bezier(.2,.8,.2,1)" }
@@ -257,7 +352,7 @@ it("FLIPs a moved note and celebrates only its transition to done", async () => 
     });
     expect(document.querySelectorAll(".muro-confetti")).toHaveLength(32);
     const count = animate.mock.calls.length;
-    rerender(board([completed]));
+    rerender(board([completed, ...earlier]));
     expect(animate).toHaveBeenCalledTimes(count);
     unmount();
     expect(document.querySelectorAll(".muro-confetti")).toHaveLength(0);

@@ -87,5 +87,7 @@
     "heatHint": "Tác vụ hoàn tất · hôm nay có viền",
     "error": "Không thể tải tổng hợp công việc.",
     "loading": "Đang tải tổng hợp công việc…"
-  }
+  },
+  "showMore": "Xem thêm {{formatted}}",
+  "showLess": "Thu gọn"
 }
