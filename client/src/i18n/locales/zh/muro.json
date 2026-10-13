@@ -1,0 +1,15 @@
+{
+  "title": "Muro",
+  "period": {
+    "label": "时间范围",
+    "today": "今天",
+    "7d": "7 天",
+    "30d": "30 天"
+  },
+  "loading": "正在加载 Muro…",
+  "empty": {
+    "title": "Muro 暂无内容",
+    "description": "Claude 和 Codex 的活动将显示在这里。"
+  },
+  "error": "无法加载 Muro。"
+}

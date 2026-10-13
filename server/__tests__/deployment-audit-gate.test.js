@@ -47,6 +47,9 @@ printf '%s\n' "$1" >>${JSON.stringify(delays)}
 
   const command = `
     source ${JSON.stringify(VALIDATOR)}
+    # Git Bash can prepend its own tools to PATH. Bind sleep explicitly so
+    # retry delays are recorded by the fixture instead of waiting in real time.
+    sleep() { bash '${fakeSleep.replace(/\\/g, "/").replace(/'/g, "'\\''")}' "$@"; }
     audit_production_dependencies test npm
   `;
   const result = spawnSync("bash", ["-c", command], {

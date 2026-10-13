@@ -96,8 +96,11 @@ import settings_en from "./locales/en/settings.json";
 import settings_zh from "./locales/zh/settings.json";
 import settings_vi from "./locales/vi/settings.json";
 import kanban_en from "./locales/en/kanban.json";
+import muro_en from "./locales/en/muro.json";
 import kanban_zh from "./locales/zh/kanban.json";
+import muro_zh from "./locales/zh/muro.json";
 import kanban_vi from "./locales/vi/kanban.json";
+import muro_vi from "./locales/vi/muro.json";
 import errors_en from "./locales/en/errors.json";
 import errors_zh from "./locales/zh/errors.json";
 import errors_vi from "./locales/vi/errors.json";
@@ -126,6 +129,7 @@ import analytics_ko from "./locales/ko/analytics.json";
 import workflows_ko from "./locales/ko/workflows.json";
 import settings_ko from "./locales/ko/settings.json";
 import kanban_ko from "./locales/ko/kanban.json";
+import muro_ko from "./locales/ko/muro.json";
 import errors_ko from "./locales/ko/errors.json";
 import updates_ko from "./locales/ko/updates.json";
 import ccConfig_ko from "./locales/ko/ccConfig.json";
@@ -142,6 +146,7 @@ import analytics_es from "./locales/es/analytics.json";
 import workflows_es from "./locales/es/workflows.json";
 import settings_es from "./locales/es/settings.json";
 import kanban_es from "./locales/es/kanban.json";
+import muro_es from "./locales/es/muro.json";
 import errors_es from "./locales/es/errors.json";
 import updates_es from "./locales/es/updates.json";
 import ccConfig_es from "./locales/es/ccConfig.json";
@@ -164,6 +169,7 @@ i18n
         workflows: workflows_en,
         settings: settings_en,
         kanban: kanban_en,
+        muro: muro_en,
         errors: errors_en,
         updates: updates_en,
         ccConfig: ccConfig_en,
@@ -181,6 +187,7 @@ i18n
         workflows: workflows_zh,
         settings: settings_zh,
         kanban: kanban_zh,
+        muro: muro_zh,
         errors: errors_zh,
         updates: updates_zh,
         ccConfig: ccConfig_zh,
@@ -198,6 +205,7 @@ i18n
         workflows: workflows_vi,
         settings: settings_vi,
         kanban: kanban_vi,
+        muro: muro_vi,
         errors: errors_vi,
         updates: updates_vi,
         ccConfig: ccConfig_vi,
@@ -215,6 +223,7 @@ i18n
         workflows: workflows_ko,
         settings: settings_ko,
         kanban: kanban_ko,
+        muro: muro_ko,
         errors: errors_ko,
         updates: updates_ko,
         ccConfig: ccConfig_ko,
@@ -232,6 +241,7 @@ i18n
         workflows: workflows_es,
         settings: settings_es,
         kanban: kanban_es,
+        muro: muro_es,
         errors: errors_es,
         updates: updates_es,
         ccConfig: ccConfig_es,
@@ -253,6 +263,7 @@ i18n
       "workflows",
       "settings",
       "kanban",
+      "muro",
       "errors",
       "updates",
       "ccConfig",

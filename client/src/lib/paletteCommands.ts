@@ -165,6 +165,7 @@ import {
   Settings as SettingsIcon,
   Slash,
   Sparkles,
+  StickyNote,
   Timer,
   Store,
   UserRound,
@@ -404,6 +405,7 @@ export const PAGE_COMMANDS: {
 }[] = [
   { to: "/", icon: LayoutDashboard, navKey: "nav:dashboard" },
   { to: "/kanban", icon: Columns3, navKey: "nav:agentBoard" },
+  { to: "/muro", icon: StickyNote, navKey: "nav:muro" },
   { to: "/sessions", icon: FolderOpen, navKey: "nav:sessions" },
   { to: "/activity", icon: Activity, navKey: "nav:activityFeed" },
   { to: "/analytics", icon: BarChart3, navKey: "nav:analytics" },

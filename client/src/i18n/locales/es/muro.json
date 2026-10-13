@@ -1,0 +1,15 @@
+{
+  "title": "Muro",
+  "period": {
+    "label": "Periodo",
+    "today": "Hoy",
+    "7d": "7 días",
+    "30d": "30 días"
+  },
+  "loading": "Cargando el Muro…",
+  "empty": {
+    "title": "Aún no hay nada en el Muro",
+    "description": "Aquí aparecerá la actividad de Claude y Codex."
+  },
+  "error": "No se pudo cargar el Muro."
+}

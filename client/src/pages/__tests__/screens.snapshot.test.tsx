@@ -423,6 +423,7 @@ vi.mock("../../lib/push", () => ({
 // Page components (imported after the mocks above; vi.mock is hoisted).
 import { Dashboard } from "../Dashboard";
 import { KanbanBoard } from "../KanbanBoard";
+import { Muro } from "../Muro";
 import { Sessions } from "../Sessions";
 import { SessionDetail } from "../SessionDetail";
 import { ActivityFeed } from "../ActivityFeed";
@@ -491,9 +492,20 @@ beforeAll(() => {
   // Fake only Date so relative/absolute times are deterministic; leave timers
   // real so setTimeout-based flushing in settle() still works.
   vi.useFakeTimers({ now: new Date("2026-06-10T13:00:00.000Z"), toFake: ["Date"] });
+  // These English baselines must not inherit the host's time format (Windows
+  // uses the system locale even when LANG is set). Preserve explicit locales.
+  const formatTime = Date.prototype.toLocaleTimeString;
+  vi.spyOn(Date.prototype, "toLocaleTimeString").mockImplementation(function (
+    this: Date,
+    locales,
+    options
+  ) {
+    return formatTime.call(this, locales ?? "en-US", options);
+  });
 });
 
 afterAll(() => {
+  vi.restoreAllMocks();
   vi.useRealTimers();
 });
 
@@ -526,6 +538,9 @@ describe("screen snapshots", () => {
   });
   it("Kanban board", async () => {
     await snapshot(<KanbanBoard />, "/kanban");
+  });
+  it("Muro", async () => {
+    await snapshot(<Muro />, "/muro");
   });
   it("Sessions", async () => {
     await snapshot(<Sessions />, "/sessions");

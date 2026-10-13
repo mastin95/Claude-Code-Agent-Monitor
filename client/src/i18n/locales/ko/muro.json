@@ -1,0 +1,15 @@
+{
+  "title": "Muro",
+  "period": {
+    "label": "기간",
+    "today": "오늘",
+    "7d": "7일",
+    "30d": "30일"
+  },
+  "loading": "Muro 불러오는 중…",
+  "empty": {
+    "title": "아직 Muro에 내용이 없습니다",
+    "description": "Claude와 Codex의 활동이 여기에 표시됩니다."
+  },
+  "error": "Muro를 불러오지 못했습니다."
+}
