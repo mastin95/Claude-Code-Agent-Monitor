@@ -393,6 +393,8 @@ import type {
   DashboardEvent,
   GptModelPricing,
   ModelPricing,
+  MuroPeriod,
+  MuroSummary,
   Session,
   SessionDrillIn,
   SessionStats,
@@ -953,6 +955,18 @@ export const api = {
       const qs = new URLSearchParams({ tz_offset: String(new Date().getTimezoneOffset()) });
       applyScope(qs);
       return request<Analytics>(`/analytics?${qs.toString()}`);
+    },
+  },
+
+  /** Read-only Muro aggregates using the same global scope and timezone as Analytics. */
+  muro: {
+    summary: (period: MuroPeriod = "today") => {
+      const qs = new URLSearchParams({
+        period,
+        tz_offset: String(new Date().getTimezoneOffset()),
+      });
+      applyScope(qs);
+      return request<MuroSummary>(`/muro/summary?${qs.toString()}`);
     },
   },
 

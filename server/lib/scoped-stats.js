@@ -182,6 +182,7 @@ function scopedTokenUsageWithDate(db, sources, providers) {
 }
 
 module.exports = {
+  sessionScope,
   statsOverview,
   agentStatusCounts,
   sessionStatusCounts,

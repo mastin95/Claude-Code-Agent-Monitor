@@ -58,6 +58,7 @@ const eventsRouter = require("./routes/events");
 const statsRouter = require("./routes/stats");
 const hooksRouter = require("./routes/hooks");
 const analyticsRouter = require("./routes/analytics");
+const muroRouter = require("./routes/muro");
 const pricingRouter = require("./routes/pricing");
 const settingsRouter = require("./routes/settings");
 const workflowsRouter = require("./routes/workflows");
@@ -103,6 +104,7 @@ function createApp() {
   app.use("/api/stats", statsRouter);
   app.use("/api/hooks", hooksRouter);
   app.use("/api/analytics", analyticsRouter);
+  app.use("/api/muro", muroRouter);
   app.use("/api/pricing", pricingRouter);
   app.use("/api/settings", settingsRouter);
   app.use("/api/workflows", workflowsRouter);

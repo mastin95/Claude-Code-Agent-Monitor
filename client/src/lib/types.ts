@@ -1089,6 +1089,37 @@ export interface Stats {
   sessions_by_status: Record<string, number>;
 }
 
+/** Calendar window selected by the Muro. */
+export type MuroPeriod = "today" | "7d" | "30d";
+
+/** Counts for the two providers supported by the Muro; Cursor is excluded. */
+export interface MuroCounts {
+  claude: number;
+  codex: number;
+}
+
+/** Response from GET /api/muro/summary, scoped to the selected machines/products. */
+export interface MuroSummary {
+  period: MuroPeriod;
+  totals: Record<
+    "claude" | "codex",
+    {
+      tasks_completed: number;
+      tokens: number;
+      time_worked_ms: number;
+    }
+  >;
+  series: {
+    unit: "hour" | "day";
+    /** Oldest first, with zero-filled local YYYY-MM-DD or YYYY-MM-DDTHH buckets. */
+    buckets: Array<MuroCounts & { bucket: string }>;
+  };
+  /** Exactly 35 local dates, oldest first and including today. */
+  heatmap: Array<MuroCounts & { date: string }>;
+  /** Consecutive completion days through today, or yesterday if today is empty. */
+  streak_days: number;
+}
+
 /**
  * Response shape of GET /api/analytics - aggregated token/tool/session metrics
  * that back the Analytics page's charts. A superset of {@link Stats}: `overview`
