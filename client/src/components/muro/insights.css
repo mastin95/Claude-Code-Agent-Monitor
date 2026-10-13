@@ -1,0 +1,219 @@
+/**
+ * @file insights.css
+ * @description Prototype KPI cards and responsive Muro chart rail with reduced-motion support.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+.muro-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.muro-kpi {
+  @apply bg-surface-1 border border-border;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.muro-kpi h2 {
+  @apply text-gray-400;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.muro-kpi-value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.muro-kpi-value small {
+  @apply text-gray-400;
+  font-size: 14px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+.muro-kpi p,
+.muro-chart > p {
+  @apply text-gray-500;
+  font-size: 12px;
+}
+.muro-split {
+  @apply bg-surface-3;
+  height: 5px;
+  display: flex;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.muro-split i {
+  display: block;
+  height: 100%;
+  transition: width 0.6s;
+}
+.muro-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 18px;
+  align-items: start;
+}
+.muro-body > * {
+  min-width: 0;
+}
+.muro-charts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  --muro-grid: #2a2a3d;
+  --muro-empty: #242435;
+}
+.muro-chart {
+  @apply bg-surface-1 border border-border;
+  border-radius: 16px;
+  padding: 16px;
+}
+.muro-chart h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.muro-chart > p {
+  margin-bottom: 10px;
+}
+.muro-chart svg text {
+  @apply fill-gray-500 font-mono;
+  font-size: 10px;
+}
+.muro-chart svg .muro-donut-total {
+  @apply fill-gray-100 font-sans;
+  font-size: 24px;
+  font-weight: 700;
+}
+.muro-donut-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.muro-donut {
+  width: 130px;
+  flex-shrink: 0;
+}
+.muro-donut circle {
+  transition: opacity 0.2s;
+}
+.muro-legend {
+  flex: 1;
+  min-width: 132px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.muro-legend button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 6px;
+  font-size: 12px;
+  width: 100%;
+}
+.muro-legend button:hover,
+.muro-legend button[aria-pressed="true"] {
+  @apply bg-surface-3;
+}
+.muro-legend button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.muro-legend button:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 2px;
+}
+.muro-legend i {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 3px;
+}
+.muro-legend span {
+  flex: 1;
+  font-weight: 600;
+}
+.muro-legend b {
+  @apply font-mono text-gray-400;
+  font-weight: 400;
+}
+.muro-rhythm,
+.muro-heat {
+  width: 100%;
+  display: block;
+}
+.muro-chart-hit:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 1px;
+}
+.muro-chart-tip {
+  @apply bg-surface-4 border border-border-light;
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  width: 220px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  box-shadow: 0 10px 24px #0008;
+}
+.muro-chart-tip b {
+  display: block;
+  margin-bottom: 4px;
+}
+.muro-chart-tip > span {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.muro-chart-tip i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+.muro-chart-tip strong {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+.muro-note-wrap {
+  transition: opacity 0.2s;
+}
+.muro-note-wrap.muro-dimmed {
+  opacity: 0.25;
+}
+@media (max-width: 1200px) {
+  .muro-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .muro-charts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .muro-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .muro-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .muro-page,
+  .muro-page *,
+  .muro-page *::before,
+  .muro-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

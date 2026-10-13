@@ -1,7 +1,7 @@
 /**
  * @file Muro.tsx
  * @description Live Muro stage with scoped sessions, today's agent totals, and
- * page-owned filters, illustrated session lanes and an on-demand session sheet.
+ * page-owned filters, period insights, illustrated lanes and an on-demand session sheet.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
@@ -17,6 +17,7 @@ import { isRemoteDataRefreshMessage } from "../lib/remoteDataEvents";
 import { isSessionAwaitingInput, type MuroSummary, type Session } from "../lib/types";
 import { Mascot, type MuroAgent } from "../components/muro/Mascot";
 import { Board } from "../components/muro/Board";
+import { Kpis, Charts } from "../components/muro/Insights";
 import { isMuroSession, sessionTitle } from "../components/muro/model";
 import { mergeFreshestById } from "../lib/merge-by-id";
 import "@fontsource/caveat/latin-400.css";
@@ -37,9 +38,16 @@ export function Muro() {
   const [data, setData] = useState<{ sessions: Session[]; summary: MuroSummary } | null>(null);
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [highlight, setHighlight] = useState<MuroAgent | null>(null);
+  const [insights, setInsights] = useState<{ key: string; summary: MuroSummary } | null>(null);
+  const [insightsError, setInsightsError] = useState<string | null>(null);
+  const [insightsRetry, setInsightsRetry] = useState(0);
   const wsConnected = useSyncExternalStore(eventBus.onConnection, () => eventBus.connected);
   const product = dataScope.provider || "claude";
   const effectiveFilter = product === "both" || product === agentFilter ? agentFilter : null;
+  const insightsKey = `${period}:${effectiveFilter}:${JSON.stringify(dataScope)}`;
+  const toggleAgent = (agent: MuroAgent) =>
+    setAgentFilter((current) => (current === agent ? null : agent));
   useEffect(() => {
     if (product !== "both") setAgentFilter(null);
   }, [product]);
@@ -113,6 +121,47 @@ export function Muro() {
       disconnect();
     };
   }, [dataScope, retry]);
+
+  useEffect(() => {
+    let disposed = false;
+    setInsightsError(null);
+    // Reuse today's request for the initial view. Other periods and agent filters
+    // fetch their own exact streak (the heatmap only covers 35 days).
+    if (!data || (period === "today" && !effectiveFilter)) return;
+    api.muro
+      .summary(period, effectiveFilter ?? undefined)
+      .then((summary) => {
+        if (!disposed) setInsights({ key: insightsKey, summary });
+      })
+      .catch(() => {
+        if (!disposed) setInsightsError(insightsKey);
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [data, period, effectiveFilter, insightsKey, insightsRetry]);
+
+  const summary =
+    period === "today" && !effectiveFilter
+      ? data?.summary
+      : insights?.key === insightsKey
+        ? insights.summary
+        : null;
+  const insightStatus =
+    insightsError === insightsKey ? (
+      <div role="alert" className="card p-4 text-sm text-red-400">
+        <p>{t("insights.error")}</p>
+        <button
+          type="button"
+          className="btn-secondary mt-3"
+          onClick={() => setInsightsRetry((value) => value + 1)}
+        >
+          {t("common:retry")}
+        </button>
+      </div>
+    ) : !summary ? (
+      <Skeleton className="w-full h-48" label={t("insights.loading")} />
+    ) : null;
 
   const number = new Intl.NumberFormat(getCurrentLocale());
   const tokens = new Intl.NumberFormat(getCurrentLocale(), {
@@ -218,7 +267,7 @@ export function Muro() {
                   aria-pressed={effectiveFilter === agent}
                   disabled={excluded}
                   aria-label={t("stage.filter", { agent: name })}
-                  onClick={() => setAgentFilter((current) => (current === agent ? null : agent))}
+                  onClick={() => toggleAgent(agent)}
                   className={`muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default ${effectiveFilter === agent ? "border-accent" : "border-border hover:border-border-light"} ${excluded || (effectiveFilter && effectiveFilter !== agent) ? "opacity-[0.45]" : ""}`}
                 >
                   <span className="muro-floor" aria-hidden="true" />
@@ -265,13 +314,26 @@ export function Muro() {
               );
             })}
           </section>
-          <Board
-            sessions={sessions.filter(
-              (session) => !effectiveFilter || session.provider === effectiveFilter
+          {insightStatus || (summary && <Kpis summary={summary} />)}
+          <div className="muro-body">
+            <Board
+              sessions={sessions.filter(
+                (session) => !effectiveFilter || session.provider === effectiveFilter
+              )}
+              period={period}
+              highlight={highlight}
+              filterKey={`${period}:${effectiveFilter}:${product}:${dataScope.mode}:${dataScope.selected.join(",")}`}
+            />
+            {!insightStatus && summary && (
+              <Charts
+                summary={summary}
+                agentFilter={effectiveFilter}
+                product={product}
+                onFilter={toggleAgent}
+                onHighlight={setHighlight}
+              />
             )}
-            period={period}
-            filterKey={`${period}:${effectiveFilter}:${product}:${dataScope.mode}:${dataScope.selected.join(",")}`}
-          />
+          </div>
         </>
       )}
     </div>

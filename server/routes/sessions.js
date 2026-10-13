@@ -553,12 +553,25 @@ router.get("/:id/stats", (req, res) => {
   const filesTouched = db
     .prepare(
       `
-    SELECT DISTINCT json_extract(CASE WHEN json_valid(data) THEN data ELSE '{}' END, '$.tool_input.file_path') AS path
-    FROM events
-    WHERE session_id = ? AND event_type = 'PreToolUse'
+    WITH scoped AS (
+      SELECT event_type, tool_name, CASE WHEN json_valid(data) THEN data ELSE '{}' END AS data
+      FROM events WHERE session_id = ?
+    ), paths AS (
+    SELECT json_extract(data, '$.tool_input.file_path') AS path
+    FROM scoped
+    WHERE event_type = 'PreToolUse'
       AND tool_name IN ('Edit', 'Write', 'MultiEdit')
-      AND json_type(CASE WHEN json_valid(data) THEN data ELSE '{}' END, '$.tool_input.file_path') = 'text'
-      AND length(trim(json_extract(CASE WHEN json_valid(data) THEN data ELSE '{}' END, '$.tool_input.file_path'))) > 0
+      AND json_type(data, '$.tool_input.file_path') = 'text'
+    UNION
+    SELECT file.value AS path FROM scoped, json_each(
+      CASE WHEN json_type(scoped.data, '$.files') = 'array'
+        THEN json_extract(scoped.data, '$.files') ELSE '[]' END
+    ) AS file
+    WHERE event_type = 'codex_tool_call'
+      AND json_extract(scoped.data, '$.raw_tool_name') = 'apply_patch'
+      AND file.type = 'text'
+    )
+    SELECT DISTINCT path FROM paths WHERE length(trim(path)) > 0
     ORDER BY path LIMIT 50
   `
     )

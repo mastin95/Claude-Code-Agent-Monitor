@@ -384,6 +384,12 @@ function createOpenApiSpec() {
                 "Timestamp of the latest durable session event, falling back to lifecycle timestamps only for eventless historical rows. Unlike updated_at, metadata bookkeeping does not change this value.",
             },
             cost: { type: "number", nullable: true },
+            total_tokens: {
+              type: "integer",
+              minimum: 0,
+              description:
+                "Effective input, output, cache-read and cache-write tokens (including baselines). Included in session list responses, including zero for transient sessions.",
+            },
             has_token_usage: {
               type: "boolean",
               nullable: true,
@@ -700,6 +706,7 @@ function createOpenApiSpec() {
             "total_events",
             "events_by_type",
             "tools_used",
+            "files_touched",
             "error_count",
             "first_event_at",
             "last_event_at",
@@ -732,6 +739,14 @@ function createOpenApiSpec() {
                   count: { type: "integer", minimum: 0 },
                 },
               },
+            },
+            files_touched: {
+              type: "array",
+              maxItems: 50,
+              uniqueItems: true,
+              description:
+                "Alphabetically sorted unique nonempty paths from Edit/Write/MultiEdit PreToolUse tool_input.file_path and Codex apply_patch codex_tool_call data.files. New Codex rollout and PreToolUse ingestion records Add/Update/Delete File patch headers (up to 50 per call); existing ingested events are not backfilled. Invalid JSON and non-string paths are ignored.",
+              items: { type: "string" },
             },
             error_count: {
               type: "integer",

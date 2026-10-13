@@ -203,10 +203,7 @@ export function SessionSheet({
             <div className="muro-sheet-stats">
               <div>
                 <b>
-                  {formatDuration(
-                    stats.first_event_at || session.started_at,
-                    stats.last_event_at || session.ended_at || new Date().toISOString()
-                  )}
+                  {formatDuration(session.started_at, session.ended_at || new Date().toISOString())}
                 </b>
                 <span>{t("sheet.duration")}</span>
               </div>

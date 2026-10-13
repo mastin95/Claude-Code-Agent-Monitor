@@ -1183,6 +1183,11 @@
                   </p>
                 </div>
                 <div class="feature-card">
+                  <div class="feature-icon ic-amber">📝</div>
+                  <h3 id="feat-muro">Muro</h3>
+                  <p>Muro turns Claude and Codex sessions into illustrated post-its that move between working, waiting for your OK and done. Live mascots describe current work, while four counters, a completion donut, rhythm bars and a five-week heatmap summarize progress. Choose today, 7 days or 30 days and filter by agent from the stage or donut. Open any note for the request, duration, tokens, tool counts and touched files. Global scope and reduced-motion preferences apply throughout; Cursor sessions stay outside this wall.</p>
+                </div>
+                <div class="feature-card">
                   <div class="feature-icon ic-rose">🖥️</div>
                   <h3>Statusline</h3>
                   <p>
@@ -1557,6 +1562,12 @@
               </button>
             </div>
           </div>
+
+          <h3 id="muro">Muro</h3>
+          <p>Open <strong>Muro</strong> below Kanban Board. Claude sweeps and Codex builds while working; waiting speech bubbles name the latest session needing your input. Stage cards show today’s tasks and tokens. Click a card or the completion donut legend to toggle the same agent filter; hovering or focusing a legend entry dims the other agent’s post-its. Products excluded by the global scope stay dimmed, without figures or selection.</p>
+          <p>Post-its move automatically between <strong>Working</strong>, <strong>Waiting for my OK</strong> and <strong>Done</strong>; only Done follows the selected local calendar period. Open a note for the original request, session duration, tokens, tool counts, touched files and a full-session link. Escape, the close button or the backdrop closes the sheet and restores focus. Its duration matches the note: <code>ended_at</code> (or now) minus <code>started_at</code>.</p>
+          <p>Four counters show completed sessions, effective tokens including baselines, worked time and the uncapped completion streak. The summary follows the selected period and agent; stage figures stay on today. Rhythm groups completions hourly for today, daily for 7 days and in three-day groups for 30 days. The heatmap covers the last 35 local days and marks today. Claude is orange (<code>#D46F3A</code>), Codex teal (<code>#2BA394</code>). Counter animations, transitions, mascot movement and confetti are disabled with <code>prefers-reduced-motion</code>.</p>
+          <p>Files include Claude <code>Edit</code> / <code>Write</code> / <code>MultiEdit</code> paths and paths captured from newly ingested Codex <code>apply_patch</code> calls. Rollouts and <code>PreToolUse</code> hooks extract <code>*** Add File:</code>, <code>*** Update File:</code> and <code>*** Delete File:</code> into <code>data.files</code> (up to 50). Session statistics return up to 50 unique sorted paths; previously ingested Codex calls are not backfilled.</p>
 
           <h3>Screenshots</h3>
           <div class="screenshot-gallery">
@@ -7248,8 +7259,8 @@ npm run install-hooks</code></pre>
     <!-- Body-content translations — must load before script.js so the
          i18n engine sees window.__WIKI_CONTENT_I18N. Both are deferred, so they
          run in document order. -->
-    <script src="i18n-content.js?v=109" defer></script>
-    <script src="script.js?v=59" defer></script>
+    <script src="i18n-content.js?v=110" defer></script>
+    <script src="script.js?v=60" defer></script>
     <script>
       (function () {
         var carousel = document.getElementById("feature-carousel");

@@ -63,5 +63,29 @@
     "fullSession": "Xem toàn bộ phiên",
     "loading": "Đang tải tóm tắt phiên…",
     "error": "Không thể tải tóm tắt phiên."
+  },
+  "insights": {
+    "label": "Tổng số trong kỳ",
+    "tasks_completed": "Tác vụ hoàn tất",
+    "tokens": "Token đã dùng",
+    "time_worked_ms": "Thời gian làm việc",
+    "streak": "Chuỗi ngày",
+    "days": "ngày",
+    "streakSplit": "Tác vụ hoàn tất trong chuỗi (tối đa 35 ngày hiển thị): Claude {{claude}} · Codex {{codex}}",
+    "streakHint": "Số ngày liên tiếp có tác vụ hoàn tất",
+    "charts": "Biểu đồ công việc",
+    "donut": "Ai đã làm gì",
+    "donutHint": "Tác vụ hoàn tất theo Agent",
+    "completed": "{{formatted}} tác vụ hoàn tất",
+    "done": "hoàn tất",
+    "filter": "Lọc biểu đồ và bảng theo {{agent}}",
+    "rhythm": "Nhịp độ",
+    "rhythm_today": "Tác vụ hoàn tất theo giờ",
+    "rhythm_7d": "Tác vụ hoàn tất theo ngày",
+    "rhythm_30d": "Tác vụ hoàn tất mỗi 3 ngày",
+    "heatmap": "5 tuần gần nhất",
+    "heatHint": "Tác vụ hoàn tất · hôm nay có viền",
+    "error": "Không thể tải tổng hợp công việc.",
+    "loading": "Đang tải tổng hợp công việc…"
   }
 }

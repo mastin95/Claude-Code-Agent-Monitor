@@ -301,7 +301,7 @@ The responsive dark interface covers the full workflow. Every preview uses a mob
   <em>⌘ <strong>Command Palette</strong> · one keyboard launcher for pages, sessions, projects, filters, and actions</em>
 </p>
 
-The sidebar links Dashboard, Kanban Board, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, and Settings. The sections below describe the complete behavior behind these views.
+The sidebar links Dashboard, Kanban Board, Muro, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, and Settings. The sections below describe the complete behavior behind these views.
 
 ---
 
@@ -314,6 +314,7 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 | **Task Progress** | Owner-aware progress from Claude task tools, legacy `TodoWrite`, and Codex `update_plan`. Compact previews appear on cards and rows; Session Detail adds status segments, active work, owners, and 10-row paging. New top-level work clears stale unfinished state, while completed history remains. |
 | **Dashboard** | Persistent **Monitor** and **Health** tabs combine fleet totals, active hierarchies, recent activity, weighted success/cache/error/heap health, storage, tools, models, subagent effectiveness, and compaction metrics. Health refreshes every 5 seconds from `/api/settings/info` and `/api/workflows`. |
 | **Kanban Board** | Agent columns cover Working, Waiting, Completed, and Error; session columns add Active and Abandoned. Cards page 10 at a time, subscribe only to the active WebSocket view, preserve full titles, and explain waiting reasons such as permission input, turn completion, prompt idle, or interruption. |
+| **Muro** | A visual Claude/Codex wall at `/muro`: illustrated session post-its, live mascots, completed tasks, tokens, worked time, streaks, a completion donut, rhythm bars and a five-week heatmap. Today / 7 days / 30 days and a shared agent filter keep the board and charts aligned; Cursor is excluded. |
 | **Sessions** | Searchable, filterable, server-paginated history with visible-page cost calculation and a temporary in-memory Codex startup row. Search covers `id`, `name`, and `cwd` with a 300 ms debounce. Names resolve from explicit title, AI title, then the first meaningful user prompt. |
 | **Session Detail** | Live stats, active work, tool usage, subagents, tokens, hierarchy, filtered event timelines, `tool_use_id` grouping, and tool-specific renderers. Conversation view renders queued turns, system notices, Markdown, highlighted code, and styled tools; waiting banners show the reason and elapsed time. |
 | **Activity Feed** | Pausable real-time events with shared filters, server pagination, grouping, project/session/subagent origin, session links, and consistent Claude/Codex status badges. |
@@ -361,6 +362,16 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 > **Provider scope and homes:** Settings keeps the Claude-compatible (Claude Code + Cursor) / Codex / Both choice globally consistent. Claude Code and Codex homes remain editable without restarting the dashboard; Cursor is discovered automatically from `~/.cursor` or `DASHBOARD_CURSOR_HOME`.
 >
 > **Local safety boundaries:** Run Agent accepts any existing absolute working directory and canonicalizes it before use, so home and recent-project launches remain supported. Hosted webhook providers require HTTPS; generic and n8n targets may use HTTP for local/self-hosted receivers, and delivery never follows redirects.
+
+### Muro
+
+Open **Muro** below Kanban Board. Claude sweeps and Codex builds while working; waiting speech bubbles name the latest session needing your input. Stage cards show today’s tasks and tokens. Click a card or the completion donut legend to toggle the same agent filter; hovering or focusing a legend entry dims the other agent’s post-its. Products excluded by the global scope stay dimmed, without figures or selection.
+
+Post-its move automatically between **Working**, **Waiting for my OK** and **Done**; only Done follows the selected local calendar period. Open a note for the original request, session duration, tokens, tool counts, touched files and a full-session link. Escape, the close button or the backdrop closes the sheet and restores focus. Its duration matches the note: `ended_at` (or now) minus `started_at`.
+
+Four counters show completed sessions, effective tokens including baselines, worked time and the uncapped completion streak. The summary follows the selected period and agent; stage figures stay on today. Rhythm groups completions hourly for today, daily for 7 days and in three-day groups for 30 days. The heatmap covers the last 35 local days and marks today. Claude is orange (`#D46F3A`), Codex teal (`#2BA394`). Counter animations, transitions, mascot movement and confetti are disabled with `prefers-reduced-motion`.
+
+Files include Claude `Edit` / `Write` / `MultiEdit` paths and paths captured from newly ingested Codex `apply_patch` calls. Rollouts and `PreToolUse` hooks extract `*** Add File:`, `*** Update File:` and `*** Delete File:` into `data.files` (up to 50). Session statistics return up to 50 unique sorted paths; previously ingested Codex calls are not backfilled.
 
 ---
 
@@ -527,6 +538,7 @@ sequenceDiagram
    - Continuous project sync combines an immediate sweep, debounced `fs.watch`, and `DASHBOARD_SESSION_SYNC_MS` polling, default 30 seconds. One mtime cache reparses only new or grown transcripts and broadcasts the same session frames as hooks.
 4. **WebSocket** publishes the committed change.
 5. **The UI** refreshes the affected views without polling.
+6. **Muro** reloads scoped sessions and summary data after live events with a 300 ms debounce; changing the period or agent refreshes its charts.
 
 ### Agent State Machine
 

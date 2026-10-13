@@ -300,7 +300,7 @@ flowchart LR
   <em>⌘ <strong>Command Palette</strong> · 페이지, 세션, 프로젝트, 필터, 작업을 위한 단일 키보드 실행기</em>
 </p>
 
-사이드바는 Dashboard, Kanban Board, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, Settings로 이동합니다. 아래 섹션에서 이 보기의 전체 동작을 설명합니다.
+사이드바는 Dashboard, Kanban Board, Muro, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, Settings로 이동합니다. 아래 섹션에서 이 보기의 전체 동작을 설명합니다.
 
 ---
 
@@ -313,6 +313,7 @@ flowchart LR
 | **작업 진행률** | Claude 작업 도구, 레거시 `TodoWrite`, Codex `update_plan`에서 소유자를 인식하는 진행률을 생성합니다. 카드와 행에는 간단한 미리보기가 표시되고, Session Detail에는 상태 구간, 활성 작업, 소유자, 10개 행 단위 페이지가 추가됩니다. 새 최상위 작업은 이전의 미완료 상태를 지우고, 완료 기록은 유지합니다. |
 | **Dashboard** | 저장되는 **Monitor**와 **Health** 탭이 전체 합계, 활성 계층, 최근 활동, 가중 성공률/캐시/오류/힙 상태, 스토리지, 도구, 모델, Subagent 효과, 컴팩션 지표를 결합합니다. Health는 `/api/settings/info`와 `/api/workflows`에서 5초마다 새로 고칩니다. |
 | **Kanban Board** | Agent 열은 Working, Waiting, Completed, Error를, 세션 열은 Active와 Abandoned를 추가로 다룹니다. 카드는 10개씩 표시하고 활성 WebSocket 보기만 구독하며, 전체 제목을 보존하고 권한 입력, 턴 완료, 프롬프트 대기, 중단 같은 대기 사유를 설명합니다. |
+| **Muro** | `/muro`의 Claude/Codex 시각적 작업 벽: 그림이 있는 세션 메모, 실시간 마스코트, 완료 작업, 토큰, 작업 시간, 연속 완료 일수, 완료 도넛, 작업 리듬 막대와 5주 히트맵을 제공합니다. 오늘 / 7일 / 30일과 공유 Agent 필터가 보드와 차트를 동기화하며 Cursor는 제외합니다. |
 | **Sessions** | 보이는 페이지만 비용을 계산하는 검색, 필터, 서버 페이지네이션 히스토리와 메모리 내 임시 Codex 시작 행을 제공합니다. 검색은 300 ms 디바운스로 `id`, `name`, `cwd`를 대상으로 합니다. 이름은 명시적 제목, AI 제목, 첫 의미 있는 사용자 프롬프트 순으로 결정됩니다. |
 | **Session Detail** | 실시간 통계, 활성 작업, 도구 사용량, Subagent, 토큰, 계층, 필터링된 이벤트 타임라인, `tool_use_id` 그룹화, 도구별 렌더러를 제공합니다. Conversation 보기는 대기 중인 턴, 시스템 알림, Markdown, 구문 강조 코드, 스타일이 적용된 도구를 렌더링하고, 대기 배너에는 사유와 경과 시간을 표시합니다. |
 | **Activity Feed** | 공유 필터, 서버 페이지네이션, 그룹화, 프로젝트/세션/Subagent 출처, 세션 링크, 일관된 Claude/Codex 상태 배지를 갖춘 일시 정지 가능한 실시간 이벤트를 제공합니다. |
@@ -360,6 +361,16 @@ flowchart LR
 > **Provider 범위와 home:** Settings는 Claude 호환(Claude Code + Cursor) / Codex / Both 선택을 앱 전체에서 일관되게 유지합니다. Claude Code와 Codex home은 대시보드를 재시작하지 않고 편집할 수 있으며, Cursor는 `~/.cursor` 또는 `DASHBOARD_CURSOR_HOME`에서 자동으로 검색됩니다.
 >
 > **로컬 안전 경계:** Run Agent는 존재하는 모든 절대 작업 디렉터리를 허용하고 사용 전에 경로를 canonicalize하므로 home과 최근 프로젝트 실행을 계속 지원합니다. Hosted webhook provider는 HTTPS가 필요합니다. Generic과 n8n target은 로컬 또는 self-hosted receiver에 HTTP를 사용할 수 있으며, 전달은 redirect를 따르지 않습니다.
+
+### Muro
+
+Kanban Board 아래의 **Muro**를 엽니다. 작업 중 Claude는 청소하고 Codex는 건설하며, 대기 말풍선은 입력이 필요한 최신 세션을 표시합니다. 무대 카드는 오늘의 작업과 토큰을 보여줍니다. 카드나 완료 도넛 범례를 클릭하면 같은 Agent 필터를 켜고 끕니다. 범례에 마우스를 올리거나 포커스하면 다른 Agent의 메모가 흐려집니다. 전역 범위에서 제외된 제품은 흐려지고 수치가 없으며 선택할 수 없습니다.
+
+메모는 **작업 중**, **내 확인 대기 중**, **완료** 사이를 자동으로 이동하며 완료 열만 선택한 현지 달력 기간을 따릅니다. 메모를 열면 원래 요청, 세션 시간, 토큰, 도구 사용 횟수, 수정 파일과 전체 세션 링크를 볼 수 있습니다. Escape, 닫기 버튼 또는 배경을 누르면 상세 창이 닫히고 포커스가 돌아갑니다. 시간은 메모와 동일하게 `ended_at`(또는 현재)에서 `started_at`을 뺀 값입니다.
+
+네 카운터는 완료 세션, baseline을 포함한 유효 토큰, 작업 시간, 상한 없는 연속 완료 일수를 표시합니다. 요약은 선택한 기간과 Agent를 따르며 무대 수치는 항상 오늘 기준입니다. 리듬은 오늘은 시간별, 7일은 일별, 30일은 3일씩 묶습니다. 히트맵은 최근 현지 날짜 35일을 표시하고 오늘을 강조합니다. Claude는 주황색(`#D46F3A`), Codex는 청록색(`#2BA394`)입니다. `prefers-reduced-motion`에서는 카운터, 전환, 마스코트와 색종이 애니메이션이 멈춥니다.
+
+파일에는 Claude `Edit` / `Write` / `MultiEdit` 경로와 새로 수집한 Codex `apply_patch` 호출 경로가 포함됩니다. Rollout과 `PreToolUse` hook은 `*** Add File:`, `*** Update File:`, `*** Delete File:`에서 경로를 추출해 `data.files`에 최대 50개 저장합니다. 세션 통계는 정렬된 고유 경로를 최대 50개 반환하며 이전에 수집한 Codex 호출은 소급 보완하지 않습니다.
 
 ---
 
@@ -529,6 +540,7 @@ sequenceDiagram
    - 지속적 프로젝트 동기화는 즉시 sweep, debounce `fs.watch`, 기본값 30초인 `DASHBOARD_SESSION_SYNC_MS` polling을 결합합니다. 하나의 mtime cache가 새 트랜스크립트나 커진 트랜스크립트만 다시 파싱하고 Hook과 같은 세션 frame을 broadcast합니다.
 4. **WebSocket**이 commit된 변경을 게시합니다.
 5. **UI**가 polling 없이 영향을 받는 보기를 새로 고칩니다.
+6. **Muro**는 실시간 이벤트 후 300 ms 디바운스로 범위 내 세션과 요약을 다시 불러오며, 기간이나 Agent를 바꾸면 차트를 새로 고칩니다.
 
 ### 에이전트 상태 머신
 

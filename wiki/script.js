@@ -789,6 +789,7 @@ document.querySelectorAll(".diagram-toggle").forEach((toggle) => {
 (function () {
   const T = {
     zh: {
+      Muro: "Muro",
       "Search docs...": "搜索文档…",
       "No results found": "未找到结果",
       "Project Wiki": "项目维基",
@@ -1031,6 +1032,7 @@ document.querySelectorAll(".diagram-toggle").forEach((toggle) => {
       Workflows: "工作流",
     },
     vi: {
+      Muro: "Muro",
       "Search docs...": "Tìm tài liệu…",
       "No results found": "Không tìm thấy kết quả",
       "Project Wiki": "Wiki dự án",
@@ -1269,6 +1271,7 @@ document.querySelectorAll(".diagram-toggle").forEach((toggle) => {
       Workflows: "Quy trình",
     },
     ko: {
+      Muro: "Muro",
       "Search docs...": "문서 검색…",
       "No results found": "검색 결과 없음",
       "Project Wiki": "프로젝트 위키",
@@ -1477,6 +1480,7 @@ document.querySelectorAll(".diagram-toggle").forEach((toggle) => {
       "API endpoints": "API 엔드포인트",
     },
     es: {
+      Muro: "Muro",
       "Search docs...": "Buscar documentación...",
       "No results found": "No se encontraron resultados",
       "Project Wiki": "Wiki del proyecto",

@@ -59,4 +59,19 @@ describe("api.muro.summary", () => {
     );
     await expect(api.muro.summary()).rejects.toThrow("Summary unavailable");
   });
+  it("narrows the global scope for an agent's exact streak without widening product scope", async () => {
+    setScope({ mode: "selected", selected: ["remote"], provider: "both" });
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValue(new Response("{}", { status: 200 }));
+    await api.muro.summary("30d", "claude");
+    const url = new URL(String(fetchMock.mock.calls[0]![0]), "http://localhost");
+    expect(url.searchParams.get("providers")).toBe("claude");
+    expect(url.searchParams.get("sources")).toBe("remote");
+    setProviderScope("codex");
+    await expect(api.muro.summary("today", "claude")).rejects.toThrow(
+      "outside current product scope"
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
 });

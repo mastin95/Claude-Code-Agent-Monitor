@@ -165,6 +165,9 @@ describe("session sheet", () => {
     expect(api.sessions.stats).toHaveBeenCalledWith("one");
     expect(within(dialog).getByText("Please review the design")).toBeVisible();
     expect(within(dialog).getByText("127")).toBeVisible();
+    // The event range ends an hour earlier; sheet and post-it still show the same elapsed time.
+    expect(within(note).getByText("2h 0m")).toBeVisible();
+    expect(within(dialog).getByText("2h 0m")).toBeVisible();
     expect(within(dialog).getByText("src/App.tsx")).toBeVisible();
     expect(within(dialog).getByRole("link")).toHaveAttribute("href", "/sessions/one");
     const close = within(dialog).getByRole("button", { name: "Close" });
@@ -174,6 +177,19 @@ describe("session sheet", () => {
     await user.keyboard("{Tab}{Escape}");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(note).toHaveFocus();
+  });
+  it("uses the completed session duration even when events cover a shorter interval", async () => {
+    const user = userEvent.setup();
+    render(
+      board([
+        { ...row, status: "completed", ended_at: new Date(2026, 9, 13, 11, 30).toISOString() },
+      ])
+    );
+    const note = screen.getByRole("button", { name: /Review design/ });
+    await user.click(note);
+    const dialog = await screen.findByRole("dialog");
+    expect(within(note).getByText("1h 30m")).toBeVisible();
+    expect(within(dialog).getByText("1h 30m")).toBeVisible();
   });
   it("shows a skeleton, handles failure/retry, and closes from X and the backdrop", async () => {
     let reject!: (reason: Error) => void;
