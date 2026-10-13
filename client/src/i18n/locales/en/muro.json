@@ -11,5 +11,16 @@
     "title": "Nothing on the Muro yet",
     "description": "Claude and Codex activity will appear here."
   },
-  "error": "Could not load the Muro."
+  "error": "Could not load the Muro.",
+  "stage": {
+    "label": "The team",
+    "filter": "Filter by {{agent}}",
+    "claude": "Cleaning: {{title}}",
+    "codex": "Building: {{title}}",
+    "waiting": "Waiting for work…",
+    "untitled": "Untitled session",
+    "tokens": "{{formatted}} tokens",
+    "completed_one": "{{formatted}} completed today",
+    "completed_other": "{{formatted}} completed today"
+  }
 }

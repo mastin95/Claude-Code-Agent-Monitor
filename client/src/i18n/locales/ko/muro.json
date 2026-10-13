@@ -11,5 +11,16 @@
     "title": "아직 Muro에 내용이 없습니다",
     "description": "Claude와 Codex의 활동이 여기에 표시됩니다."
   },
-  "error": "Muro를 불러오지 못했습니다."
+  "error": "Muro를 불러오지 못했습니다.",
+  "stage": {
+    "label": "팀",
+    "filter": "{{agent}}로 필터링",
+    "claude": "정리 중: {{title}}",
+    "codex": "구축 중: {{title}}",
+    "waiting": "작업 대기 중…",
+    "untitled": "제목 없는 세션",
+    "tokens": "{{formatted}} 토큰",
+    "completed_one": "오늘 {{formatted}}개 완료",
+    "completed_other": "오늘 {{formatted}}개 완료"
+  }
 }

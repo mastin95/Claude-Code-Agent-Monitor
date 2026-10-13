@@ -1,0 +1,190 @@
+/**
+ * @file mascot.css
+ * @description Scoped Muro prototype keyframes with explicit and system reduced-motion guards.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+.muro-mascot .body-g {
+  animation: muro-breathe 2.4s ease-in-out infinite;
+  transform-origin: 50px 92px;
+}
+@keyframes muro-breathe {
+  50% {
+    transform: scaleY(1.035);
+  }
+}
+.muro-mascot .eyes {
+  animation: muro-blinkEye 4s infinite;
+  transform-origin: 50px 58px;
+}
+@keyframes muro-blinkEye {
+  0%,
+  46%,
+  50%,
+  100% {
+    transform: scaleY(1);
+  }
+  48% {
+    transform: scaleY(0.1);
+  }
+}
+.muro-mascot.sweep .tool {
+  animation: muro-sweep 0.7s ease-in-out infinite alternate;
+  transform-origin: 64px 62px;
+}
+@keyframes muro-sweep {
+  from {
+    transform: rotate(-22deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+.muro-mascot.sweep .dust circle {
+  animation: muro-dust 1.4s ease-out infinite;
+  transform-origin: 80px 92px;
+  opacity: 0;
+}
+.muro-mascot.sweep .dust circle:nth-child(2) {
+  animation-delay: 0.45s;
+}
+.muro-mascot.sweep .dust circle:nth-child(3) {
+  animation-delay: 0.9s;
+}
+@keyframes muro-dust {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(14px, -12px) scale(1.4);
+  }
+}
+.muro-mascot.sweep .body-g {
+  animation: muro-wiggle 0.7s ease-in-out infinite alternate;
+}
+@keyframes muro-wiggle {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+.muro-mascot.build .tool {
+  animation: muro-hammer 0.9s cubic-bezier(0.5, 0, 0.6, 1) infinite;
+  transform-origin: 66px 58px;
+}
+@keyframes muro-hammer {
+  0%,
+  55% {
+    transform: rotate(-55deg);
+  }
+  72% {
+    transform: rotate(18deg);
+  }
+  100% {
+    transform: rotate(-55deg);
+  }
+}
+.muro-mascot.build .spark {
+  animation: muro-spark 0.9s infinite;
+  opacity: 0;
+  transform-origin: 86px 86px;
+}
+@keyframes muro-spark {
+  0%,
+  68% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  74% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90%,
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+.muro-mascot.build .body-g {
+  animation: muro-thump 0.9s infinite;
+}
+@keyframes muro-thump {
+  0%,
+  70% {
+    transform: scaleY(1);
+  }
+  74% {
+    transform: scaleY(0.94);
+  }
+  82%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+.muro-mascot.build .brick-new {
+  animation: muro-brick 2.7s infinite;
+}
+@keyframes muro-brick {
+  0%,
+  60% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  75%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+.muro-mascot.wait .zz {
+  animation: muro-zz 2.2s infinite;
+}
+@keyframes muro-zz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 4px);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(6px, -10px);
+  }
+}
+.muro-mascot.done .body-g {
+  animation: none;
+}
+.muro-mascot.done:hover .body-g,
+.muro-mascot-hover:hover .muro-mascot.done .body-g {
+  animation: muro-hop 0.5s ease-out;
+}
+@keyframes muro-hop {
+  40% {
+    transform: translateY(-8px);
+  }
+}
+
+.muro-mascot {
+  flex-shrink: 0;
+}
+.muro-mascot .zz {
+  font: 700 16px sans-serif;
+  fill: #9ca3af;
+}
+.muro-mascot.wait .zz-small {
+  font-size: 12px;
+  animation-delay: 0.7s;
+}
+.muro-mascot[data-reduced="1"] * {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .muro-mascot * {
+    animation: none !important;
+  }
+}

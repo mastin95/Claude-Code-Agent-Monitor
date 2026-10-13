@@ -205,6 +205,18 @@ vi.mock("../../lib/api", async (importOriginal) => {
   return {
     ...actual,
     api: {
+      muro: {
+        summary: r({
+          period: "today",
+          totals: {
+            claude: { tasks_completed: 0, tokens: 0, time_worked_ms: 0 },
+            codex: { tasks_completed: 0, tokens: 0, time_worked_ms: 0 },
+          },
+          series: { unit: "hour", buckets: [] },
+          heatmap: [],
+          streak_days: 0,
+        }),
+      },
       stats: { get: r(stats), facets: r({ cwds: [] }) },
       sessions: {
         list: r({ sessions: [], total: 0, limit: 50, offset: 0 }),
@@ -540,6 +552,35 @@ describe("screen snapshots", () => {
     await snapshot(<KanbanBoard />, "/kanban");
   });
   it("Muro", async () => {
+    await snapshot(<Muro />, "/muro");
+  });
+  it("Muro working stage", async () => {
+    vi.mocked(api.sessions.list).mockResolvedValueOnce({
+      sessions: (["claude", "codex"] as const).map((provider) => ({
+        id: provider,
+        provider,
+        name: `${provider} task`,
+        status: "active" as const,
+        cwd: null,
+        model: null,
+        metadata: null,
+        started_at: "2026-06-10T12:00:00Z",
+        ended_at: null,
+      })),
+      total: 2,
+      limit: 10000,
+      offset: 0,
+    });
+    vi.mocked(api.muro.summary).mockResolvedValueOnce({
+      period: "today",
+      totals: {
+        claude: { tasks_completed: 3, tokens: 150000, time_worked_ms: 1000 },
+        codex: { tasks_completed: 5, tokens: 299000, time_worked_ms: 2000 },
+      },
+      series: { unit: "hour", buckets: [] },
+      heatmap: [],
+      streak_days: 1,
+    });
     await snapshot(<Muro />, "/muro");
   });
   it("Sessions", async () => {

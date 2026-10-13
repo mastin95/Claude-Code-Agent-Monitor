@@ -11,5 +11,16 @@
     "title": "Aún no hay nada en el Muro",
     "description": "Aquí aparecerá la actividad de Claude y Codex."
   },
-  "error": "No se pudo cargar el Muro."
+  "error": "No se pudo cargar el Muro.",
+  "stage": {
+    "label": "El equipo",
+    "filter": "Filtrar por {{agent}}",
+    "claude": "Limpiando: {{title}}",
+    "codex": "Construyendo: {{title}}",
+    "waiting": "Esperando trabajo…",
+    "untitled": "Sesión sin título",
+    "tokens": "{{formatted}} tokens",
+    "completed_one": "{{formatted}} hecha hoy",
+    "completed_other": "{{formatted}} hechas hoy"
+  }
 }
