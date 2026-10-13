@@ -14,6 +14,7 @@ Complete REST API and WebSocket documentation for Agent Dashboard.
   - [Agents](#agents)
   - [Tools](#tools)
   - [Metrics](#metrics)
+  - [Muro](#muro)
   - [Pricing](#pricing)
   - [Workflows](#workflows)
   - [Settings](#settings)
@@ -712,6 +713,39 @@ scrape_configs:
 A ready-to-run Prometheus + Grafana stack (four auto-provisioned dashboards; default home **CCAM — Overview**) lives in [`monitoring/`](../monitoring/README.md). **npm path (no Docker):** `npm run monitoring:install` then `npm run monitoring:up` (binaries are pulled via the monitoring package's `postinstall` — there is no official `grafana`/`prometheus` server package on npm). **Docker path:** `npm run monitoring:docker:up` or `npm run docker:full:up` (set `DASHBOARD_ALLOWED_HOSTS=host.docker.internal` on the dashboard when Prometheus runs in a container). Pre-built Prometheus console: `http://localhost:9090/consoles/index.html`.
 
 ---
+
+### Muro
+
+#### `GET /api/muro/summary`
+
+Read-only work summary for Claude and Codex sessions. Cursor sessions and subagents do not count as tasks. This endpoint does not change the database schema or emit WebSocket messages.
+
+| Parameter | Default | Meaning |
+|-----------|---------|---------|
+| `period` | `today` | `today`, `7d`, or `30d`: local calendar days including today, through the current instant |
+| `tz_offset` | `0` | Integer minutes from `Date.getTimezoneOffset()` (UTC+2 sends `-120`), between `-840` and `720` |
+| `sources` | all | Comma-separated source IDs, using the same scope as `/api/analytics` |
+| `providers` | all | Existing provider scope, intersected with Claude/Codex; Cursor is always excluded, including when the Claude scope expands to Cursor |
+
+Invalid periods and timezone offsets return HTTP 400 with an `error` object containing `code` (`INVALID_PERIOD` or `INVALID_TZ_OFFSET`) and `message`.
+
+The response always contains `period` and both `totals.claude` and `totals.codex`, each with:
+
+- `tasks_completed`: sessions with `status = 'completed'` and `ended_at` inside the local period.
+- `tokens`: effective input + output + cache-read + cache-write tokens, including their `baseline_*` counters, for sessions **started** in the period. All statuses count. The 1h cache-write counter is a subset and is not added again; server-tool request counters are excluded.
+- `time_worked_ms`: for the same started-session cohort, sum nonnegative numeric `metadata.total_turn_duration_ms` (zero is valid). Missing or invalid duration metadata falls back to `ended_at` (or now) minus `started_at`, clamped to zero. Multiple token model/rate rows do not multiply session duration.
+
+`series` contains `unit` (`hour` for `today`, otherwise `day`) and chronological `buckets`, each `{ bucket, claude, codex }` counting completed sessions. There are exactly 24 hourly buckets (`YYYY-MM-DDTHH`), 7 daily buckets, or 30 daily buckets (`YYYY-MM-DD`), with zeros for gaps and future hours today. Future session starts/completions are excluded.
+
+`heatmap` always contains the last 35 local days including today, oldest first, as `{ date, claude, codex }`, with zero-filled gaps. `streak_days` counts consecutive days with at least one completion through today, or through yesterday if today is empty. The streak is not capped at 35 days. Both metrics respect source/provider scope and are independent of `period`. The supplied fixed timezone offset applies to every historical date, matching Analytics; it does not encode historical daylight-saving changes.
+
+Client access: `api.muro.summary(period)` defaults to `today` and automatically sends the browser timezone and active global scope. The Muro page's data integration is a later step.
+
+```bash
+curl 'http://localhost:4820/api/muro/summary?period=7d&tz_offset=-120&sources=local&providers=claude,codex'
+```
+
+The complete response schema is in `openapi.yaml`, generated from `server/openapi-extra/muro.js` via `npm run openapi:yaml`.
 
 ### Pricing
 
