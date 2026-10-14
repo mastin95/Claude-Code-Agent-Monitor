@@ -149,7 +149,12 @@ export function Board({
             );
           const visible = expanded[lane] ? list : list.slice(0, COLUMN_PAGE_SIZE);
           return (
-            <section className="muro-lane" key={lane} aria-label={t(`lanes.${lane}`)}>
+            <section
+              className="muro-lane"
+              data-lane={lane}
+              key={lane}
+              aria-label={t(`lanes.${lane}`)}
+            >
               <h2>
                 <span className={`muro-lane-dot ${lane}`} aria-hidden="true" />
                 {t(`lanes.${lane}`)}

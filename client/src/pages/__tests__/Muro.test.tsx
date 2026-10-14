@@ -94,7 +94,7 @@ describe("Muro", () => {
   it("refreshes both agents' idea bubbles on the existing session_updated event", async () => {
     vi.mocked(api.sessions.list).mockResolvedValue(list([session("claude"), session("codex")]));
     const { container } = render(<Muro />);
-    await screen.findByText("Limpiando: Task claude");
+    await screen.findByText("Task claude", { selector: ".muro-bubble" });
     expect(container.querySelector(".muro-idea-bubble")).toBeNull();
     vi.mocked(api.sessions.list).mockResolvedValue(
       list(
@@ -220,10 +220,11 @@ describe("Muro", () => {
     });
     const user = userEvent.setup();
     render(<Muro />);
-    expect(await screen.findByText("Limpiando: Revisar diseño")).toBeVisible();
-    expect(screen.getByText("Construyendo: Crear endpoint")).toBeVisible();
+    expect(await screen.findByText("Revisar diseño", { selector: ".muro-bubble" })).toBeVisible();
+    expect(screen.getByText("Crear endpoint", { selector: ".muro-bubble" })).toBeVisible();
     expect(screen.queryByText(/Cursor must never appear/)).not.toBeInTheDocument();
     const claude = within(screen.getByRole("button", { name: "Filtrar por Claude" }));
+    expect(claude.getByText("Limpiando", { selector: ".muro-bubble-verb" })).toBeVisible();
     expect(claude.getByText("3 hechas hoy")).toBeVisible();
     expect(claude.getByTitle("150.000 tokens")).toBeVisible();
     for (const period of ["7 días", "30 días", "Hoy"]) {
@@ -246,10 +247,16 @@ describe("Muro", () => {
       ])
     );
     const { container } = render(<Muro />);
-    expect(await screen.findByText("Esperando tu OK: Task claude")).toBeVisible();
-    expect(screen.getByText(`Construyendo: ${"a".repeat(40)}`)).toBeVisible();
-    expect(container.querySelector('[data-agent="claude"]')).toHaveAttribute("data-mode", "wait");
-    expect(container.querySelector('[data-agent="codex"]')).toHaveAttribute("data-mode", "work");
+    expect(await screen.findByText("Task claude", { selector: ".muro-bubble" })).toBeVisible();
+    expect(screen.getByText("a".repeat(40), { selector: ".muro-bubble" })).toBeVisible();
+    expect(container.querySelector('.muro-mascot[data-agent="claude"]')).toHaveAttribute(
+      "data-mode",
+      "wait"
+    );
+    expect(container.querySelector('.muro-mascot[data-agent="codex"]')).toHaveAttribute(
+      "data-mode",
+      "work"
+    );
   });
 
   it("toggles the page-owned agent filter with mouse and keyboard", async () => {
@@ -309,7 +316,7 @@ describe("Muro", () => {
       ])
     );
     render(<Muro />);
-    expect(await screen.findByText("Esperando tu OK: New request")).toBeVisible();
+    expect(await screen.findByText("New request", { selector: ".muro-bubble" })).toBeVisible();
     expect(
       within(screen.getByRole("button", { name: "Filtrar por Codex" })).getByText(
         "Esperando trabajo…"
@@ -363,7 +370,7 @@ describe("Muro", () => {
       await vi.advanceTimersByTimeAsync(1);
     });
     expect(api.muro.summary).toHaveBeenCalledTimes(2);
-    expect(screen.getByText("Construyendo: Task codex")).toBeVisible();
+    expect(screen.getByText("Task codex", { selector: ".muro-bubble" })).toBeVisible();
     act(() => eventBus.setConnected(false));
     expect(screen.getByRole("status")).toHaveTextContent("Sin conexión");
     act(() => eventBus.setConnected(true));

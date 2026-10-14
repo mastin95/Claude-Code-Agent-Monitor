@@ -365,6 +365,8 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 > **本地安全边界：** Run Agent 接受任意已存在的绝对工作目录，并在使用前进行规范化，因此仍支持从主目录和最近项目启动。托管 Webhook Provider 必须使用 HTTPS；generic 和 n8n 目标可为本地/自托管接收端使用 HTTP，且投递从不跟随重定向。
 ### Muro
 
+漫画风格使用本地打包的 Bangers 和 Nunito 字体、墨线对话气泡及按列着色的便签：工作中为黄色，等待我确认为粉色，已完成为绿色。委托行显示迷你 Claude 和 Codex 吉祥物、单行请求与回复，以及两行状态印章。悬停可查看完整的首次请求、发送时间和最新回复时间；打开后仍可查看完整保留的对话。
+
 通过 `openai/codex-plugin-cc` 从 Claude 交给 Codex 的任务会显示在舞台下方：所选周期内最多显示五项最新委托，以及请求和回复时间、状态、时长、轮数和平均往返时间。纸飞机标记进行中的工作；Codex 便签标注“来自 Claude”，父会话便签列出其委托。打开便签可实时查看逐轮对话，并在 Claude 与 Codex 详情之间跳转。仅 `session_meta.originator: "Claude Code"` 的 rollout 符合条件。每次请求及其最终回复保存在 `metadata.handoff` 中，每段文本最多 2000 个字符；标题去掉 `Codex Companion Task: ` 前缀。父会话链接首先采用插件任务中的 `threadId` / `sessionId` 配对，即使目录不同或 Claude 会话尚未导入也适用；其次采用主会话或 Subagent 对话记录中的 Bash `Thread ready (<id>)` 结果，包括稍后到达的结果。否则使用 Codex 启动时在同一目录中唯一活跃的 Claude 会话（忽略大小写和斜杠差异）；匹配不唯一时保持未链接。不更改数据库结构或 WebSocket 消息类型。
 
 周期按 Codex 会话开始日期的本地日历天筛选。委托列表显示首次请求和最新回复，时长从首次请求开始计算。平均值仅包含带回复时间的已交付委托，并计算至其最后一条回复。

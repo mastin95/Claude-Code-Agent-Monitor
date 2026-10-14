@@ -29,11 +29,11 @@ import { SessionSheet } from "../components/muro/SessionSheet";
 import { HandoffPlane, HandoffRibbon } from "../components/muro/Handoffs";
 import { useReducedMotion } from "../components/muro/motion";
 import { mergeFreshestById } from "../lib/merge-by-id";
-import "@fontsource/caveat/latin-400.css";
-import "@fontsource/caveat/latin-ext-400.css";
-import "@fontsource/caveat/latin-700.css";
-import "@fontsource/caveat/latin-ext-700.css";
 import "../components/muro/stage.css";
+import "@fontsource/bangers/400.css";
+import "@fontsource/nunito/700.css";
+import "@fontsource/nunito/800.css";
+import "@fontsource/nunito/900.css";
 
 const PERIODS = ["today", "7d", "30d"] as const;
 type Period = (typeof PERIODS)[number];
@@ -328,12 +328,13 @@ export function Muro() {
               return (
                 <button
                   key={agent}
+                  data-agent={agent}
                   type="button"
                   aria-pressed={effectiveFilter === agent}
                   disabled={excluded}
                   aria-label={t("stage.filter", { agent: name })}
                   onClick={() => toggleAgent(agent)}
-                  className={`muro-actor ${ideas.length ? "muro-actor-ideas" : ""} relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default ${effectiveFilter === agent ? "border-accent" : "border-border hover:border-border-light"} ${excluded || (effectiveFilter && effectiveFilter !== agent) ? "opacity-[0.45]" : ""}`}
+                  className={`muro-actor ${ideas.length ? "muro-actor-ideas" : ""} relative flex gap-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default ${excluded || (effectiveFilter && effectiveFilter !== agent) ? "opacity-[0.45]" : ""}`}
                 >
                   <span className="muro-floor" aria-hidden="true" />
                   <Mascot
@@ -342,9 +343,9 @@ export function Muro() {
                     size={104}
                     reducedMotion={excluded}
                   />
-                  <span className="relative flex flex-col gap-1.5 min-w-0">
+                  <span className="muro-actor-body">
                     <IdeaBubble ideas={ideas} stage />
-                    <span className="flex items-center gap-2 text-[17px] font-bold text-gray-100">
+                    <span className="muro-actor-name">
                       <span
                         aria-hidden="true"
                         className={`w-2.5 h-2.5 rounded-[3px] ${agent === "claude" ? "bg-[#D46F3A]" : "bg-[#2BA394]"}`}
@@ -352,16 +353,24 @@ export function Muro() {
                       {name}
                     </span>
                     <span className="muro-bubble">
-                      {excluded
-                        ? t("stage.excluded")
-                        : working
-                          ? t(`stage.${agent}`, { title })
-                          : waiting
-                            ? t("stage.awaiting", { title })
-                            : t("stage.waiting")}
+                      {excluded ? (
+                        t("stage.excluded")
+                      ) : working ? (
+                        <>
+                          <b className="muro-bubble-verb">{t(`note.${agent}`)}</b>
+                          {title}
+                        </>
+                      ) : waiting ? (
+                        <>
+                          <b className="muro-bubble-verb">{t("note.reason.stop")}</b>
+                          {title}
+                        </>
+                      ) : (
+                        t("stage.waiting")
+                      )}
                     </span>
                     {!excluded && (
-                      <span className="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400">
+                      <span className="muro-stage-chips">
                         <span>
                           {t("stage.completed", {
                             count: totals.tasks_completed,

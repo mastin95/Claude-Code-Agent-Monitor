@@ -5,83 +5,131 @@
  */
 .muro-handoffs {
   margin: 0 0 2rem;
-  padding: 1rem;
-  border: 1px solid #ffffff20;
-  border-radius: 1rem;
+  padding: 0;
+  overflow: hidden;
+  background: var(--cream);
+  border: 4px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 7px 7px 0 #000;
+  color: var(--ink);
 }
 .muro-handoffs header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
   gap: 0.5rem 1rem;
-  margin-bottom: 0.8rem;
+  background:
+    radial-gradient(#ffffff40 1.4px, transparent 1.8px) 0 0 / 8px 8px,
+    var(--pink);
+  border-bottom: 4px solid var(--ink);
+  padding: 12px 20px 10px;
+  margin: 0;
+  align-items: center;
 }
 .muro-handoffs h2 {
-  font-weight: 700;
+  font: 400 34px/1 var(--display);
+  letter-spacing: 0.05em;
+  paint-order: stroke fill;
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+  text-shadow: 2px 2px 0 #ffffff80;
 }
-.muro-handoffs header > span,
+.muro-handoffs header > span {
+  font: 900 14px var(--text);
+  color: var(--ink);
+  background: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
 .muro-handoff-empty {
-  color: #a6adbb;
   font-size: 0.8rem;
+  color: var(--ink);
+  padding: 16px;
 }
 .muro-handoffs ol {
   display: grid;
-  gap: 0.75rem;
   list-style: none;
+  gap: 0;
 }
 .muro-handoff-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.75rem;
   width: 100%;
   text-align: left;
   font-size: 0.8rem;
-  border-radius: 0.5rem;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 0;
+  color: var(--ink);
+  grid-template-columns: 48px minmax(0, 1fr) 28px 48px minmax(0, 1fr) 178px;
 }
-.muro-handoff-row:focus-visible,
+.muro-handoff-row:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: -4px;
+}
 .muro-handoff-plane:focus-visible {
   outline: 3px solid #a99bff;
   outline-offset: 4px;
 }
-.muro-handoff-ask,
-.muro-handoff-reply {
-  padding: 0.75rem;
-  border-radius: 0.2rem 0.2rem 0.75rem 0.2rem;
-  color: #2f291f;
-  background: #ffcfb0;
+.muro-handoff-ask {
   overflow-wrap: anywhere;
+  font: 800 15px/1.3 var(--text);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  padding: 9px 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #ffc7a6;
 }
 .muro-handoff-reply {
-  background: #c9f2c3;
+  overflow-wrap: anywhere;
+  font: 800 15px/1.3 var(--text);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  padding: 9px 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #a9efe2;
 }
 .muro-handoff-reply.pending {
-  border: 1px dashed #96c18d;
-  background: transparent;
-  color: #b8c8b4;
-}
-.muro-handoff-times {
-  display: grid;
-  gap: 0.25rem;
-  color: #a6adbb;
-  font-size: 0.7rem;
+  background: #fff;
+  border-style: dashed;
+  box-shadow: none;
+  color: #6b6478;
+  font-style: italic;
+  border: 3px dashed var(--ink);
 }
 .muro-handoff-status {
-  border-radius: 1rem;
-  padding: 0.3rem 0.65rem;
   font-size: 0.7rem;
+  justify-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  border-radius: 12px;
+  padding: 5px 8px;
+  color: var(--ink);
+  transform: rotate(-2deg);
 }
 .muro-handoff-status.working {
-  background: #c9e2ff;
   color: #174d89;
+  background: var(--lane-work);
 }
 .muro-handoff-status.waiting {
-  background: #f6e7a6;
   color: #6b4e06;
+  background: var(--lane-wait);
 }
 .muro-handoff-status.delivered {
-  background: #c9f2c3;
   color: #245f24;
+  background: var(--lane-done);
 }
 .muro-stage-handoffs {
   position: relative;
@@ -100,12 +148,13 @@
   padding: 0.65rem 1rem;
   width: max-content;
   max-width: 90%;
-  background: #fff2d5;
-  color: #4b382b;
-  border-radius: 0.2rem 0.2rem 0.9rem 0.2rem;
-  box-shadow: 0 3px 8px #0003;
   text-align: left;
   animation: muro-paper-float 3s ease-in-out infinite;
+  background: #fff;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 #000;
 }
 .muro-handoff-plane span {
   min-width: 0;
@@ -116,55 +165,66 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 28rem;
-  font-size: 0.8rem;
+  font: 900 15px var(--text);
 }
 .muro-handoff-plane small {
   display: block;
-  font-size: 0.7rem;
+  font: 400 14px var(--display);
+  letter-spacing: 0.06em;
+  color: #a61750;
 }
 .muro-handoff-stamp {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  transform: rotate(8deg);
-  border: 1px solid #a34920;
-  color: #873e20;
-  border-radius: 0.2rem;
-  padding: 0.15rem 0.3rem;
-  font-size: 0.65rem;
-  background: #fff2d5;
   z-index: 2;
+  transform: rotate(6deg);
+  color: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 var(--ink);
+  font: 400 16px/1 var(--display);
+  letter-spacing: 0.06em;
+  padding: 5px 9px 3px;
+  background: #a8431a;
 }
 .muro-handoff-children {
   display: block;
-  font-size: 0.75rem;
-  margin: 0.5rem 0;
-  color: #57422c;
+  margin: 0;
+  font: 900 13px var(--text);
+  color: var(--ink);
 }
 .muro-conversation {
   margin: 1rem 0;
 }
 .muro-round h3 {
   text-align: center;
-  border-bottom: 1px dashed #57422c50;
   margin: 1rem 0;
   padding-bottom: 0.5rem;
+  border-bottom: 3px dashed #ffffff30;
 }
 .muro-message {
   width: 85%;
   padding: 0.8rem;
   margin: 0.6rem 0;
-  border-radius: 0.8rem;
-  color: #352b20;
-  background: #ffcfb0;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  box-shadow: 5px 5px 0 #000;
+  font: 800 15px/1.4 var(--text);
+  background: #ffc7a6;
 }
 .muro-message.reply {
   margin-left: auto;
-  background: #fff;
+  background: #a9efe2;
 }
 .muro-message time {
   float: right;
-  font-size: 0.75rem;
+  font: 900 12px var(--text);
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 2px 8px;
 }
 .muro-message p {
   white-space: pre-wrap;
@@ -181,6 +241,37 @@
     transform: translate(-50%, -4px) rotate(1deg);
   }
 }
+.muro-handoffs li + li {
+  border-top: 3px dashed #17132140;
+}
+.muro-handoff-row:hover {
+  background: #fff0c2;
+}
+.muro-handoff-who svg {
+  display: block;
+  filter: drop-shadow(2px 2px 0 var(--ink));
+}
+.muro-handoff-arrow {
+  font: 900 24px/1 var(--text);
+  color: var(--pink);
+  -webkit-text-stroke: 1px var(--ink);
+  text-align: center;
+}
+.muro-handoff-status b {
+  font: 400 19px/1 var(--display);
+  letter-spacing: 0.06em;
+  white-space: normal;
+  text-align: center;
+}
+.muro-handoff-status small {
+  font: 800 12px/1 var(--text);
+  text-align: center;
+  line-height: 1.3;
+}
+.muro-message > :first-child {
+  font: 400 20px/1 var(--display);
+  letter-spacing: 0.06em;
+}
 @media (prefers-reduced-motion: reduce) {
   .muro-handoff-plane {
     animation: none;
@@ -188,15 +279,15 @@
 }
 @media (max-width: 900px) {
   .muro-handoff-row {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 44px minmax(0, 1fr);
+    padding: 12px;
   }
-  .muro-handoff-reply,
+  .muro-handoff-arrow {
+    display: none;
+  }
   .muro-handoff-status {
     grid-column: 2;
-  }
-  .muro-handoff-times {
-    grid-column: 1;
-    grid-row: 2;
+    min-width: 0;
   }
   .muro-handoff-plane b {
     max-width: 65vw;
