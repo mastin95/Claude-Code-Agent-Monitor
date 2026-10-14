@@ -314,7 +314,7 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 | **Tiến độ công việc** | Tiến độ theo chủ sở hữu từ công cụ tác vụ Claude, `TodoWrite` cũ và `update_plan` của Codex. Bản xem trước gọn xuất hiện trên thẻ và hàng; Chi tiết phiên bổ sung các đoạn trạng thái, công việc hiện tại, chủ sở hữu và phân trang 10 hàng. Công việc cấp cao nhất mới xóa trạng thái chưa hoàn tất cũ, còn lịch sử đã hoàn tất được giữ lại. |
 | **Dashboard** | Hai tab **Monitor** và **Health** được lưu bền vững, kết hợp tổng số Agent, hệ thống phân cấp đang hoạt động, hoạt động gần đây, sức khỏe có trọng số theo thành công/cache/lỗi/heap, lưu trữ, công cụ, model, hiệu quả Subagent và chỉ số compaction. Health làm mới mỗi 5 giây từ `/api/settings/info` và `/api/workflows`. |
 | **Bảng Kanban** | Các cột Agent gồm Đang làm việc, Đang chờ, Hoàn tất và Lỗi; các cột phiên bổ sung Đang hoạt động và Bị bỏ dở. Thẻ phân trang 10 mục mỗi lần, chỉ đăng ký chế độ xem WebSocket đang hoạt động, giữ nguyên tiêu đề đầy đủ và giải thích lý do chờ như yêu cầu quyền, kết thúc lượt, đang ở dấu nhắc hoặc bị gián đoạn. |
-| **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. Ý tưởng chính được đánh dấu xuất hiện trực tiếp qua bong bóng, chấm và dòng thời gian phiên được lưu. |
+| **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. Ý tưởng chính được đánh dấu xuất hiện trực tiếp qua bong bóng, chấm và dòng thời gian phiên được lưu. Tác vụ Claude giao cho Codex hiển thị yêu cầu, phản hồi và hội thoại liên kết. |
 | **Phiên** | Lịch sử có thể tìm kiếm, lọc và phân trang phía máy chủ, với chi phí chỉ tính trên trang đang hiển thị và một hàng khởi động Codex tạm thời trong bộ nhớ. Tìm kiếm bao quát `id`, `name` và `cwd` với debounce 300 ms. Tên được lấy lần lượt từ tiêu đề rõ ràng, tiêu đề AI rồi lời nhắc người dùng có ý nghĩa đầu tiên. |
 | **Chi tiết phiên** | Thống kê trực tiếp, công việc hiện tại, mức dùng công cụ, Subagent, token, hệ thống phân cấp, dòng thời gian sự kiện có bộ lọc, nhóm theo `tool_use_id` và trình kết xuất riêng cho từng công cụ. Chế độ Hội thoại kết xuất lượt chờ, thông báo hệ thống, Markdown, mã được tô sáng và công cụ có kiểu riêng; banner chờ hiển thị lý do và thời gian đã trôi qua. |
 | **Luồng hoạt động** | Sự kiện thời gian thực có thể tạm dừng, với bộ lọc dùng chung, phân trang phía máy chủ, nhóm, nguồn dự án/phiên/Subagent, liên kết phiên và badge trạng thái Claude/Codex nhất quán. |
@@ -364,6 +364,10 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 > **Ranh giới an toàn cục bộ:** Chạy Agent chấp nhận mọi thư mục làm việc tuyệt đối đang tồn tại và chuẩn hóa trước khi dùng, nên vẫn hỗ trợ khởi chạy từ thư mục nhà và dự án gần đây. Nhà cung cấp webhook được lưu trữ bắt buộc dùng HTTPS; đích generic và n8n có thể dùng HTTP cho bên nhận cục bộ/tự lưu trữ, và quá trình gửi không theo redirect.
 
 ### Muro
+
+Các tác vụ Claude giao cho Codex qua `openai/codex-plugin-cc` xuất hiện bên dưới sân khấu: khoảng thời gian đã chọn hiển thị tối đa năm tác vụ gần nhất, thời điểm yêu cầu và phản hồi, trạng thái, thời lượng, số vòng và thời gian trao đổi trung bình. Máy bay giấy đánh dấu công việc đang chạy; ghi chú Codex có nhãn “Từ Claude” và ghi chú phiên cha liệt kê các tác vụ đã giao. Mở ghi chú để đọc hội thoại trực tiếp theo từng vòng và chuyển giữa bảng chi tiết Claude và Codex. Chỉ rollout có `session_meta.originator: "Claude Code"` mới được nhận diện. Mỗi yêu cầu và phản hồi kết luận được lưu trong `metadata.handoff`, giới hạn 2000 ký tự mỗi đoạn; tiêu đề bỏ tiền tố `Codex Companion Task: `. Liên kết phiên cha ưu tiên cặp `threadId` / `sessionId` trong tác vụ plugin, kể cả khi khác thư mục hoặc phiên Claude chưa được nhập; tiếp theo là kết quả Bash `Thread ready (<id>)` trong bản ghi phiên chính hoặc Subagent, kể cả kết quả đến sau. Nếu không có, dùng phiên Claude duy nhất đang hoạt động trong cùng thư mục lúc Codex khởi chạy (không phân biệt hoa/thường và dấu gạch chéo); trường hợp không rõ ràng sẽ không liên kết. Không thay đổi cấu trúc cơ sở dữ liệu hay loại thông điệp WebSocket.
+
+Khoảng thời gian lọc theo ngày bắt đầu phiên Codex trong lịch địa phương. Mỗi dòng tác vụ hiển thị yêu cầu đầu tiên và phản hồi mới nhất; thời lượng tính từ yêu cầu đầu tiên. Giá trị trung bình chỉ gồm tác vụ đã giao kết quả có thời điểm phản hồi, tính đến phản hồi cuối cùng.
 
 Mở **Muro** bên dưới Bảng Kanban. Claude quét dọn và Codex xây dựng khi làm việc; bong bóng chờ nêu phiên mới nhất cần bạn nhập liệu. Thẻ sân khấu hiển thị tác vụ và token hôm nay. Nhấn thẻ hoặc chú giải biểu đồ vòng để bật/tắt cùng bộ lọc Agent; di chuột hoặc đặt tiêu điểm vào chú giải sẽ làm mờ ghi chú của Agent còn lại. Sản phẩm bị loại bởi phạm vi toàn cục được làm mờ, không có số liệu và không thể chọn.
 
@@ -556,7 +560,7 @@ sequenceDiagram
    - Đồng bộ dự án liên tục kết hợp quét ngay lập tức, `fs.watch` có debounce và polling `DASHBOARD_SESSION_SYNC_MS`, mặc định 30 giây. Một cache mtime chỉ phân tích lại transcript mới hoặc lớn hơn và broadcast cùng các frame phiên như hook.
 4. **WebSocket** phát thay đổi đã commit.
 5. **UI** làm mới chế độ xem bị ảnh hưởng mà không cần polling.
-6. **Muro** tải lại phiên và tổng hợp trong phạm vi sau sự kiện trực tiếp với debounce 300 ms; thay đổi khoảng thời gian hoặc Agent làm mới biểu đồ.
+6. **Muro** tải lại phiên và tổng hợp trong phạm vi sau sự kiện trực tiếp với debounce 300 ms; thay đổi khoảng thời gian hoặc Agent làm mới biểu đồ. Siêu dữ liệu tác vụ và bảng hội thoại đang mở được làm mới qua cùng các cập nhật phiên.
 
 ### Máy trạng thái Agent
 
@@ -656,6 +660,7 @@ flowchart LR
 | `DASHBOARD_SESSION_SYNC_MS` | `30000` | Poll an toàn cho tệp mới hoặc đã đổi trong `~/.claude/projects`. `fs.watch` vẫn tức thì; `0` chỉ tắt polling. |
 | `DASHBOARD_CURSOR_HOME` | `~/.cursor` | Thư mục gốc trạng thái Cursor cho chat, transcript, backfill và snapshot bền vững. |
 | `DASHBOARD_CURSOR_SYNC_MS` | `5000` | Poll an toàn Cursor có fingerprint. Watcher vẫn hoạt động khi `0` tắt polling. |
+| `CLAUDE_PLUGIN_DATA` | `<CLAUDE_HOME>/plugins/data/codex-openai-codex` | Thư mục dữ liệu plugin để liên kết phiên cha của tác vụ; đọc `state/*/jobs/*.json`. Luôn quét thêm `os.tmpdir()/codex-companion/*/jobs/*.json`. |
 | `DASHBOARD_CODEX_HOME` | `CODEX_HOME` hoặc `~/.codex` | Thư mục gốc trạng thái Codex. Cài đặt lưu override, bật lại watcher và quét ngay. |
 | `DASHBOARD_CODEX_SYNC_MS` | `4000` | Poll an toàn rollout Codex. Hook và watcher vẫn hoạt động khi đặt `0`. |
 | `DASHBOARD_CODEX_MAX_ATTEMPTS` | `5` | Số lần thử cho một rollout không đọc được và không đổi, tính cả lần đầu. Thay đổi kích thước hoặc mtime đặt lại ngân sách; khi hết chỉ log một lần. |

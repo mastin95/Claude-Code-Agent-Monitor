@@ -699,8 +699,11 @@ export const api = {
      * @param id The session id.
      * @returns `{ session, agents, events, workflows }` for the detail view.
      */
-    get: (id: string) => {
-      const qs = applyScope(new URLSearchParams());
+    get: (id: string, options?: { handoffPeer?: boolean }) => {
+      // Explicit handoff navigation may cross products, but never sources.
+      const qs = applyScope(
+        new URLSearchParams(options?.handoffPeer ? { providers: "claude,codex" } : {})
+      );
       return request<{
         session: Session;
         agents: Agent[];
@@ -717,8 +720,10 @@ export const api = {
      * @param id The session id.
      * @returns {@link SessionStats} for that one session.
      */
-    stats: (id: string) => {
-      const qs = applyScope(new URLSearchParams());
+    stats: (id: string, options?: { handoffPeer?: boolean }) => {
+      const qs = applyScope(
+        new URLSearchParams(options?.handoffPeer ? { providers: "claude,codex" } : {})
+      );
       return request<SessionStats>(
         `/sessions/${encodeURIComponent(id)}/stats${qs.size ? `?${qs.toString()}` : ""}`
       );

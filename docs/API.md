@@ -144,6 +144,27 @@ cache during hooks, imports, and watchdog sweeps; Codex derives it from durable
 `codex_user_message` records. Historical rows fall back to the main-agent task. The detail route
 returns the same optional field.
 
+**Muro handoffs.** For Codex sessions originating in Claude Code, session
+`metadata` may also contain `handoff: { from: "claude", parent_session_id, rounds }`.
+`parent_session_id` is a Claude session ID or null. Each round is
+`{ ask, ask_at, reply, reply_at }`: one user request, its assistant reply
+and their transcript timestamps; a pending reply and reply timestamp are null.
+The reply prefers `response_item` assistant `final_answer` over `commentary`,
+also accepts legacy `event_msg.agent_message`, and uses
+`task_complete.last_agent_message` as the definitive answer when present.
+Mirrored `item_completed` records do not create duplicate rounds or replies.
+Each text is limited to 2000 characters. Other metadata keys are preserved,
+and later evidence can fill or correct the parent link. A plugin job JSON's
+`threadId` / `sessionId` pair has priority over a Bash `Thread ready (<id>)`
+result in a main or subagent transcript, followed by a unique same-directory
+Claude session active at Codex launch; otherwise the parent is null. Job links
+can cross directories and refer to a Claude session not yet imported. The existing
+session reads and `session_updated` notification carry changes; routes, database
+schema and WebSocket message types are unchanged.
+When following an explicit handoff link across products, the client reads the
+related session and statistics with `providers=claude,codex`, preserving the
+current `sources` filter so the link does not include sessions from other data sources.
+
 **Muro key ideas.** The session `metadata` JSON may contain `key_ideas`, an
 array of up to 12 items shaped as `{ kind, text, at }`. `kind` is `approach`,
 `pivot`, `risk` or `improvement`; `text` is the cleaned decision text (at most

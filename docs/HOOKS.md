@@ -657,6 +657,34 @@ graph TB
     style Broadcast fill:#F59E0B
 ```
 
+### Claude-to-Codex handoffs
+
+Codex rollouts from `openai/codex-plugin-cc` are identified by
+`session_meta.originator: "Claude Code"`. Ingestion merges `metadata.handoff`
+without replacing other session metadata: each user message starts a round,
+capped at 2000 characters per request or reply. Assistant `response_item`
+messages supply `commentary` or `final_answer` text, preferring the final answer;
+legacy `event_msg.agent_message` is also supported. A
+`task_complete.last_agent_message` supplies the definitive answer when present.
+Mirrored `item_completed` records are ignored and pending replies remain null.
+An incoming `response_item` user message with `user.text` starts the next round
+and restores Working, clearing the previous round's waiting state.
+
+Parent resolution prefers the `threadId` / `sessionId` pair in the plugin job
+JSON, even if the directories differ or the parent session is not yet imported.
+Next come Bash `Thread ready (<id>)` results in main or subagent transcripts,
+including `<project>/<sessionId>/subagents/*.jsonl`. Otherwise, the fallback
+requires one same-source Claude session active at Codex launch in the same
+directory, ignoring case and slash differences; ambiguous matches remain null.
+Late higher-priority evidence replaces a fallback link.
+
+Job discovery reads only `<CLAUDE_PLUGIN_DATA>/state/*/jobs/*.json` (default root:
+`getClaudeHome()/plugins/data/codex-openai-codex/state`) and
+`os.tmpdir()/codex-companion/*/jobs/*.json`. It caches file modification times
+and tolerates missing directories. Tests can inject roots through
+`reconcileHandoffParents({ jobRoots })`. Changes use the existing
+`session_updated` broadcast without adding hook events or blocking hook execution.
+
 ### Muro key ideas
 
 Transcript ingestion also extracts explicitly marked assistant decisions for Muro.

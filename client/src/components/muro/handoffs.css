@@ -1,0 +1,204 @@
+/**
+ * @file handoffs.css
+ * @description Responsive paper handoffs, accessible conversation bubbles and reduced-motion flight.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+.muro-handoffs {
+  margin: 0 0 2rem;
+  padding: 1rem;
+  border: 1px solid #ffffff20;
+  border-radius: 1rem;
+}
+.muro-handoffs header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.8rem;
+}
+.muro-handoffs h2 {
+  font-weight: 700;
+}
+.muro-handoffs header > span,
+.muro-handoff-empty {
+  color: #a6adbb;
+  font-size: 0.8rem;
+}
+.muro-handoffs ol {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+}
+.muro-handoff-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  font-size: 0.8rem;
+  border-radius: 0.5rem;
+}
+.muro-handoff-row:focus-visible,
+.muro-handoff-plane:focus-visible {
+  outline: 3px solid #a99bff;
+  outline-offset: 4px;
+}
+.muro-handoff-ask,
+.muro-handoff-reply {
+  padding: 0.75rem;
+  border-radius: 0.2rem 0.2rem 0.75rem 0.2rem;
+  color: #2f291f;
+  background: #ffcfb0;
+  overflow-wrap: anywhere;
+}
+.muro-handoff-reply {
+  background: #c9f2c3;
+}
+.muro-handoff-reply.pending {
+  border: 1px dashed #96c18d;
+  background: transparent;
+  color: #b8c8b4;
+}
+.muro-handoff-times {
+  display: grid;
+  gap: 0.25rem;
+  color: #a6adbb;
+  font-size: 0.7rem;
+}
+.muro-handoff-status {
+  border-radius: 1rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.7rem;
+}
+.muro-handoff-status.working {
+  background: #c9e2ff;
+  color: #174d89;
+}
+.muro-handoff-status.waiting {
+  background: #f6e7a6;
+  color: #6b4e06;
+}
+.muro-handoff-status.delivered {
+  background: #c9f2c3;
+  color: #245f24;
+}
+.muro-stage-handoffs {
+  position: relative;
+}
+.muro-stage-handoffs:has(.muro-handoff-plane) {
+  padding-bottom: 4.5rem;
+}
+.muro-handoff-plane {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1rem;
+  width: max-content;
+  max-width: 90%;
+  background: #fff2d5;
+  color: #4b382b;
+  border-radius: 0.2rem 0.2rem 0.9rem 0.2rem;
+  box-shadow: 0 3px 8px #0003;
+  text-align: left;
+  animation: muro-paper-float 3s ease-in-out infinite;
+}
+.muro-handoff-plane span {
+  min-width: 0;
+}
+.muro-handoff-plane b {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 28rem;
+  font-size: 0.8rem;
+}
+.muro-handoff-plane small {
+  display: block;
+  font-size: 0.7rem;
+}
+.muro-handoff-stamp {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  transform: rotate(8deg);
+  border: 1px solid #a34920;
+  color: #873e20;
+  border-radius: 0.2rem;
+  padding: 0.15rem 0.3rem;
+  font-size: 0.65rem;
+  background: #fff2d5;
+  z-index: 2;
+}
+.muro-handoff-children {
+  display: block;
+  font-size: 0.75rem;
+  margin: 0.5rem 0;
+  color: #57422c;
+}
+.muro-conversation {
+  margin: 1rem 0;
+}
+.muro-round h3 {
+  text-align: center;
+  border-bottom: 1px dashed #57422c50;
+  margin: 1rem 0;
+  padding-bottom: 0.5rem;
+}
+.muro-message {
+  width: 85%;
+  padding: 0.8rem;
+  margin: 0.6rem 0;
+  border-radius: 0.8rem;
+  color: #352b20;
+  background: #ffcfb0;
+}
+.muro-message.reply {
+  margin-left: auto;
+  background: #fff;
+}
+.muro-message time {
+  float: right;
+  font-size: 0.75rem;
+}
+.muro-message p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-top: 0.4rem;
+}
+.muro-child-links {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+@keyframes muro-paper-float {
+  50% {
+    transform: translate(-50%, -4px) rotate(1deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .muro-handoff-plane {
+    animation: none;
+  }
+}
+@media (max-width: 900px) {
+  .muro-handoff-row {
+    grid-template-columns: auto 1fr;
+  }
+  .muro-handoff-reply,
+  .muro-handoff-status {
+    grid-column: 2;
+  }
+  .muro-handoff-times {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .muro-handoff-plane b {
+    max-width: 65vw;
+  }
+}

@@ -1,5 +1,34 @@
 {
   "title": "Muro",
+  "handoffs": {
+    "heading": {
+      "today": "Encargos de hoy",
+      "7d": "Encargos · 7 días",
+      "30d": "Encargos · 30 días"
+    },
+    "count_one": "{{count}} encargo",
+    "count_other": "{{count}} encargos",
+    "average": "Ida y vuelta media: {{duration}}",
+    "empty": "Aún no hay encargos. Claude se los pasa a Codex con /codex:rescue.",
+    "pending": "Codex está trabajando en ello...",
+    "sent": "Ida {{time}}",
+    "returned": "Vuelta {{time}}",
+    "status": { "working": "Trabajando", "waiting": "Esperando mi OK", "delivered": "Entregado" },
+    "rounds": "{{count}} rondas",
+    "round": "Ronda {{count}}",
+    "from": "De Claude",
+    "children_one": "{{count}} encargo a Codex · {{state}}",
+    "children_other": "{{count}} encargos a Codex · {{state}}",
+    "ongoing": "en marcha",
+    "finished": "entregados",
+    "childList": "Encargos a Codex",
+    "parent": "Ver la sesión de Claude",
+    "conversation": "Conversación entre Claude y Codex",
+    "askLabel": "Claude pide a Codex: {{ask}}",
+    "replyLabel": "Codex responde a Claude",
+    "open": "Claude pide a Codex: {{ask}}. {{state}}. Abrir encargo",
+    "flight": "Claude → Codex · hace {{count}} min"
+  },
   "period": {
     "label": "Periodo",
     "today": "Hoy",

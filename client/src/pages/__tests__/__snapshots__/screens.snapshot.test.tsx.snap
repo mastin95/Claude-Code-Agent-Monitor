@@ -5687,7 +5687,7 @@ exports[`screen snapshots > Muro 1`] = `
     </div>
     <section
       aria-label="The team"
-      class="grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
+      class="muro-stage-handoffs grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
     >
       <button
         aria-label="Filter by Claude"
@@ -5970,6 +5970,24 @@ exports[`screen snapshots > Muro 1`] = `
           </span>
         </span>
       </button>
+    </section>
+    <section
+      aria-label="Today's handoffs"
+      class="muro-handoffs"
+    >
+      <header>
+        <h2>
+          Today's handoffs
+        </h2>
+        <span>
+          0 handoffs · Average round trip: —
+        </span>
+      </header>
+      <p
+        class="muro-handoff-empty"
+      >
+        No handoffs yet. Claude passes them to Codex with /codex:rescue.
+      </p>
     </section>
     <section
       aria-label="Period totals"
@@ -6566,7 +6584,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
     </div>
     <section
       aria-label="The team"
-      class="grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
+      class="muro-stage-handoffs grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
     >
       <button
         aria-label="Filter by Claude"
@@ -6987,6 +7005,24 @@ exports[`screen snapshots > Muro working stage 1`] = `
           </span>
         </span>
       </button>
+    </section>
+    <section
+      aria-label="Today's handoffs"
+      class="muro-handoffs"
+    >
+      <header>
+        <h2>
+          Today's handoffs
+        </h2>
+        <span>
+          0 handoffs · Average round trip: —
+        </span>
+      </header>
+      <p
+        class="muro-handoff-empty"
+      >
+        No handoffs yet. Claude passes them to Codex with /codex:rescue.
+      </p>
     </section>
     <section
       aria-label="Period totals"

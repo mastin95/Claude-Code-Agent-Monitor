@@ -314,7 +314,7 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 | **Task Progress** | Owner-aware progress from Claude task tools, legacy `TodoWrite`, and Codex `update_plan`. Compact previews appear on cards and rows; Session Detail adds status segments, active work, owners, and 10-row paging. New top-level work clears stale unfinished state, while completed history remains. |
 | **Dashboard** | Persistent **Monitor** and **Health** tabs combine fleet totals, active hierarchies, recent activity, weighted success/cache/error/heap health, storage, tools, models, subagent effectiveness, and compaction metrics. Health refreshes every 5 seconds from `/api/settings/info` and `/api/workflows`. |
 | **Kanban Board** | Agent columns cover Working, Waiting, Completed, and Error; session columns add Active and Abandoned. Cards page 10 at a time, subscribe only to the active WebSocket view, preserve full titles, and explain waiting reasons such as permission input, turn completion, prompt idle, or interruption. |
-| **Muro** | A visual Claude/Codex wall at `/muro`: illustrated session post-its, live mascots, completed tasks, tokens, worked time, streaks, a completion donut, rhythm bars and a five-week heatmap. Today / 7 days / 30 days and a shared agent filter keep the board and charts aligned; Cursor is excluded. Explicitly marked key ideas appear live as bubbles, dots and a retained session timeline. |
+| **Muro** | A visual Claude/Codex wall at `/muro`: illustrated session post-its, live mascots, completed tasks, tokens, worked time, streaks, a completion donut, rhythm bars and a five-week heatmap. Today / 7 days / 30 days and a shared agent filter keep the board and charts aligned; Cursor is excluded. Explicitly marked key ideas appear live as bubbles, dots and a retained session timeline. Claude-to-Codex handoffs show requests, replies and linked conversations. |
 | **Sessions** | Searchable, filterable, server-paginated history with visible-page cost calculation and a temporary in-memory Codex startup row. Search covers `id`, `name`, and `cwd` with a 300 ms debounce. Names resolve from explicit title, AI title, then the first meaningful user prompt. |
 | **Session Detail** | Live stats, active work, tool usage, subagents, tokens, hierarchy, filtered event timelines, `tool_use_id` grouping, and tool-specific renderers. Conversation view renders queued turns, system notices, Markdown, highlighted code, and styled tools; waiting banners show the reason and elapsed time. |
 | **Activity Feed** | Pausable real-time events with shared filters, server pagination, grouping, project/session/subagent origin, session links, and consistent Claude/Codex status badges. |
@@ -364,6 +364,10 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 > **Local safety boundaries:** Run Agent accepts any existing absolute working directory and canonicalizes it before use, so home and recent-project launches remain supported. Hosted webhook providers require HTTPS; generic and n8n targets may use HTTP for local/self-hosted receivers, and delivery never follows redirects.
 
 ### Muro
+
+Claude-to-Codex handoffs from `openai/codex-plugin-cc` appear below the stage: the selected period shows up to five recent assignments, their request and reply times, status, duration, round count and average round trip. A paper plane marks ongoing work; Codex notes carry “From Claude” and the parent note lists its assignments. Open a note to read the live, round-by-round conversation and navigate between the Claude and Codex sheets. Only rollouts with `session_meta.originator: "Claude Code"` qualify. Each request and its final reply are retained in `metadata.handoff`, capped at 2000 characters per text; titles omit `Codex Companion Task: `. Parent links first use the plugin job’s `threadId` / `sessionId` pair, even across directories or before the Claude session is imported; next come Bash `Thread ready (<id>)` results in main or subagent transcripts, including results that arrive later. Otherwise, one Claude session active in the same directory at launch is used (case and slash differences are ignored); ambiguous matches stay unlinked. No database schema or WebSocket message types change.
+
+The period uses each Codex session’s start date in local calendar days. Ribbon rows show the first request and latest reply; duration starts at the first request. The average includes only delivered assignments with a reply timestamp, measured through their last reply.
 
 Open **Muro** below Kanban Board. Claude sweeps and Codex builds while working; waiting speech bubbles name the latest session needing your input. Stage cards show today’s tasks and tokens. Click a card or the completion donut legend to toggle the same agent filter; hovering or focusing a legend entry dims the other agent’s post-its. Products excluded by the global scope stay dimmed, without figures or selection.
 
@@ -556,7 +560,7 @@ sequenceDiagram
    - Continuous project sync combines an immediate sweep, debounced `fs.watch`, and `DASHBOARD_SESSION_SYNC_MS` polling, default 30 seconds. One mtime cache reparses only new or grown transcripts and broadcasts the same session frames as hooks.
 4. **WebSocket** publishes the committed change.
 5. **The UI** refreshes the affected views without polling.
-6. **Muro** reloads scoped sessions and summary data after live events with a 300 ms debounce; changing the period or agent refreshes its charts.
+6. **Muro** reloads scoped sessions and summary data after live events with a 300 ms debounce; changing the period or agent refreshes its charts. Handoff metadata and open conversation sheets refresh through the same session updates.
 
 ### Agent State Machine
 
@@ -656,6 +660,7 @@ flowchart LR
 | `DASHBOARD_SESSION_SYNC_MS` | `30000` | Safety poll for new or changed `~/.claude/projects` files. `fs.watch` remains immediate; `0` disables only polling. |
 | `DASHBOARD_CURSOR_HOME` | `~/.cursor` | Cursor state root for chats, transcripts, backfill, and durable snapshots. |
 | `DASHBOARD_CURSOR_SYNC_MS` | `5000` | Fingerprinted Cursor safety poll. Watchers stay active when `0` disables polling. |
+| `CLAUDE_PLUGIN_DATA` | `<CLAUDE_HOME>/plugins/data/codex-openai-codex` | Plugin data root for handoff parent links; reads `state/*/jobs/*.json`. Always also scans `os.tmpdir()/codex-companion/*/jobs/*.json`. |
 | `DASHBOARD_CODEX_HOME` | `CODEX_HOME` or `~/.codex` | Codex state root. Settings persists an override, rearms watching, and scans immediately. |
 | `DASHBOARD_CODEX_SYNC_MS` | `4000` | Codex rollout safety poll. Hooks and watchers remain active when set to `0`. |
 | `DASHBOARD_CODEX_MAX_ATTEMPTS` | `5` | Attempts for one unchanged unreadable rollout, including the first. A size or mtime change resets the budget; exhaustion logs once. |

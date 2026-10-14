@@ -313,7 +313,7 @@ flowchart LR
 | **작업 진행률** | Claude 작업 도구, 레거시 `TodoWrite`, Codex `update_plan`에서 소유자를 인식하는 진행률을 생성합니다. 카드와 행에는 간단한 미리보기가 표시되고, Session Detail에는 상태 구간, 활성 작업, 소유자, 10개 행 단위 페이지가 추가됩니다. 새 최상위 작업은 이전의 미완료 상태를 지우고, 완료 기록은 유지합니다. |
 | **Dashboard** | 저장되는 **Monitor**와 **Health** 탭이 전체 합계, 활성 계층, 최근 활동, 가중 성공률/캐시/오류/힙 상태, 스토리지, 도구, 모델, Subagent 효과, 컴팩션 지표를 결합합니다. Health는 `/api/settings/info`와 `/api/workflows`에서 5초마다 새로 고칩니다. |
 | **Kanban Board** | Agent 열은 Working, Waiting, Completed, Error를, 세션 열은 Active와 Abandoned를 추가로 다룹니다. 카드는 10개씩 표시하고 활성 WebSocket 보기만 구독하며, 전체 제목을 보존하고 권한 입력, 턴 완료, 프롬프트 대기, 중단 같은 대기 사유를 설명합니다. |
-| **Muro** | `/muro`의 Claude/Codex 시각적 작업 벽: 그림이 있는 세션 메모, 실시간 마스코트, 완료 작업, 토큰, 작업 시간, 연속 완료 일수, 완료 도넛, 작업 리듬 막대와 5주 히트맵을 제공합니다. 오늘 / 7일 / 30일과 공유 Agent 필터가 보드와 차트를 동기화하며 Cursor는 제외합니다. 명시적으로 표시한 핵심 아이디어는 실시간 말풍선, 점, 보존된 세션 타임라인으로 나타납니다. |
+| **Muro** | `/muro`의 Claude/Codex 시각적 작업 벽: 그림이 있는 세션 메모, 실시간 마스코트, 완료 작업, 토큰, 작업 시간, 연속 완료 일수, 완료 도넛, 작업 리듬 막대와 5주 히트맵을 제공합니다. 오늘 / 7일 / 30일과 공유 Agent 필터가 보드와 차트를 동기화하며 Cursor는 제외합니다. 명시적으로 표시한 핵심 아이디어는 실시간 말풍선, 점, 보존된 세션 타임라인으로 나타납니다. Claude가 Codex에 맡긴 의뢰의 요청, 응답과 연결된 대화를 보여 줍니다. |
 | **Sessions** | 보이는 페이지만 비용을 계산하는 검색, 필터, 서버 페이지네이션 히스토리와 메모리 내 임시 Codex 시작 행을 제공합니다. 검색은 300 ms 디바운스로 `id`, `name`, `cwd`를 대상으로 합니다. 이름은 명시적 제목, AI 제목, 첫 의미 있는 사용자 프롬프트 순으로 결정됩니다. |
 | **Session Detail** | 실시간 통계, 활성 작업, 도구 사용량, Subagent, 토큰, 계층, 필터링된 이벤트 타임라인, `tool_use_id` 그룹화, 도구별 렌더러를 제공합니다. Conversation 보기는 대기 중인 턴, 시스템 알림, Markdown, 구문 강조 코드, 스타일이 적용된 도구를 렌더링하고, 대기 배너에는 사유와 경과 시간을 표시합니다. |
 | **Activity Feed** | 공유 필터, 서버 페이지네이션, 그룹화, 프로젝트/세션/Subagent 출처, 세션 링크, 일관된 Claude/Codex 상태 배지를 갖춘 일시 정지 가능한 실시간 이벤트를 제공합니다. |
@@ -363,6 +363,10 @@ flowchart LR
 > **로컬 안전 경계:** Run Agent는 존재하는 모든 절대 작업 디렉터리를 허용하고 사용 전에 경로를 canonicalize하므로 home과 최근 프로젝트 실행을 계속 지원합니다. Hosted webhook provider는 HTTPS가 필요합니다. Generic과 n8n target은 로컬 또는 self-hosted receiver에 HTTP를 사용할 수 있으며, 전달은 redirect를 따르지 않습니다.
 
 ### Muro
+
+`openai/codex-plugin-cc`를 통해 Claude가 Codex에 맡긴 작업은 무대 아래에 표시됩니다. 선택한 기간의 최신 의뢰를 최대 다섯 개까지 보여 주며 요청·응답 시각, 상태, 소요 시간, 라운드 수와 평균 왕복 시간을 함께 표시합니다. 종이비행기는 진행 중인 작업을 나타내고, Codex 메모에는 “Claude가 보냄”이 표시되며 부모 세션 메모에는 의뢰 목록이 나타납니다. 메모를 열면 라운드별 실시간 대화를 읽고 Claude와 Codex 상세 화면 사이를 이동할 수 있습니다. `session_meta.originator: "Claude Code"`인 rollout만 해당합니다. 각 요청과 해당 라운드의 최종 응답은 `metadata.handoff`에 저장되며 텍스트마다 2000자로 제한됩니다. 제목에서는 `Codex Companion Task: ` 접두사를 제거합니다. 부모 세션 연결은 플러그인 작업의 `threadId` / `sessionId` 쌍을 최우선으로 사용하며 디렉터리가 다르거나 Claude 세션을 아직 가져오지 않은 경우에도 적용됩니다. 그다음으로 나중에 도착한 결과를 포함하여 기본 세션 또는 Subagent 대화 기록의 Bash `Thread ready (<id>)` 결과를 사용합니다. 결과가 없으면 Codex 시작 시 같은 디렉터리에서 활성 상태였던 유일한 Claude 세션을 사용합니다(대소문자와 슬래시 차이는 무시). 후보가 여러 개면 연결하지 않습니다. 데이터베이스 스키마나 WebSocket 메시지 유형은 변경되지 않습니다.
+
+기간은 각 Codex 세션 시작 날짜의 현지 달력 날짜를 기준으로 합니다. 의뢰 목록은 첫 요청과 최신 응답을 표시하며 소요 시간은 첫 요청부터 계산합니다. 평균에는 응답 시각이 있는 전달 완료 의뢰만 포함하고 마지막 응답까지의 시간을 계산합니다.
 
 Kanban Board 아래의 **Muro**를 엽니다. 작업 중 Claude는 청소하고 Codex는 건설하며, 대기 말풍선은 입력이 필요한 최신 세션을 표시합니다. 무대 카드는 오늘의 작업과 토큰을 보여줍니다. 카드나 완료 도넛 범례를 클릭하면 같은 Agent 필터를 켜고 끕니다. 범례에 마우스를 올리거나 포커스하면 다른 Agent의 메모가 흐려집니다. 전역 범위에서 제외된 제품은 흐려지고 수치가 없으며 선택할 수 없습니다.
 
@@ -558,7 +562,7 @@ sequenceDiagram
    - 지속적 프로젝트 동기화는 즉시 sweep, debounce `fs.watch`, 기본값 30초인 `DASHBOARD_SESSION_SYNC_MS` polling을 결합합니다. 하나의 mtime cache가 새 트랜스크립트나 커진 트랜스크립트만 다시 파싱하고 Hook과 같은 세션 frame을 broadcast합니다.
 4. **WebSocket**이 commit된 변경을 게시합니다.
 5. **UI**가 polling 없이 영향을 받는 보기를 새로 고칩니다.
-6. **Muro**는 실시간 이벤트 후 300 ms 디바운스로 범위 내 세션과 요약을 다시 불러오며, 기간이나 Agent를 바꾸면 차트를 새로 고칩니다.
+6. **Muro**는 실시간 이벤트 후 300 ms 디바운스로 범위 내 세션과 요약을 다시 불러오며, 기간이나 Agent를 바꾸면 차트를 새로 고칩니다. 의뢰 메타데이터와 열린 대화 상세 화면도 같은 세션 업데이트로 새로 고칩니다.
 
 ### 에이전트 상태 머신
 
@@ -658,6 +662,7 @@ flowchart LR
 | `DASHBOARD_SESSION_SYNC_MS` | `30000` | 새로 생기거나 변경된 `~/.claude/projects` 파일을 위한 안전 poll입니다. `fs.watch`는 계속 즉시 작동하며 `0`은 polling만 끕니다. |
 | `DASHBOARD_CURSOR_HOME` | `~/.cursor` | Chat, transcript, backfill, durable snapshot을 위한 Cursor 상태 root입니다. |
 | `DASHBOARD_CURSOR_SYNC_MS` | `5000` | Fingerprint 기반 Cursor 안전 poll입니다. `0`으로 polling을 꺼도 watcher는 계속 작동합니다. |
+| `CLAUDE_PLUGIN_DATA` | `<CLAUDE_HOME>/plugins/data/codex-openai-codex` | 의뢰 부모 세션 연결용 플러그인 데이터 루트이며 `state/*/jobs/*.json`을 읽습니다. `os.tmpdir()/codex-companion/*/jobs/*.json`도 항상 스캔합니다. |
 | `DASHBOARD_CODEX_HOME` | `CODEX_HOME` 또는 `~/.codex` | Codex 상태 root입니다. Settings에 override를 저장하면 watching을 다시 설정하고 즉시 스캔합니다. |
 | `DASHBOARD_CODEX_SYNC_MS` | `4000` | Codex rollout 안전 poll입니다. `0`으로 설정해도 Hook과 watcher는 계속 작동합니다. |
 | `DASHBOARD_CODEX_MAX_ATTEMPTS` | `5` | 변경되지 않고 읽을 수 없는 rollout 하나에 대한 시도 횟수이며 첫 시도를 포함합니다. Size나 mtime이 바뀌면 budget이 초기화되고, 모두 소진하면 한 번만 기록합니다. |

@@ -878,6 +878,7 @@ function createIngestRetryBudget(maxAttempts) {
 
 function startCodexSessionSync(broadcast) {
   const fs = require("fs");
+  const { reconcileHandoffParents } = require("./lib/codex-handoffs");
   const { getCodexHome, getCodexSessionsDir, onCodexHomeChanged } = require("./lib/codex-home");
   const {
     findCodexTranscripts,
@@ -950,6 +951,7 @@ function startCodexSessionSync(broadcast) {
       // rollout line. Refresh those titles before evaluating transcript bytes
       // so cards change in real time even for an otherwise idle session.
       for (const result of refreshCodexSessionTitles()) publish(result);
+      for (const result of reconcileHandoffParents()) publish(result);
       const transcripts = findCodexTranscripts(sessionsDir);
       for (let index = 0; index < transcripts.length; index++) {
         const transcriptPath = transcripts[index];

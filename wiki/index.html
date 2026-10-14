@@ -1185,7 +1185,7 @@
                 <div class="feature-card">
                   <div class="feature-icon ic-amber">📝</div>
                   <h3 id="feat-muro">Muro</h3>
-                  <p>Muro turns Claude and Codex sessions into illustrated post-its that move between working, waiting for your OK and done. Live mascots describe current work, while four counters, a completion donut, rhythm bars and a five-week heatmap summarize progress. Choose today, 7 days or 30 days and filter by agent from the stage or donut. Open any note for the request, duration, tokens, tool counts and touched files. Global scope and reduced-motion preferences apply throughout; Cursor sessions stay outside this wall.</p>
+                  <p>Muro turns Claude and Codex sessions into illustrated post-its for working, waiting for your OK and done. Live mascots, counters, a completion donut, rhythm bars and a five-week heatmap show progress across today, 7 or 30 days. Claude-to-Codex handoffs show requests, replies and live round-by-round conversations with links to both sessions. Filter by agent from the stage or donut and open notes for duration, tokens, tools and files. Global scope and reduced motion apply; Cursor stays outside this wall.</p>
                 </div>
                 <div class="feature-card">
                   <div class="feature-icon ic-rose">🖥️</div>
@@ -1564,6 +1564,8 @@
           </div>
 
           <h3 id="muro">Muro</h3>
+          <p>Claude-to-Codex handoffs from <code>openai/codex-plugin-cc</code> appear below the stage: the selected period shows up to five recent assignments, their request and reply times, status, duration, round count and average round trip. A paper plane marks ongoing work; Codex notes carry “From Claude” and the parent note lists its assignments. Open a note to read the live, round-by-round conversation and navigate between the Claude and Codex sheets. Only rollouts with <code>session_meta.originator: "Claude Code"</code> qualify. Each request and its final reply are retained in <code>metadata.handoff</code>, capped at 2000 characters per text; titles omit <code>Codex Companion Task: </code>. Parent links first use the plugin job’s <code>threadId</code> / <code>sessionId</code> pair, even across directories or before the Claude session is imported; next come Bash <code>Thread ready (&lt;id&gt;)</code> results in main or subagent transcripts, including results that arrive later. Otherwise, one Claude session active in the same directory at launch is used (case and slash differences are ignored); ambiguous matches stay unlinked. No database schema or WebSocket message types change.</p>
+          <p>The period uses each Codex session’s start date in local calendar days. Ribbon rows show the first request and latest reply; duration starts at the first request. The average includes only delivered assignments with a reply timestamp, measured through their last reply.</p>
           <p>Open <strong>Muro</strong> below Kanban Board. Claude sweeps and Codex builds while working; waiting speech bubbles name the latest session needing your input. Stage cards show today’s tasks and tokens. Click a card or the completion donut legend to toggle the same agent filter; hovering or focusing a legend entry dims the other agent’s post-its. Products excluded by the global scope stay dimmed, without figures or selection.</p>
           <p>Post-its move automatically between <strong>Working</strong>, <strong>Waiting for my OK</strong> and <strong>Done</strong>; only Done follows the selected local calendar period. Open a note for the original request, session duration, tokens, tool counts, touched files and a full-session link. Escape, the close button or the backdrop closes the sheet and restores focus. Its duration matches the note: <code>ended_at</code> (or now) minus <code>started_at</code>. Each column initially shows its six newest notes, ordered by last activity (Working), waiting-since time (Waiting for my OK) or completion time (Done). Show N more expands that column; Show less collapses it, while the header always counts all notes.</p>
           <p>Four counters show completed sessions, effective tokens including baselines, worked time and the uncapped completion streak. The summary follows the selected period and agent; stage figures stay on today. Rhythm groups completions hourly for today, daily for 7 days and in three-day groups for 30 days. The heatmap covers the last 35 local days and marks today. Claude is orange (<code>#D46F3A</code>), Codex teal (<code>#2BA394</code>). Counter animations, transitions, mascot movement and confetti are disabled with <code>prefers-reduced-motion</code>. Today’s rhythm starts at the first active hour or 08:00, whichever is earlier, and ends at the current hour with at least eight bars. It extends backwards when needed; before 07:00 it shows 00:00–07:00.</p>
@@ -2164,6 +2166,11 @@ npm run mcp:start:repl         # interactive CLI with tab completion</code></pre
                   <td><code>DASHBOARD_CURSOR_SYNC_MS</code></td>
                   <td><code>5000</code></td>
                   <td>Cursor chat/transcript safety-net interval (ms). Filesystem watching still imports CLI startup and prompt changes immediately; <code>0</code> disables only periodic discovery.</td>
+                </tr>
+                <tr>
+                  <td><code>CLAUDE_PLUGIN_DATA</code></td>
+                  <td><code>&lt;CLAUDE_HOME&gt;/plugins/data/codex-openai-codex</code></td>
+                  <td>Plugin data root for handoff parent links; reads <code>state/*/jobs/*.json</code>. Always also scans <code>os.tmpdir()/codex-companion/*/jobs/*.json</code>.</td>
                 </tr>
                 <tr>
                   <td><code>DASHBOARD_CODEX_HOME</code></td>
@@ -7263,7 +7270,7 @@ npm run install-hooks</code></pre>
     <!-- Body-content translations — must load before script.js so the
          i18n engine sees window.__WIKI_CONTENT_I18N. Both are deferred, so they
          run in document order. -->
-    <script src="i18n-content.js?v=112" defer></script>
+    <script src="i18n-content.js?v=115" defer></script>
     <script src="script.js?v=61" defer></script>
     <script>
       (function () {

@@ -21,6 +21,7 @@ const {
 const { getDataDir } = require("./claude-home");
 const { updatePlanArgumentIndexes } = require("./codex-plan-call");
 const { extractKeyIdeas, mergeKeyIdeas, storeSessionKeyIdeas } = require("./key-ideas");
+const { metadataOf, reduceHandoff, saveHandoff, handoffTitle } = require("./codex-handoffs");
 
 const MAX_EVENT_SUMMARY = 500;
 const CONTEXT_SHORT_LIMIT = 272000;
@@ -589,7 +590,7 @@ function backfillCodexCardContext(transcriptPath, session, consumedBytes) {
 /** Keep dashboard cards aligned with the title chosen in Codex's `/rename` UI. */
 function syncCodexSessionTitle(session) {
   if (!session?.id) return { changed: false, session };
-  const title = getCodexSessionTitle(session.id);
+  const title = handoffTitle(session, getCodexSessionTitle(session.id));
   if (!title || title === session.name) return { changed: false, session };
   const changed = stmts.updateSessionName.run(title, session.id, title).changes > 0;
   return { changed, session: changed ? stmts.getSession.get(session.id) : session };
@@ -882,6 +883,7 @@ function resumeCodexSessionAtPrompt(sessionId) {
 }
 
 function applyCodexTranscriptLifecycle(sessionId, record) {
+  if (responseItemUserMessage(record)) return setCodexWorking(sessionId);
   const type = record?.type === "event_msg" ? record.payload?.type : null;
   if (!LIFECYCLE_EVENT_TYPES.has(type)) return false;
   if (type === "task_complete") return setCodexWaiting(sessionId, "stop");
@@ -1077,6 +1079,34 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
       repairSession?.status === "active"
         ? backfillCodexCardContext(transcriptPath, repairSession, Math.min(offset, stat.size))
         : false;
+    // Older byte cursors may already cover the whole rollout. Backfill once,
+    // using the same bounded reader and without replaying events or token totals.
+    if (repairSession && (metadataOf(repairSession).handoff_version || 0) < 2) {
+      let handoff = null;
+      const handoffCursor = {};
+      let position = 0;
+      while (position < Math.min(offset, stat.size)) {
+        const batch = readCompleteLines(transcriptPath, position, Math.min(offset, stat.size));
+        if (!batch.bytes) break;
+        for (const line of batch.text.split("\n")) {
+          try {
+            handoff = reduceHandoff(handoff, JSON.parse(line), handoffCursor);
+          } catch {
+            /* malformed line */
+          }
+        }
+        position += batch.bytes;
+        if (!handoff) break;
+      }
+      if (handoff) {
+        handoff.parent_session_id = metadataOf(repairSession).handoff?.parent_session_id || null;
+        saveHandoff(repairSession.id, handoff);
+        setSessionMetadataFlag(repairSession.id, "handoff_cursor", handoffCursor);
+      }
+      setSessionMetadataFlag(repairSession.id, "handoff_version", 2);
+      syncCodexSessionTitle(stmts.getSession.get(repairSession.id));
+      repairedCardContext = true;
+    }
   } catch {
     return { changed: false, events: [], failed: true };
   }
@@ -1140,7 +1170,10 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
     };
   }
 
-  let meta = records.find((record) => record.type === "session_meta")?.payload;
+  const metaRecord = records.find((record) => record.type === "session_meta");
+  let meta = metaRecord
+    ? { ...metaRecord.payload, timestamp: metaRecord.payload?.timestamp || metaRecord.timestamp }
+    : undefined;
   const resolvedSessionId = state?.session_id || meta?.id || sessionIdFromPath(transcriptPath);
   const knownSession = resolvedSessionId ? stmts.getSession.get(resolvedSessionId) : null;
   // Imported rollouts live in a dashboard-owned snapshot so uploads remain
@@ -1240,7 +1273,11 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
   // pass would.
   const nameOpen = carry?.nameOpen ?? (!session.name || session.name === "Codex session");
   let keyIdeas = [];
+  let handoff = offset === 0 ? null : metadataOf(stmts.getSession.get(session.id)).handoff || null;
+  const handoffCursor =
+    offset === 0 ? {} : metadataOf(stmts.getSession.get(session.id)).handoff_cursor || {};
   for (const record of records) {
+    handoff = reduceHandoff(handoff, record, handoffCursor);
     if (record.type === "session_meta") {
       meta = record.payload;
       continue;
@@ -1280,7 +1317,10 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
         stmts.updateAgent.run(null, null, prompt, null, null, null, agentId);
       }
     }
-    if (record.type === "event_msg" && LIFECYCLE_EVENT_TYPES.has(record.payload?.type)) {
+    if (
+      userMessage ||
+      (record.type === "event_msg" && LIFECYCLE_EVENT_TYPES.has(record.payload?.type))
+    ) {
       latestLifecycleRecord = record;
     }
     // Tool invocations are owned by `ingestCodexToolEvents`. The primary
@@ -1300,6 +1340,11 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
 
   syncCodexCardContext(session.id, agentId);
   storeSessionKeyIdeas(stmts, session.id, keyIdeas);
+  if (handoff) {
+    saveHandoff(session.id, handoff);
+    setSessionMetadataFlag(session.id, "handoff_cursor", handoffCursor);
+  }
+  setSessionMetadataFlag(session.id, "handoff_version", 2);
   setSessionMetadataFlag(session.id, "card_context_version", CARD_CONTEXT_VERSION);
 
   stmts.upsertCodexIngestState.run(

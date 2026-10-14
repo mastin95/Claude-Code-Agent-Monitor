@@ -22,6 +22,22 @@ afterEach(() => {
 });
 
 describe("api.muro.summary", () => {
+  it("allows explicit handoff peer reads across products while preserving source scope", async () => {
+    setScope({ mode: "selected", selected: ["remote"], provider: "codex" });
+    const fetchMock = vi
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => new Response("{}", { status: 200 }));
+    await api.sessions.get("parent", { handoffPeer: true });
+    await api.sessions.stats("parent", { handoffPeer: true });
+    for (const call of fetchMock.mock.calls) {
+      const url = new URL(String(call[0]), "http://localhost");
+      expect(url.searchParams.get("sources")).toBe("remote");
+      expect(url.searchParams.get("providers")).toBe("claude,codex");
+    }
+    await api.sessions.get("ordinary");
+    const last = new URL(String(fetchMock.mock.calls[2]![0]), "http://localhost");
+    expect(last.searchParams.get("providers")).toBe("codex");
+  });
   it.each(["today", "7d", "30d"] as const)("requests %s with the active scope", async (period) => {
     setScope({ mode: "selected", selected: ["local", "remote"] });
     setProviderScope("codex");

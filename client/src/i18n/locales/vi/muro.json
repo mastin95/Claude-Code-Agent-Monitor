@@ -1,5 +1,34 @@
 {
   "title": "Muro",
+  "handoffs": {
+    "heading": {
+      "today": "Việc giao hôm nay",
+      "7d": "Việc giao · 7 ngày",
+      "30d": "Việc giao · 30 ngày"
+    },
+    "count_one": "{{count}} việc giao",
+    "count_other": "{{count}} việc giao",
+    "average": "Thời gian phản hồi trung bình: {{duration}}",
+    "empty": "Chưa có việc giao. Claude giao việc cho Codex qua /codex:rescue.",
+    "pending": "Codex đang xử lý...",
+    "sent": "Gửi {{time}}",
+    "returned": "Trả lời {{time}}",
+    "status": { "working": "Đang làm", "waiting": "Chờ tôi xác nhận", "delivered": "Đã bàn giao" },
+    "rounds": "{{count}} vòng",
+    "round": "Vòng {{count}}",
+    "from": "Từ Claude",
+    "children_one": "{{count}} việc giao cho Codex · {{state}}",
+    "children_other": "{{count}} việc giao cho Codex · {{state}}",
+    "ongoing": "đang thực hiện",
+    "finished": "đã bàn giao",
+    "childList": "Việc giao cho Codex",
+    "parent": "Xem phiên Claude",
+    "conversation": "Hội thoại giữa Claude và Codex",
+    "askLabel": "Claude yêu cầu Codex: {{ask}}",
+    "replyLabel": "Codex trả lời Claude",
+    "open": "Claude yêu cầu Codex: {{ask}}. {{state}}. Mở việc giao",
+    "flight": "Claude → Codex · {{count}} phút trước"
+  },
   "period": {
     "label": "Khoảng thời gian",
     "today": "Hôm nay",
