@@ -13,7 +13,7 @@ import { Board } from "../Board";
 import type { MuroSession } from "../model";
 import { api } from "../../../lib/api";
 import i18n from "../../../i18n";
-import companionFixture from "../../../../../server/__tests__/fixtures/codex-companion-0162-2-turn.json";
+import companionFixture from "./fixtures/codex-companion-0162-2-turn.json";
 vi.mock("../../../lib/api", () => ({ api: { sessions: { stats: vi.fn() } } }));
 const now = new Date(2026, 9, 14, 12);
 const time = (day: number, hour = 10) => new Date(2026, 9, day, hour).toISOString();

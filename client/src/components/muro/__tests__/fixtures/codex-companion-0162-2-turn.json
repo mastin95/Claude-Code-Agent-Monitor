@@ -1,0 +1,300 @@
+{
+  "records": [
+    {
+      "type": "session_meta",
+      "timestamp": "2026-10-14T10:00:00.000Z",
+      "payload": {
+        "id": "01a13aca-eb31-7cd3-bf42-66a9e6a937c1",
+        "session_id": "01a13aca-eb31-7cd3-bf42-66a9e6a937c1",
+        "cwd": "C:\\Users\\Martin\\Documents\\Card_Game",
+        "originator": "Claude Code",
+        "source": "vscode",
+        "cli_version": "0.162.0-alpha.17.2"
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:01:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "developer",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Developer instructions"
+          }
+        ]
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:01:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "user",
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "turn-1",
+          "content_item_kinds": ["agents_md.instructions", "environments.environment_context"]
+        },
+        "content": [
+          {
+            "type": "input_text",
+            "text": "AGENTS.md and environment context"
+          }
+        ]
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:01:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "user",
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "turn-1",
+          "content_item_kinds": ["user.text"]
+        },
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Inspect the implementation.\nRead only."
+          }
+        ]
+      }
+    },
+    {
+      "type": "event_msg",
+      "timestamp": "2026-10-14T10:01:00.000Z",
+      "payload": {
+        "type": "item_completed",
+        "item": {
+          "type": "UserMessage",
+          "content": [
+            {
+              "type": "Text",
+              "text": "Inspect the implementation.\nRead only."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:02:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "assistant",
+        "phase": "commentary",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "I am inspecting the files."
+          }
+        ]
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:03:00.000Z",
+      "payload": {
+        "type": "custom_tool_call",
+        "name": "exec_command",
+        "call_id": "call-turn-1",
+        "input": "read files"
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:04:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "assistant",
+        "phase": "final_answer",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "The implementation is correct."
+          }
+        ]
+      }
+    },
+    {
+      "type": "event_msg",
+      "timestamp": "2026-10-14T10:05:00.000Z",
+      "payload": {
+        "type": "item_completed",
+        "item": {
+          "type": "AgentMessage",
+          "content": [
+            {
+              "type": "Text",
+              "text": "The implementation is correct."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event_msg",
+      "timestamp": "2026-10-14T10:06:00.000Z",
+      "payload": {
+        "type": "task_complete",
+        "turn_id": "turn-1",
+        "last_agent_message": "The implementation is correct. Complete."
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:07:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "developer",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Developer instructions"
+          }
+        ]
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:07:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "user",
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "turn-2",
+          "content_item_kinds": ["agents_md.instructions", "environments.environment_context"]
+        },
+        "content": [
+          {
+            "type": "input_text",
+            "text": "AGENTS.md and environment context"
+          }
+        ]
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:07:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "user",
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "turn-2",
+          "content_item_kinds": ["user.text"]
+        },
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Check the tests too."
+          }
+        ]
+      }
+    },
+    {
+      "type": "event_msg",
+      "timestamp": "2026-10-14T10:07:00.000Z",
+      "payload": {
+        "type": "item_completed",
+        "item": {
+          "type": "UserMessage",
+          "content": [
+            {
+              "type": "Text",
+              "text": "Check the tests too."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:08:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "assistant",
+        "phase": "commentary",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "I am inspecting the files."
+          }
+        ]
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:09:00.000Z",
+      "payload": {
+        "type": "custom_tool_call",
+        "name": "exec_command",
+        "call_id": "call-turn-2",
+        "input": "read files"
+      }
+    },
+    {
+      "type": "response_item",
+      "timestamp": "2026-10-14T10:10:00.000Z",
+      "payload": {
+        "type": "message",
+        "role": "assistant",
+        "phase": "final_answer",
+        "content": [
+          {
+            "type": "output_text",
+            "text": "The tests pass."
+          }
+        ]
+      }
+    },
+    {
+      "type": "event_msg",
+      "timestamp": "2026-10-14T10:11:00.000Z",
+      "payload": {
+        "type": "item_completed",
+        "item": {
+          "type": "AgentMessage",
+          "content": [
+            {
+              "type": "Text",
+              "text": "The tests pass."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "event_msg",
+      "timestamp": "2026-10-14T10:12:00.000Z",
+      "payload": {
+        "type": "task_complete",
+        "turn_id": "turn-2",
+        "last_agent_message": "The tests pass. Complete."
+      }
+    }
+  ],
+  "expected": {
+    "handoff": {
+      "from": "claude",
+      "parent_session_id": null,
+      "rounds": [
+        {
+          "ask": "Inspect the implementation.\nRead only.",
+          "ask_at": "2026-10-14T10:01:00.000Z",
+          "reply": "The implementation is correct. Complete.",
+          "reply_at": "2026-10-14T10:06:00.000Z"
+        },
+        {
+          "ask": "Check the tests too.",
+          "ask_at": "2026-10-14T10:07:00.000Z",
+          "reply": "The tests pass. Complete.",
+          "reply_at": "2026-10-14T10:12:00.000Z"
+        }
+      ]
+    },
+    "awaiting_reason": "stop",
+    "awaiting_input_since": "2026-10-14T10:12:00.000Z"
+  }
+}
