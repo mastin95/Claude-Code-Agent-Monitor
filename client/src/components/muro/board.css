@@ -1,14 +1,17 @@
 /**
  * @file board.css
- * @description Prototype paper board, illustrated notes and zooming session sheet.
+ * @description Manga board, lane-colored notes and accessible session sheet.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 .muro-board {
-  @apply bg-surface-1 border border-border;
-  background-image: radial-gradient(circle at 1px 1px, #ffffff0f 1px, transparent 0);
-  background-size: 22px 22px;
-  border-radius: 18px;
   padding: 18px;
+  background:
+    radial-gradient(#ffffff12 1.4px, transparent 1.8px) 0 0 / 9px 9px,
+    var(--aubergine);
+  border: 4px solid var(--ink);
+  box-shadow: 7px 7px 0 #000;
+  border-radius: 18px;
+  min-width: 0;
 }
 .muro-lanes {
   display: grid;
@@ -19,24 +22,35 @@
   min-width: 0;
 }
 .muro-lane h2 {
-  display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  font-weight: 700;
-  margin: 4px 2px 24px;
+  display: inline-flex;
+  font: 400 30px/1 var(--display);
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  background: var(--lane-color, #fff);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 7px 12px 4px;
+  box-shadow: 4px 4px 0 #000;
+  transform: rotate(-2deg);
+  margin: 4px 2px 26px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .muro-lane-count {
-  @apply bg-surface-3 text-gray-400 font-mono;
-  font-size: 12px;
-  border-radius: 8px;
-  padding: 1px 8px;
+  font: 900 16px/1 var(--text);
+  background: var(--ink);
+  color: #fff;
+  border-radius: 999px;
+  padding: 4px 9px;
 }
 .muro-lane-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
+  display: none;
 }
 .muro-lane-dot.working {
   background: #38bdf8;
@@ -53,32 +67,34 @@
   gap: 22px;
 }
 .muro-lane-empty {
-  @apply border border-dashed border-border-light text-gray-500;
+  @apply border border-dashed border-border-light;
   border-radius: 14px;
   padding: 26px 8px;
   font-size: 13px;
   text-align: center;
+  color: #e7e1ef;
 }
 .muro-note {
   position: relative;
-  transform: rotate(var(--rotation));
   transition:
     transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.25s;
   background: var(--paper);
   color: #1b1a24;
-  border-radius: 3px 3px 14px 3px;
-  padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  box-shadow:
-    0 1px 0 #0003,
-    0 10px 18px -8px #0009;
   cursor: pointer;
-  border: 0;
   text-align: left;
   width: 100%;
+  --agent: #2ba394;
+  --agent-ink: #0f6b5c;
+  --rotation-soft: clamp(-1.5deg, calc(var(--rotation) * 0.5), 1.5deg);
+  transform: rotate(var(--rotation-soft));
+  border: 3.5px solid var(--ink);
+  border-radius: 8px 8px 24px 8px;
+  box-shadow: 7px 7px 0 #000;
+  padding: 12px 12px 14px;
+  gap: 10px;
 }
 .muro-note::before {
   content: "";
@@ -92,27 +108,31 @@
   transform: rotate(calc(var(--rotation) * -1.5));
   border-radius: 2px;
 }
-.muro-note:hover,
-.muro-note:focus-visible {
-  transform: rotate(0) translateY(-6px) scale(1.03);
-  box-shadow:
-    0 2px 0 #0003,
-    0 22px 30px -10px #000b;
+.muro-note:hover {
   z-index: 2;
+  transform: rotate(0) translate(-3px, -5px);
+  box-shadow: 11px 11px 0 #000;
 }
 .muro-note:focus-visible {
+  z-index: 2;
+  transform: rotate(0) translate(-3px, -5px);
+  box-shadow: 11px 11px 0 #000;
   outline: 3px solid #818cf8;
   outline-offset: 4px;
 }
 .muro-scene {
-  height: 90px;
-  border-radius: 8px;
-  background: #ffffff59;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  height: 104px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background:
+    var(--halftone),
+    repeating-conic-gradient(from 0deg at 50% 100%, #ffffff80 0 6deg, transparent 6deg 16deg),
+    color-mix(in srgb, var(--paper) 65%, #fff);
 }
 .muro-scene svg {
   margin-bottom: -6px;
@@ -121,41 +141,41 @@
   position: absolute;
   left: 8px;
   top: 8px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: #1b1a24;
-  color: var(--paper);
-  border-radius: 6px;
-  padding: 2px 6px;
   z-index: 1;
+  font: 400 16px/1 var(--display);
+  letter-spacing: 0.08em;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 7px;
+  padding: 5px 9px 3px;
+  transform: rotate(-3deg);
 }
 .muro-tag.muro-urgent {
-  background: #b91c1c;
   color: white;
+  border: 2px solid var(--ink);
+  background: #b91c1c;
 }
 .muro-note-title {
-  font-family: "Caveat", cursive;
-  font-size: 22px;
-  line-height: 1.02;
-  font-weight: 700;
-  text-wrap: balance;
   overflow-wrap: anywhere;
+  font: 900 19px/1.2 var(--text);
+  color: var(--ink);
+  text-wrap: pretty;
+  letter-spacing: -0.01em;
 }
 .muro-meta {
-  @apply font-mono;
   display: flex;
-  gap: 10px;
-  font-size: 11px;
-  color: #4b4650;
   flex-wrap: wrap;
+  gap: 6px;
+  font: 900 13px/1 var(--text);
+  color: var(--ink);
 }
 .muro-progress {
-  height: 6px;
-  border-radius: 3px;
-  background: #0000001f;
   overflow: hidden;
+  height: 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
 }
 .muro-progress > span {
   display: block;
@@ -176,6 +196,17 @@
   padding: 20px 16px;
   background: transparent;
   overflow: hidden;
+  --ink: #171321;
+  --cream: #fff8e7;
+  --acid: #dfff00;
+  --aubergine: #302044;
+  --pink: #ff3d8b;
+  --lane-work: #ffe14d;
+  --lane-wait: #ffa8d2;
+  --lane-done: #9debab;
+  --display: "Bangers", "Impact", sans-serif;
+  --text: "Nunito", system-ui, sans-serif;
+  --halftone: radial-gradient(#17132126 1.2px, transparent 1.6px) 0 0 / 7px 7px;
 }
 .muro-dialog[open] {
   display: flex;
@@ -191,12 +222,16 @@
   width: min(620px, 100%);
   max-height: 100%;
   overflow: auto;
-  background: var(--paper);
-  color: #1b1a24;
-  border-radius: 6px 6px 22px 6px;
   padding: 24px;
-  box-shadow: 0 40px 80px #000b;
   transform-origin: top left;
+  background:
+    radial-gradient(#ffffff0f 1.4px, transparent 1.8px) 0 0 / 9px 9px,
+    var(--aubergine);
+  color: #fff;
+  border: 4px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 12px 12px 0 #000;
+  font-family: var(--text);
 }
 .muro-sheet-close {
   position: absolute;
@@ -204,12 +239,13 @@
   top: 12px;
   width: 40px;
   height: 40px;
-  border-radius: 20px;
-  border: 0;
-  background: #00000014;
   display: grid;
   place-items: center;
   z-index: 1;
+  background: #fff;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
 }
 .muro-sheet-hero {
   display: flex;
@@ -218,34 +254,53 @@
   padding-right: 24px;
 }
 .muro-sheet-hero svg {
-  background: #ffffff59;
+  background:
+    var(--halftone),
+    repeating-conic-gradient(from 0deg at 50% 100%, #ffffff8c 0 6deg, transparent 6deg 16deg),
+    var(--acid);
+  border: 3.5px solid var(--ink);
   border-radius: 16px;
+  box-shadow: 5px 5px 0 #000;
 }
-.muro-eyebrow,
-.muro-sheet h3 {
-  font-size: 12px;
-  font-weight: 700;
+.muro-eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #4b4650;
+  display: inline-block;
+  font: 400 17px/1 var(--display);
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: var(--acid);
+  border: 2.5px solid var(--ink);
+  border-radius: 8px;
+  padding: 5px 9px 3px;
+}
+.muro-sheet h3 {
+  text-transform: uppercase;
+  font: 400 22px/1 var(--display);
+  letter-spacing: 0.08em;
+  color: var(--acid);
+  margin: 14px 0 8px;
 }
 .muro-sheet h2 {
-  font-family: "Caveat", cursive;
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1;
   margin: 6px 0 0;
   overflow-wrap: anywhere;
+  font: 400 40px/1 var(--display);
+  letter-spacing: 0.04em;
+  color: #fff;
+  -webkit-text-stroke: 1.5px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 #000;
+  margin-top: 10px;
 }
 .muro-ask {
   margin-top: 12px;
   font-size: 13px;
-  color: #4b4650;
-  background: #ffffff66;
   border-radius: 10px;
   padding: 8px 10px;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+  background: #ffffff14;
+  color: #f1edf9;
+  font-weight: 800;
 }
 .muro-sheet-stats {
   display: grid;
@@ -254,29 +309,31 @@
   margin: 14px 0;
 }
 .muro-sheet-stats > div {
-  background: #ffffff73;
-  border-radius: 12px;
   padding: 10px;
   overflow-wrap: anywhere;
+  background: #fff;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 #000;
+  transform: rotate(-1deg);
+  border-radius: 12px;
 }
 .muro-sheet-stats b {
   display: block;
-  font-size: 20px;
-  font-variant-numeric: tabular-nums;
+  font: 400 36px/1.05 var(--display);
+  letter-spacing: 0.04em;
+  color: var(--ink);
 }
 .muro-sheet-stats span {
-  font-size: 11px;
   text-transform: uppercase;
-  color: #4b4650;
-}
-.muro-sheet h3 {
-  margin: 14px 0 8px;
+  color: var(--ink);
+  font: 900 12px var(--text);
 }
 .muro-tools {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 12px;
+  font: 800 13px var(--text);
 }
 .muro-tool {
   display: grid;
@@ -292,8 +349,9 @@
 }
 .muro-tool-track > span {
   display: block;
-  height: 12px;
-  background: #1b1a24;
+  background: var(--pink);
+  border: 2px solid var(--ink);
+  height: 16px;
   border-radius: 4px;
 }
 .muro-files {
@@ -307,15 +365,16 @@
 .muro-files > span {
   border-radius: 6px;
   padding: 5px 8px;
-  background: #ffffff66;
+  background: #ffffff14;
 }
 .muro-session-link {
   display: inline-block;
   margin-top: 18px;
-  font-size: 13px;
-  font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
+  color: var(--acid);
+  font: 400 20px var(--display);
+  letter-spacing: 0.06em;
 }
 .muro-sheet-message {
   margin: 20px 0;
@@ -333,6 +392,59 @@
   z-index: 60;
   pointer-events: none;
 }
+.muro-note[data-agent="claude"] {
+  --agent: #d46f3a;
+  --agent-ink: #a8431a;
+}
+.muro-lane[data-lane="working"] {
+  --lane-color: var(--lane-work);
+}
+.muro-lane[data-lane="waiting"] {
+  --lane-color: var(--lane-wait);
+}
+.muro-lane[data-lane="done"] {
+  --lane-color: var(--lane-done);
+}
+.muro-note::after {
+  content: "";
+  position: absolute;
+  right: -3.5px;
+  bottom: -3.5px;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #00000030 50%, var(--aubergine) 50%);
+  border-top: 3.5px solid var(--ink);
+  border-left: 3.5px solid var(--ink);
+  border-radius: 8px 0 0 0;
+}
+.muro-scene .muro-mascot {
+  filter: drop-shadow(2px 2px 0 var(--ink));
+}
+.muro-meta > span {
+  background: #ffffffcc;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+.muro-meta > span:first-child {
+  display: none;
+}
+.muro-meta > span:nth-child(2)::before {
+  content: "⏱ ";
+}
+.muro-meta > span:nth-child(3)::before {
+  content: "⚡ ";
+}
+.muro-sheet-stats > div:first-child {
+  background: var(--lane-work);
+}
+.muro-sheet-stats > div:nth-child(2) {
+  transform: rotate(1deg);
+  background: var(--lane-wait);
+}
+.muro-sheet-stats > div:nth-child(3) {
+  background: var(--lane-done);
+}
 @media (max-width: 900px) {
   .muro-lanes {
     grid-template-columns: 1fr;
@@ -349,15 +461,23 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .muro-board *,
-  .muro-dialog *,
-  .muro-confetti {
-    animation: none !important;
-    transition: none !important;
+  .muro-board * {
+    animation: none;
+    transition: none;
   }
-  .muro-note:hover,
+  .muro-dialog * {
+    animation: none;
+    transition: none;
+  }
+  .muro-confetti {
+    animation: none;
+    transition: none;
+  }
+  .muro-note:hover {
+    transform: rotate(var(--rotation-soft));
+  }
   .muro-note:focus-visible {
-    transform: rotate(var(--rotation));
+    transform: rotate(var(--rotation-soft));
   }
   .muro-confetti {
     display: none;

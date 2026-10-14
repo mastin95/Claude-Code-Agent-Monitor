@@ -57,9 +57,10 @@ export function PostIt({
       ref={buttonRef}
       type="button"
       className="muro-note muro-mascot-hover"
+      data-agent={session.provider}
       style={
         {
-          "--paper": paper(session.provider, lane),
+          "--paper": paper(lane),
           "--rotation": `${rotation(session.id)}deg`,
         } as CSSProperties
       }

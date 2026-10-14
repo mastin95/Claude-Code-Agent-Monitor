@@ -18,6 +18,7 @@ import {
   type Handoff,
 } from "./handoff-model";
 import "./handoffs.css";
+import { Mascot } from "./Mascot";
 
 const firstLine = (text: string) => text.split(/\r?\n/)[0];
 const duration = (ms: number) =>
@@ -62,34 +63,44 @@ export function HandoffRibbon({
           {list.slice(0, 5).map((session) => {
             const rounds = sessionHandoff(session)!.rounds;
             const round = rounds[rounds.length - 1];
-            const ask = firstLine(rounds[0]?.ask || sessionTitle(session, t("stage.untitled")));
+            const fullAsk = rounds[0]?.ask || sessionTitle(session, t("stage.untitled"));
+            const ask = firstLine(fullAsk);
             const state = handoffStatus(session);
             return (
               <li key={session.id}>
                 <button
                   type="button"
                   className="muro-handoff-row"
+                  title={`${fullAsk}\n${t("handoffs.sent", { time: rounds[0]?.ask_at ? formatTime(rounds[0].ask_at) : "—" })}\n${t("handoffs.returned", { time: round?.reply_at ? formatTime(round.reply_at) : "—" })}`}
                   onClick={() => onOpen(session)}
                   aria-label={t("handoffs.open", { ask, state: t(`handoffs.status.${state}`) })}
                 >
-                  <b>Claude</b>
+                  <span className="muro-handoff-who" aria-hidden="true">
+                    <Mascot agent="claude" mode="done" size={44} reducedMotion />
+                  </span>
                   <span className="muro-handoff-ask">{ask}</span>
-                  <span className="muro-handoff-times">
-                    <span>
-                      {t("handoffs.sent", {
-                        time: formatTime(rounds[0]?.ask_at || session.started_at),
-                      })}
-                    </span>
-                    {round?.reply_at && (
-                      <span>{t("handoffs.returned", { time: formatTime(round.reply_at) })}</span>
-                    )}
+                  <span className="muro-handoff-arrow" aria-hidden="true">
+                    ➜
+                  </span>
+                  <span className="muro-handoff-who" aria-hidden="true">
+                    <Mascot
+                      agent="codex"
+                      mode={round?.reply == null ? "work" : "done"}
+                      size={44}
+                      reducedMotion
+                    />
                   </span>
                   <span className={`muro-handoff-reply${round?.reply == null ? " pending" : ""}`}>
                     {round?.reply == null ? t("handoffs.pending") : firstLine(round.reply)}
                   </span>
                   <span className={`muro-handoff-status ${state}`}>
-                    {t(`handoffs.status.${state}`)} · {duration(handoffElapsed(session))}
-                    {rounds.length > 1 && <> · {t("handoffs.rounds", { count: rounds.length })}</>}
+                    <b>{t(`handoffs.status.${state}`)}</b>
+                    <small>
+                      {duration(handoffElapsed(session))}
+                      {rounds.length > 1 && (
+                        <> · {t("handoffs.rounds", { count: rounds.length })}</>
+                      )}
+                    </small>
                   </span>
                 </button>
               </li>

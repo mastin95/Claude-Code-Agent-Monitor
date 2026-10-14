@@ -1564,6 +1564,7 @@
           </div>
 
           <h3 id="muro">Muro</h3>
+          <p>The manga presentation uses locally bundled Bangers and Nunito fonts, inked speech bubbles and lane-colored notes: yellow for Working, pink for Waiting for my OK and green for Done. Handoff rows show mini Claude and Codex mascots, single-line requests and replies, and a two-line status stamp. Hover a row for the full first request and its sent time plus the latest reply time; opening it still shows the complete retained conversation.</p>
           <p>Claude-to-Codex handoffs from <code>openai/codex-plugin-cc</code> appear below the stage: the selected period shows up to five recent assignments, their request and reply times, status, duration, round count and average round trip. A paper plane marks ongoing work; Codex notes carry “From Claude” and the parent note lists its assignments. Open a note to read the live, round-by-round conversation and navigate between the Claude and Codex sheets. Only rollouts with <code>session_meta.originator: "Claude Code"</code> qualify. Each request and its final reply are retained in <code>metadata.handoff</code>, capped at 2000 characters per text; titles omit <code>Codex Companion Task: </code>. Parent links first use the plugin job’s <code>threadId</code> / <code>sessionId</code> pair, even across directories or before the Claude session is imported; next come Bash <code>Thread ready (&lt;id&gt;)</code> results in main or subagent transcripts, including results that arrive later. Otherwise, one Claude session active in the same directory at launch is used (case and slash differences are ignored); ambiguous matches stay unlinked. No database schema or WebSocket message types change.</p>
           <p>The period uses each Codex session’s start date in local calendar days. Ribbon rows show the first request and latest reply; duration starts at the first request. The average includes only delivered assignments with a reply timestamp, measured through their last reply.</p>
           <p>Open <strong>Muro</strong> below Kanban Board. Claude sweeps and Codex builds while working; waiting speech bubbles name the latest session needing your input. Stage cards show today’s tasks and tokens. Click a card or the completion donut legend to toggle the same agent filter; hovering or focusing a legend entry dims the other agent’s post-its. Products excluded by the global scope stay dimmed, without figures or selection.</p>
@@ -7270,7 +7271,7 @@ npm run install-hooks</code></pre>
     <!-- Body-content translations — must load before script.js so the
          i18n engine sees window.__WIKI_CONTENT_I18N. Both are deferred, so they
          run in document order. -->
-    <script src="i18n-content.js?v=115" defer></script>
+    <script src="i18n-content.js?v=116" defer></script>
     <script src="script.js?v=61" defer></script>
     <script>
       (function () {

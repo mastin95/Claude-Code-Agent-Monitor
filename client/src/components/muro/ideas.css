@@ -3,19 +3,28 @@
  * @description Decision colors, compact thought bubbles, idea dots and the session timeline.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
-.muro-idea-bubble,
-.muro-idea-timeline li {
-  color: var(--idea-ink);
-  background: var(--idea-bg);
-  border: 2px solid color-mix(in srgb, var(--idea-ink) 55%, transparent);
-  border-radius: 12px;
-  padding: 6px 8px;
-  min-width: 0;
-}
 .muro-idea-bubble {
+  color: color-mix(in srgb, var(--idea-ink) 85%, #000);
+  background: var(--idea-bg);
+  min-width: 0;
+  border: 3px solid var(--ink);
+  border-radius: 30px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 8px 16px 10px;
   display: block;
   position: relative;
   animation: muro-idea-arrive 180ms ease-out;
+}
+.muro-idea-timeline li {
+  color: color-mix(in srgb, var(--idea-ink) 85%, #000);
+  background: var(--idea-bg);
+  min-width: 0;
+  border: 3px solid var(--ink);
+  border-radius: 30px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 8px 16px 10px;
+  position: relative;
+  list-style: none;
 }
 .muro-idea-heading {
   display: flex;
@@ -30,24 +39,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 9px;
-  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  font: 400 15px/1 var(--display);
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--idea-ink) 85%, #000);
 }
 .muro-idea-text {
   display: block;
-  font-family: "Caveat", cursive;
-  font-size: 20px;
-  line-height: 1.05;
   overflow-wrap: anywhere;
+  font: 800 14px/1.3 var(--text);
+  color: var(--ink);
   margin-top: 3px;
 }
 .muro-idea-count {
   display: inline-flex;
   gap: 6px;
   align-items: center;
-  font-size: 10px;
+  font: 900 13px var(--text);
+  color: var(--ink);
 }
 .muro-idea-dots {
   display: inline-flex;
@@ -59,6 +68,7 @@
   width: 9px;
   height: 9px;
   background: var(--idea-dot);
+  border: 1.5px solid var(--ink);
   border-radius: 50%;
 }
 .muro-idea-bubble .muro-idea-dots > span {
@@ -70,8 +80,8 @@
   outline-offset: 1px;
 }
 .muro-scene.muro-scene-ideas {
-  height: 128px;
   justify-content: flex-start;
+  height: 128px;
 }
 .muro-scene-ideas > svg {
   width: 72.52px;
@@ -82,43 +92,51 @@
   position: absolute;
   left: 72px;
   right: 5px;
-  top: 34px;
+  top: 38px;
+  padding: 6px 12px 8px;
 }
 .muro-scene-ideas .muro-idea-text {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 18px;
-  line-height: 20px;
+  font-size: 13.5px;
+  line-height: 17px;
+  -webkit-line-clamp: 2;
 }
-.muro-idea-bubble::before,
+.muro-idea-bubble::before {
+  content: "";
+  position: absolute;
+  background: var(--idea-bg);
+  border: 2.5px solid var(--ink);
+  width: 14px;
+  height: 14px;
+  bottom: -18px;
+  left: 8px;
+  border-radius: 50%;
+}
 .muro-idea-bubble::after {
   content: "";
   position: absolute;
   background: var(--idea-bg);
-  border: 1px solid color-mix(in srgb, var(--idea-ink) 55%, transparent);
+  border: 2.5px solid var(--ink);
+  width: 8px;
+  height: 8px;
+  left: -5px;
+  bottom: -30px;
   border-radius: 50%;
-  width: 9px;
-  height: 9px;
-  bottom: -10px;
-  left: 3px;
-}
-.muro-idea-bubble::after {
-  width: 5px;
-  height: 5px;
-  left: -7px;
-  bottom: -17px;
 }
 .muro-idea-stage {
   max-width: 380px;
   width: 100%;
-  margin-bottom: 9px;
+  margin-bottom: 20px;
 }
 .muro-idea-stage .muro-idea-text {
-  white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 .muro-actor-ideas {
   min-height: 178px;
@@ -128,9 +146,9 @@
   justify-content: flex-end;
   gap: 12px;
   flex-wrap: wrap;
-  font-size: 12px;
-  color: #9ca3af;
   margin-bottom: 16px;
+  font: 800 13px var(--text);
+  color: #fff;
 }
 .muro-idea-legend > span {
   display: inline-flex;
@@ -144,17 +162,12 @@
   border-radius: 50%;
 }
 .muro-idea-timeline {
-  border-left: 2px solid #1b1a2433;
   margin-left: 5px;
   padding-left: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-.muro-idea-timeline li {
-  position: relative;
-  list-style: none;
-  padding: 10px 12px;
+  border-left: 3px dashed #ffffff40;
 }
 .muro-idea-timeline li::before {
   content: "";
@@ -176,10 +189,10 @@
 .muro-idea-help pre {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  background: #ffffff66;
   padding: 12px;
   border-radius: 8px;
   margin: 8px 0;
+  background: #ffffff14;
 }
 .muro-idea-help button {
   text-decoration: underline;

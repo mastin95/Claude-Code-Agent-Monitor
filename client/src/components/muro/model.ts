@@ -33,8 +33,8 @@ export function sessionTitle(session: Session, fallback: string): string {
     fallback
   );
 }
-export function paper(agent: MuroAgent, lane: Lane): string {
-  return lane === "waiting" ? "#F6E7A6" : agent === "claude" ? "#FFCFB0" : "#AEE8DE";
+export function paper(lane: Lane): string {
+  return { working: "#FFE14D", waiting: "#FFA8D2", done: "#9DEBAB" }[lane];
 }
 export function rotation(id: string): number {
   return ((Array.from(id).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 7) - 3) * 0.8;

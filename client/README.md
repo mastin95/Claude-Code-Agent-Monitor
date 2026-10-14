@@ -498,7 +498,11 @@ useEffect(() => {
 
 ## Routing
 
-The `/muro` page includes a live Claude/Codex stage. Each card shows the most
+The `/muro` page includes a live Claude/Codex stage. Manga styles are owned by
+`stage.css`, `board.css`, `handoffs.css` and `ideas.css`, using locally bundled
+Bangers and Nunito fonts. Note colors follow the lane; agent identity uses
+`data-agent`. Handoff row tooltips retain the full first request and sent/returned
+times, while the visible status stamp separates status from duration and rounds. Each card shows the most
 recent working session and today's completed tasks and tokens from
 `api.muro.summary("today")`, following the global machine/provider scope. Waiting
 sessions use the idle mascot and the most recent waiting title when no work is

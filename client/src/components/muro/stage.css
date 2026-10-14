@@ -1,44 +1,199 @@
 /**
  * @file stage.css
- * @description Muro stage cards and handwritten speech bubbles from the prototype.
+ * @description Manga stage cards, local font tokens, speech bubbles and responsive agent chips.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
 .muro-actor {
-  @apply bg-gradient-to-b from-surface-2 to-surface-1;
+  --agent: #2ba394;
+  --agent-ink: #0f6b5c;
+  background:
+    var(--halftone),
+    repeating-conic-gradient(from 0deg at 16% 78%, #ffffff8c 0 6deg, transparent 6deg 16deg),
+    var(--acid);
+  border: 4px solid var(--ink);
+  box-shadow: 7px 7px 0 #000;
+  border-radius: 20px;
+  padding: 58px 22px 42px;
+  align-items: flex-end;
+  overflow: visible;
+  min-width: 0;
 }
 .muro-floor {
   position: absolute;
   inset: auto 0 0;
-  height: 20px;
-  background: repeating-linear-gradient(90deg, #ffffff08 0 18px, transparent 18px 36px);
-  border-top: 1px solid #ffffff08;
+  height: 30px;
+  background: repeating-linear-gradient(-45deg, #00000024 0 5px, transparent 5px 12px), #b8d400;
+  border-top: 4px solid var(--ink);
+  border-radius: 0 0 16px 16px;
 }
 .muro-bubble {
   position: relative;
-  background: #eeedf2;
-  color: #1b1a24;
-  border-radius: 14px;
-  padding: 7px 12px;
-  font-family: "Caveat", cursive;
-  font-size: 20px;
-  line-height: 1.05;
-  max-width: 320px;
   overflow-wrap: anywhere;
+  background: #fff;
+  color: var(--ink);
+  font: 900 18px/1.25 var(--text);
+  padding: 14px 22px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 46% 50% 44% 48% / 42% 46% 40% 44%;
+  box-shadow: 5px 5px 0 var(--ink);
+  max-width: 380px;
 }
 .muro-bubble::before {
+  border-left: 0;
   content: "";
   position: absolute;
-  left: -7px;
-  top: 12px;
-  border: 7px solid transparent;
-  border-right-color: #eeedf2;
-  border-left: 0;
+  top: 60%;
+  border-style: solid;
+  border-color: transparent;
+  left: -26px;
+  margin-top: -2px;
+  transform: rotate(-18deg);
+  border: solid transparent;
+  border-width: 10px 28px 10px 0;
+  border-right-color: var(--ink);
+}
+.muro-page {
+  --ink: #171321;
+  --cream: #fff8e7;
+  --acid: #dfff00;
+  --aubergine: #302044;
+  --pink: #ff3d8b;
+  --lane-work: #ffe14d;
+  --lane-wait: #ffa8d2;
+  --lane-done: #9debab;
+  --display: "Bangers", "Impact", sans-serif;
+  --text: "Nunito", system-ui, sans-serif;
+  --halftone: radial-gradient(#17132126 1.2px, transparent 1.6px) 0 0 / 7px 7px;
+  min-width: 0;
+}
+.muro-actor[data-agent="claude"] {
+  --agent: #d46f3a;
+  --agent-ink: #a8431a;
+}
+.muro-actor[aria-pressed="true"] {
+  box-shadow:
+    7px 7px 0 #000,
+    0 0 0 4px var(--pink);
+}
+.muro-actor > .muro-mascot {
+  position: relative;
+  margin: 0 8px -36px 0;
+  transform: scale(1.35);
+  transform-origin: bottom center;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+.muro-actor::after {
+  position: absolute;
+  left: 18px;
+  top: 74px;
+  font: 400 44px/1 var(--display);
+  letter-spacing: 0.03em;
+  color: var(--pink);
+  -webkit-text-stroke: 2.5px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 var(--ink);
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+.muro-actor:has(.muro-mascot.sweep)::after {
+  content: "FSSSH!";
+}
+.muro-actor:has(.muro-mascot.build)::after {
+  content: "¡TAC!";
+}
+.muro-actor-name {
+  position: absolute;
+  left: 14px;
+  top: -16px;
+  font: 400 30px/1 var(--display);
+  letter-spacing: 0.06em;
+  background: var(--agent);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  padding: 6px 14px 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+  paint-order: stroke fill;
+  transform: rotate(-3deg);
+  color: var(--ink);
+  -webkit-text-stroke: 0;
+}
+.muro-actor-name > span {
+  display: none;
+}
+.muro-bubble-verb {
+  display: block;
+  font: 400 19px/1 var(--display);
+  letter-spacing: 0.08em;
+  color: var(--agent-ink);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.muro-bubble::after {
+  content: "";
+  position: absolute;
+  top: 60%;
+  border-style: solid;
+  border-color: transparent;
+  left: -18px;
+  margin-top: 1px;
+  border-width: 7px 21px 7px 0;
+  border-right-color: #fff;
+  transform: rotate(-18deg);
+}
+.muro-stage-chips {
+  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.muro-stage-chips > span {
+  font: 900 14px/1 var(--text);
+  color: var(--ink);
+  background: #fff;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 5px 11px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.muro-stage-chips > span:first-child::before {
+  content: "✔ ";
+  color: #1f9a45;
+}
+.muro-stage-chips > span:nth-child(2)::before {
+  content: "⚡ ";
+}
+.muro-actor-body {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
 }
 @media (prefers-reduced-motion: reduce) {
-  .muro-page,
+  .muro-page {
+    animation: none;
+    transition: none;
+  }
   .muro-page * {
-    animation: none !important;
-    transition: none !important;
+    animation: none;
+    transition: none;
+  }
+}
+@media (max-width: 600px) {
+  .muro-actor {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 42px 16px 42px;
+  }
+  .muro-actor > .muro-mascot {
+    align-self: flex-start;
+    transform: none;
+    margin: 0;
+  }
+  .muro-bubble {
+    max-width: 100%;
   }
 }

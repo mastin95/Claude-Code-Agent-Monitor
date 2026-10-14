@@ -5692,7 +5692,8 @@ exports[`screen snapshots > Muro 1`] = `
       <button
         aria-label="Filter by Claude"
         aria-pressed="false"
-        class="muro-actor  relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
+        class="muro-actor  relative flex gap-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default "
+        data-agent="claude"
         type="button"
       >
         <span
@@ -5810,10 +5811,10 @@ exports[`screen snapshots > Muro 1`] = `
           </text>
         </svg>
         <span
-          class="relative flex flex-col gap-1.5 min-w-0"
+          class="muro-actor-body"
         >
           <span
-            class="flex items-center gap-2 text-[17px] font-bold text-gray-100"
+            class="muro-actor-name"
           >
             <span
               aria-hidden="true"
@@ -5827,7 +5828,7 @@ exports[`screen snapshots > Muro 1`] = `
             Waiting for work…
           </span>
           <span
-            class="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400"
+            class="muro-stage-chips"
           >
             <span>
               0 completed today
@@ -5843,7 +5844,8 @@ exports[`screen snapshots > Muro 1`] = `
       <button
         aria-label="Filter by Codex"
         aria-pressed="false"
-        class="muro-actor  relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light opacity-[0.45]"
+        class="muro-actor  relative flex gap-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default opacity-[0.45]"
+        data-agent="codex"
         disabled=""
         type="button"
       >
@@ -5952,10 +5954,10 @@ exports[`screen snapshots > Muro 1`] = `
           </text>
         </svg>
         <span
-          class="relative flex flex-col gap-1.5 min-w-0"
+          class="muro-actor-body"
         >
           <span
-            class="flex items-center gap-2 text-[17px] font-bold text-gray-100"
+            class="muro-actor-name"
           >
             <span
               aria-hidden="true"
@@ -6192,6 +6194,7 @@ exports[`screen snapshots > Muro 1`] = `
           <section
             aria-label="Working"
             class="muro-lane"
+            data-lane="working"
           >
             <h2>
               <span
@@ -6218,6 +6221,7 @@ exports[`screen snapshots > Muro 1`] = `
           <section
             aria-label="Waiting for my OK"
             class="muro-lane"
+            data-lane="waiting"
           >
             <h2>
               <span
@@ -6244,6 +6248,7 @@ exports[`screen snapshots > Muro 1`] = `
           <section
             aria-label="Done"
             class="muro-lane"
+            data-lane="done"
           >
             <h2>
               <span
@@ -6589,7 +6594,8 @@ exports[`screen snapshots > Muro working stage 1`] = `
       <button
         aria-label="Filter by Claude"
         aria-pressed="false"
-        class="muro-actor muro-actor-ideas relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
+        class="muro-actor muro-actor-ideas relative flex gap-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default "
+        data-agent="claude"
         type="button"
       >
         <span
@@ -6740,7 +6746,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
           </g>
         </svg>
         <span
-          class="relative flex flex-col gap-1.5 min-w-0"
+          class="muro-actor-body"
         >
           <span
             class="muro-idea-bubble muro-idea-stage"
@@ -6790,7 +6796,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
             </span>
           </span>
           <span
-            class="flex items-center gap-2 text-[17px] font-bold text-gray-100"
+            class="muro-actor-name"
           >
             <span
               aria-hidden="true"
@@ -6801,10 +6807,15 @@ exports[`screen snapshots > Muro working stage 1`] = `
           <span
             class="muro-bubble"
           >
-            Cleaning: claude task
+            <b
+              class="muro-bubble-verb"
+            >
+              Cleaning
+            </b>
+            claude task
           </span>
           <span
-            class="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400"
+            class="muro-stage-chips"
           >
             <span>
               3 completed today
@@ -6820,7 +6831,8 @@ exports[`screen snapshots > Muro working stage 1`] = `
       <button
         aria-label="Filter by Codex"
         aria-pressed="false"
-        class="muro-actor muro-actor-ideas relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
+        class="muro-actor muro-actor-ideas relative flex gap-3.5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default "
+        data-agent="codex"
         type="button"
       >
         <span
@@ -6928,7 +6940,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
           </text>
         </svg>
         <span
-          class="relative flex flex-col gap-1.5 min-w-0"
+          class="muro-actor-body"
         >
           <span
             class="muro-idea-bubble muro-idea-stage"
@@ -6978,7 +6990,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
             </span>
           </span>
           <span
-            class="flex items-center gap-2 text-[17px] font-bold text-gray-100"
+            class="muro-actor-name"
           >
             <span
               aria-hidden="true"
@@ -6989,10 +7001,15 @@ exports[`screen snapshots > Muro working stage 1`] = `
           <span
             class="muro-bubble"
           >
-            Waiting for your OK: codex task
+            <b
+              class="muro-bubble-verb"
+            >
+              Your turn
+            </b>
+            codex task
           </span>
           <span
-            class="flex flex-wrap gap-x-3.5 gap-y-1 font-mono text-xs text-gray-400"
+            class="muro-stage-chips"
           >
             <span>
               5 completed today
@@ -7227,6 +7244,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
           <section
             aria-label="Working"
             class="muro-lane"
+            data-lane="working"
           >
             <h2>
               <span
@@ -7250,7 +7268,8 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 <button
                   aria-label="claude task, Claude, Cleaning. View session summary. Latest idea: Risk — Keep subagent ideas separate."
                   class="muro-note muro-mascot-hover"
-                  style="--paper: #FFCFB0; --rotation: 2.4000000000000004deg;"
+                  data-agent="claude"
+                  style="--paper: #FFE14D; --rotation: 2.4000000000000004deg;"
                   type="button"
                 >
                   <span
@@ -7477,6 +7496,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
           <section
             aria-label="Waiting for my OK"
             class="muro-lane"
+            data-lane="waiting"
           >
             <h2>
               <span
@@ -7500,7 +7520,8 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 <button
                   aria-label="codex task, Codex, Permission needed. View session summary. Latest idea: Pivot — Reuse the session update stream."
                   class="muro-note muro-mascot-hover"
-                  style="--paper: #F6E7A6; --rotation: 2.4000000000000004deg;"
+                  data-agent="codex"
+                  style="--paper: #FFA8D2; --rotation: 2.4000000000000004deg;"
                   type="button"
                 >
                   <span
@@ -7664,6 +7685,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
           <section
             aria-label="Done"
             class="muro-lane"
+            data-lane="done"
           >
             <h2>
               <span
@@ -7687,7 +7709,8 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 <button
                   aria-label="Completed design, Claude, Done 11:00 AM. View session summary. Latest idea: Improvement — Keep the live session history."
                   class="muro-note muro-mascot-hover"
-                  style="--paper: #FFCFB0; --rotation: -0.8deg;"
+                  data-agent="claude"
+                  style="--paper: #9DEBAB; --rotation: -0.8deg;"
                   type="button"
                 >
                   <span

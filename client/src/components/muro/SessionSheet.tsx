@@ -176,11 +176,7 @@ export function SessionSheet({
         }
       }}
     >
-      <div
-        ref={panel}
-        className="muro-sheet"
-        style={{ "--paper": paper(session.provider, lane) } as CSSProperties}
-      >
+      <div ref={panel} className="muro-sheet" style={{ "--paper": paper(lane) } as CSSProperties}>
         <button
           ref={closeButton}
           className="muro-sheet-close"

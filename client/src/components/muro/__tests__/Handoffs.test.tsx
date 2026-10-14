@@ -103,6 +103,13 @@ describe("Muro handoffs", () => {
     expect(screen.getByRole("region", { name: "Handoffs · 7 days" })).toBeVisible();
     expect(screen.getByText("Request old")).toBeVisible();
     expect(screen.queryByText("Second line")).toBeNull();
+    const row = screen.getByRole("button", {
+      name: "Claude asks Codex: Request old. Working. Open handoff",
+    });
+    expect(row.title).toContain("Request old\nSecond line");
+    expect(row.title).toContain("Sent ");
+    expect(row.title).toContain("Returned —");
+    expect(row.querySelectorAll(".muro-handoff-who svg")).toHaveLength(2);
   });
   it("caps at five newest rows while counting and averaging the whole period", () => {
     const sessions = Array.from({ length: 6 }, (_, index) =>
@@ -154,9 +161,9 @@ describe("Muro handoffs", () => {
       />
     );
     expect(screen.getAllByText("Codex is working on it...")).toHaveLength(2);
-    expect(screen.getByText(/^Working ·/)).toBeVisible();
-    expect(screen.getByText(/^Waiting for my OK ·/)).toBeVisible();
-    expect(screen.getByText(/^Delivered ·/)).toBeVisible();
+    expect(screen.getByText("Working")).toBeVisible();
+    expect(screen.getByText("Waiting for my OK")).toBeVisible();
+    expect(screen.getByText("Delivered")).toBeVisible();
     expect(
       handoffStatus({
         ...answered(),
