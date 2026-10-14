@@ -18,7 +18,7 @@ import type { MuroSummary, Session, WSMessage } from "../../lib/types";
 import i18n from "../../i18n";
 
 vi.mock("../../lib/api", () => ({
-  api: { sessions: { list: vi.fn() }, muro: { summary: vi.fn() } },
+  api: { sessions: { list: vi.fn(), get: vi.fn(), stats: vi.fn() }, muro: { summary: vi.fn() } },
 }));
 
 const emptySummary: MuroSummary = {
@@ -122,6 +122,81 @@ describe("Muro", () => {
     const codex = await screen.findByRole("button", { name: "Filtrar por Codex" });
     expect(codex).toBeDisabled();
     expect(within(codex).queryByText("Idea codex")).not.toBeInTheDocument();
+  });
+
+  it("updates an open handoff conversation and its parent links on session_updated", async () => {
+    vi.useFakeTimers({ toFake: ["Date"], now: new Date("2026-10-14T12:00:00Z") });
+    vi.mocked(api.sessions.stats).mockResolvedValue({
+      session_id: "codex-1",
+      total_events: 0,
+      events_by_type: [],
+      tools_used: [],
+      error_count: 0,
+      first_event_at: null,
+      last_event_at: null,
+      agents: { total: 0, main: 0, subagent: 0, compaction: 0, by_status: {} },
+      subagent_types: [],
+      tokens: { input_tokens: 0, output_tokens: 0, cache_read_tokens: 0, cache_write_tokens: 0 },
+    });
+    const parent = session("claude");
+    const codex = session("codex", {
+      started_at: "2026-10-14T10:00:00Z",
+      metadata: JSON.stringify({
+        handoff: {
+          from: "claude",
+          parent_session_id: null,
+          rounds: [
+            {
+              ask: "Revisa el diseño",
+              ask_at: "2026-10-14T10:00:00Z",
+              reply: null,
+              reply_at: null,
+            },
+          ],
+        },
+      }),
+    });
+    vi.mocked(api.sessions.list).mockResolvedValue(list([parent, codex]));
+    render(
+      <MemoryRouter>
+        <Muro />
+      </MemoryRouter>
+    );
+    const ribbon = await screen.findByRole("region", { name: "Encargos de hoy" });
+    const user = userEvent.setup();
+    await user.click(
+      within(ribbon).getByRole("button", { name: /Claude pide a Codex: Revisa el diseño/ })
+    );
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("Codex está trabajando en ello...")).toBeVisible();
+    const updated = {
+      ...codex,
+      status: "completed" as const,
+      ended_at: "2026-10-14T11:00:00Z",
+      metadata: JSON.stringify({
+        handoff: {
+          from: "claude",
+          parent_session_id: parent.id,
+          rounds: [
+            {
+              ask: "Revisa el diseño",
+              ask_at: "2026-10-14T10:00:00Z",
+              reply: "Diseño revisado",
+              reply_at: "2026-10-14T11:00:00Z",
+            },
+          ],
+        },
+      }),
+    };
+    vi.mocked(api.sessions.list).mockResolvedValue(list([parent, updated]));
+    act(() => publish("session_updated"));
+    expect(await within(dialog).findByText("Diseño revisado")).toBeVisible();
+    await user.click(within(dialog).getByRole("button", { name: /Ver la sesión de Claude/ }));
+    expect(screen.getByRole("dialog", { name: "Task claude" })).toBeVisible();
+    await user.click(
+      within(screen.getByRole("dialog")).getByRole("button", { name: "Task codex →" })
+    );
+    expect(within(screen.getByRole("dialog")).getByText("Diseño revisado")).toBeVisible();
   });
 
   it("uses the freshest working session for each provider and today's independent totals", async () => {

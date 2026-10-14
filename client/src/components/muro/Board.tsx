@@ -31,11 +31,15 @@ export function Board({
   period,
   filterKey,
   highlight = null,
+  relatedSessions = sessions,
+  onOpen,
 }: {
   sessions: MuroSession[];
   period: MuroPeriod;
   filterKey: string;
   highlight?: MuroAgent | null;
+  relatedSessions?: MuroSession[];
+  onOpen?: (session: MuroSession) => void;
 }) {
   const { t } = useTranslation("muro");
   const reducedMotion = useReducedMotion();
@@ -167,13 +171,14 @@ export function Board({
                     >
                       <PostIt
                         session={session}
+                        relatedSessions={relatedSessions}
                         lane={lane}
                         reducedMotion={reducedMotion}
                         buttonRef={(element) => {
                           if (element) buttons.current.set(session.id, element);
                           else buttons.current.delete(session.id);
                         }}
-                        onOpen={() => setSelected({ session, lane })}
+                        onOpen={() => (onOpen ? onOpen(session) : setSelected({ session, lane }))}
                       />
                     </div>
                   ))
@@ -209,6 +214,11 @@ export function Board({
       {current && (
         <SessionSheet
           session={current.session}
+          relatedSessions={relatedSessions}
+          onNavigate={(id) => {
+            const session = relatedSessions.find((candidate) => candidate.id === id);
+            if (session) setSelected({ session, lane: sessionLane(session, period) || "done" });
+          }}
           lane={current.lane}
           reducedMotion={reducedMotion}
           getOrigin={getOrigin}

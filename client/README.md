@@ -510,6 +510,24 @@ reconnection and a minute timer also refresh the data. The SVG mascots animate
 only through scoped CSS, respect reduced motion, and use locally bundled Caveat
 for speech bubbles and post-it titles.
 
+Claude-to-Codex handoffs appear in a ribbon below the stage. The Today / 7 days /
+30 days selector filters by Codex session start time; the newest five assignments
+are visible, while the count covers the whole selected period. Rows show the
+first request and latest reply, and duration starts at the first request. The average includes only
+delivered assignments with a reply timestamp, ending at the last reply.
+Orange requests and green replies show their times, status, duration and multiple
+rounds; pending replies use a dashed working placeholder. The empty state points
+to `/codex:rescue`. An in-progress assignment adds a paper-plane note between
+the mascots, with reduced-motion support. Codex post-its carry a From Claude
+stamp; parent Claude notes count their assignments and indicate ongoing work.
+The live sheet replaces the original request with timestamped orange Claude
+and white Codex bubbles grouped by round, links to the parent Claude sheet,
+and lists child assignments when a Claude sheet is open. These elements read
+the optional `metadata.handoff` field and use all five UI languages.
+Explicit handoff links can open the related product's sheet even when the global
+provider filter selects only Claude or Codex. These reads include both providers
+while preserving the selected data sources.
+
 Below the stage, the three post-it lanes show working sessions, sessions waiting
 for input, and completed sessions whose end time falls within the selected local
 calendar period. Each lane starts with its six newest notes, sorted descending by

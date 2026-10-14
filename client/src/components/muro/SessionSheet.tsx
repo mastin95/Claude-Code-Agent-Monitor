@@ -14,6 +14,8 @@ import { formatDuration, getCurrentLocale } from "../../lib/format";
 import { Skeleton } from "../Skeleton";
 import { Mascot } from "./Mascot";
 import { IdeaTimeline, sessionIdeas } from "./KeyIdeas";
+import { HandoffConversation } from "./Handoffs";
+import { childHandoffs, sessionHandoff } from "./handoff-model";
 import { modeFor, paper, rotation, sessionTitle, type Lane, type MuroSession } from "./model";
 
 export function SessionSheet({
@@ -22,12 +24,20 @@ export function SessionSheet({
   reducedMotion,
   getOrigin,
   onClose,
+  relatedSessions = [],
+  onNavigate,
+  navigationError = false,
+  handoffPeer = false,
 }: {
   session: MuroSession;
   lane: Lane;
   reducedMotion: boolean;
   getOrigin: () => HTMLElement | null;
   onClose: () => void;
+  relatedSessions?: MuroSession[];
+  onNavigate?: (id: string) => void;
+  navigationError?: boolean;
+  handoffPeer?: boolean;
 }) {
   const { t } = useTranslation("muro");
   const dialog = useRef<HTMLDialogElement>(null);
@@ -40,13 +50,20 @@ export function SessionSheet({
   const [retry, setRetry] = useState(0);
   const title = sessionTitle(session, t("stage.untitled"));
   const number = new Intl.NumberFormat(getCurrentLocale());
+  const handoff = sessionHandoff(session);
+  const children = childHandoffs(session, relatedSessions);
+  useEffect(() => {
+    closeButton.current?.focus();
+  }, [session.id]);
 
   useEffect(() => {
     let cancelled = false;
     setStats(null);
     setError(false);
-    api.sessions
-      .stats(session.id)
+    const request = handoffPeer
+      ? api.sessions.stats(session.id, { handoffPeer: true })
+      : api.sessions.stats(session.id);
+    request
       .then((result) => {
         if (!cancelled) setStats(result);
       })
@@ -56,7 +73,7 @@ export function SessionSheet({
     return () => {
       cancelled = true;
     };
-  }, [session.id, retry]);
+  }, [session.id, handoffPeer, retry]);
 
   useLayoutEffect(() => {
     const modal = dialog.current!;
@@ -187,10 +204,30 @@ export function SessionSheet({
             <h2>{title}</h2>
           </div>
         </div>
-        <p className="muro-ask">
-          <b>{t("sheet.ask")}</b> {session.prompt_preview || t("sheet.noPrompt")}
-        </p>
+        {handoff ? (
+          <HandoffConversation handoff={handoff} onNavigate={onNavigate} />
+        ) : (
+          <p className="muro-ask">
+            <b>{t("sheet.ask")}</b> {session.prompt_preview || t("sheet.noPrompt")}
+          </p>
+        )}
+        {children.length > 0 && onNavigate && (
+          <section className="muro-child-links" aria-label={t("handoffs.childList")}>
+            <h3>{t("handoffs.childList")}</h3>
+            {children.map((child) => (
+              <button
+                type="button"
+                className="muro-session-link"
+                key={child.id}
+                onClick={() => onNavigate(child.id)}
+              >
+                {sessionTitle(child, t("stage.untitled"))} →
+              </button>
+            ))}
+          </section>
+        )}
         <IdeaTimeline ideas={sessionIdeas(session)} />
+        {navigationError && <p role="alert">{t("sheet.error")}</p>}
         {error ? (
           <div role="alert" className="muro-sheet-message">
             <p>{t("sheet.error")}</p>

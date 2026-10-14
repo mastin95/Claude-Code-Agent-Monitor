@@ -5,7 +5,7 @@
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslation } from "react-i18next";
 import { AlertCircle } from "lucide-react";
 import { Skeleton } from "../components/Skeleton";
@@ -19,7 +19,15 @@ import { Mascot, type MuroAgent } from "../components/muro/Mascot";
 import { Board } from "../components/muro/Board";
 import { Kpis, Charts } from "../components/muro/Insights";
 import { IdeaBubble, sessionIdeas } from "../components/muro/KeyIdeas";
-import { isMuroSession, sessionTitle } from "../components/muro/model";
+import {
+  isMuroSession,
+  sessionTitle,
+  sessionLane,
+  type MuroSession,
+} from "../components/muro/model";
+import { SessionSheet } from "../components/muro/SessionSheet";
+import { HandoffPlane, HandoffRibbon } from "../components/muro/Handoffs";
+import { useReducedMotion } from "../components/muro/motion";
 import { mergeFreshestById } from "../lib/merge-by-id";
 import "@fontsource/caveat/latin-400.css";
 import "@fontsource/caveat/latin-ext-400.css";
@@ -40,6 +48,23 @@ export function Muro() {
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
   const [highlight, setHighlight] = useState<MuroAgent | null>(null);
+  const [selected, setSelected] = useState<MuroSession | null>(null);
+  const [sheetError, setSheetError] = useState(false);
+  const origin = useRef<HTMLElement | null>(null);
+  const navigation = useRef(0);
+  const reducedMotion = useReducedMotion();
+  const getOrigin = useCallback(() => origin.current, []);
+  const closeSheet = useCallback(() => {
+    navigation.current++;
+    setSelected(null);
+    setSheetError(false);
+  }, []);
+  const openSheet = (session: MuroSession) => {
+    navigation.current++;
+    origin.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSheetError(false);
+    setSelected(session);
+  };
   const [insights, setInsights] = useState<{ key: string; summary: MuroSummary } | null>(null);
   const [insightsError, setInsightsError] = useState<string | null>(null);
   const [insightsRetry, setInsightsRetry] = useState(0);
@@ -58,6 +83,8 @@ export function Muro() {
     let request = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
     setData(null);
+    navigation.current++;
+    setSelected(null);
     setError(false);
     const load = async () => {
       const current = ++request;
@@ -142,6 +169,24 @@ export function Muro() {
     };
   }, [data, period, effectiveFilter, insightsKey, insightsRetry]);
 
+  // Linked parents may be outside the current product list. Refresh their
+  // detail after the same live reloads, without reopening a closed sheet.
+  useEffect(() => {
+    if (!selected || data?.sessions.some((session) => session.id === selected.id)) return;
+    let cancelled = false;
+    api.sessions
+      .get(selected.id, { handoffPeer: true })
+      .then((detail) => {
+        if (!cancelled && isMuroSession(detail.session)) setSelected(detail.session);
+      })
+      .catch(() => {
+        if (!cancelled) setSheetError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [selected?.id, data]);
+
   const summary =
     period === "today" && !effectiveFilter
       ? data?.summary
@@ -175,6 +220,24 @@ export function Muro() {
     .sort((a, b) =>
       (b.last_activity || b.started_at).localeCompare(a.last_activity || a.started_at)
     );
+  const currentSession =
+    selected && (sessions.find((session) => session.id === selected.id) || selected);
+  const navigateSheet = async (id: string) => {
+    const request = ++navigation.current;
+    setSheetError(false);
+    const session = sessions.find((candidate) => candidate.id === id);
+    if (session) {
+      setSelected(session);
+      return;
+    }
+    try {
+      const detail = await api.sessions.get(id, { handoffPeer: true });
+      if (request === navigation.current && isMuroSession(detail.session))
+        setSelected(detail.session);
+    } catch {
+      if (request === navigation.current) setSheetError(true);
+    }
+  };
 
   return (
     <div
@@ -244,7 +307,7 @@ export function Muro() {
         <>
           <section
             aria-label={t("stage.label")}
-            className="grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
+            className="muro-stage-handoffs grid grid-cols-1 xl:grid-cols-2 gap-3.5 mb-8"
           >
             {(["claude", "codex"] as const).map((agent) => {
               const excluded = product !== "both" && product !== agent;
@@ -316,10 +379,25 @@ export function Muro() {
                 </button>
               );
             })}
+            <HandoffPlane
+              sessions={sessions.filter(
+                (session) => !effectiveFilter || session.provider === effectiveFilter
+              )}
+              onOpen={openSheet}
+            />
           </section>
+          <HandoffRibbon
+            sessions={sessions.filter(
+              (session) => !effectiveFilter || session.provider === effectiveFilter
+            )}
+            period={period}
+            onOpen={openSheet}
+          />
           {insightStatus || (summary && <Kpis summary={summary} />)}
           <div className="muro-body">
             <Board
+              relatedSessions={sessions}
+              onOpen={openSheet}
               sessions={sessions.filter(
                 (session) => !effectiveFilter || session.provider === effectiveFilter
               )}
@@ -337,6 +415,19 @@ export function Muro() {
               />
             )}
           </div>
+          {currentSession && (
+            <SessionSheet
+              session={currentSession}
+              lane={sessionLane(currentSession, period) || "done"}
+              reducedMotion={reducedMotion}
+              getOrigin={getOrigin}
+              onClose={closeSheet}
+              relatedSessions={sessions}
+              navigationError={sheetError}
+              handoffPeer={product !== "both" && currentSession.provider !== product}
+              onNavigate={(id) => void navigateSheet(id)}
+            />
+          )}
         </>
       )}
     </div>

@@ -11,6 +11,7 @@ const { stmts } = require("../db");
 const { getDataDir } = require("./claude-home");
 const { getCodexSessionsDir } = require("./codex-home");
 const { findCodexTranscripts, ingestCodexTranscript } = require("./codex-ingest");
+const { handoffTitle } = require("./codex-handoffs");
 const { writeSnapshot } = require("./snapshot-store");
 
 const SNAPSHOT_DIR = () => path.join(getDataDir(), "codex-transcripts");
@@ -159,7 +160,7 @@ async function importCodexFromDirectory(root, options = {}) {
       else if (result.changed) counters.backfilled++;
       else counters.skipped++;
 
-      const importedTitle = titles.get(sessionId);
+      const importedTitle = handoffTitle(result.session, titles.get(sessionId));
       if (importedTitle && result.session && result.session.name !== importedTitle) {
         stmts.updateSessionName.run(importedTitle, sessionId, importedTitle);
       }

@@ -9,6 +9,7 @@ import { formatDuration, formatTime, getCurrentLocale } from "../../lib/format";
 import { AWAITING_REASON_CONFIG, sessionAwaitingReason } from "../../lib/types";
 import { Mascot } from "./Mascot";
 import { IdeaBubble, IdeaDots, sessionIdeas } from "./KeyIdeas";
+import { childHandoffs, handoffStatus, sessionHandoff, lastRound } from "./handoff-model";
 import { modeFor, paper, rotation, sessionTitle, type Lane, type MuroSession } from "./model";
 
 export function PostIt({
@@ -17,12 +18,14 @@ export function PostIt({
   reducedMotion,
   onOpen,
   buttonRef,
+  relatedSessions = [],
 }: {
   session: MuroSession;
   lane: Lane;
   reducedMotion: boolean;
   onOpen: () => void;
   buttonRef?: Ref<HTMLButtonElement>;
+  relatedSessions?: MuroSession[];
 }) {
   const { t } = useTranslation("muro");
   const reason = sessionAwaitingReason(session) || "stop";
@@ -37,6 +40,18 @@ export function PostIt({
   const progress = lane === "working" && session.todo_summary?.total ? session.todo_summary : null;
   const ideas = sessionIdeas(session);
   const latest = ideas[ideas.length - 1];
+  const handoff = sessionHandoff(session);
+  const children = childHandoffs(session, relatedSessions);
+  const childLabel = children.length
+    ? t("handoffs.children", {
+        count: children.length,
+        state: t(
+          children.some((child) => handoffStatus(child) !== "delivered")
+            ? "handoffs.ongoing"
+            : "handoffs.finished"
+        ),
+      })
+    : "";
   return (
     <button
       ref={buttonRef}
@@ -48,10 +63,11 @@ export function PostIt({
           "--rotation": `${rotation(session.id)}deg`,
         } as CSSProperties
       }
-      aria-label={`${t("note.open", { title, agent, state: label })}${latest ? `. ${t("ideas.latest", { kind: t(`ideas.kinds.${latest.kind}`), text: latest.text })}` : ""}`}
+      aria-label={`${t("note.open", { title, agent, state: label })}${handoff ? `. ${t("handoffs.askLabel", { ask: lastRound(handoff)?.ask || title })}` : ""}${childLabel ? `. ${childLabel}` : ""}${latest ? `. ${t("ideas.latest", { kind: t(`ideas.kinds.${latest.kind}`), text: latest.text })}` : ""}`}
       onClick={onOpen}
     >
       <span className={`muro-scene${lane === "working" && latest ? " muro-scene-ideas" : ""}`}>
+        {handoff && <span className="muro-handoff-stamp">{t("handoffs.from")}</span>}
         <span
           className={`muro-tag ${lane === "waiting" && AWAITING_REASON_CONFIG[reason].urgent ? "muro-urgent" : ""}`}
         >
@@ -66,6 +82,7 @@ export function PostIt({
         {lane === "working" && <IdeaBubble ideas={ideas} reducedMotion={reducedMotion} />}
       </span>
       <span className="muro-note-title">{title}</span>
+      {childLabel && <span className="muro-handoff-children">→ {childLabel}</span>}
       {progress && (
         <span
           className="muro-progress"
