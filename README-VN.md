@@ -314,7 +314,7 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 | **Tiến độ công việc** | Tiến độ theo chủ sở hữu từ công cụ tác vụ Claude, `TodoWrite` cũ và `update_plan` của Codex. Bản xem trước gọn xuất hiện trên thẻ và hàng; Chi tiết phiên bổ sung các đoạn trạng thái, công việc hiện tại, chủ sở hữu và phân trang 10 hàng. Công việc cấp cao nhất mới xóa trạng thái chưa hoàn tất cũ, còn lịch sử đã hoàn tất được giữ lại. |
 | **Dashboard** | Hai tab **Monitor** và **Health** được lưu bền vững, kết hợp tổng số Agent, hệ thống phân cấp đang hoạt động, hoạt động gần đây, sức khỏe có trọng số theo thành công/cache/lỗi/heap, lưu trữ, công cụ, model, hiệu quả Subagent và chỉ số compaction. Health làm mới mỗi 5 giây từ `/api/settings/info` và `/api/workflows`. |
 | **Bảng Kanban** | Các cột Agent gồm Đang làm việc, Đang chờ, Hoàn tất và Lỗi; các cột phiên bổ sung Đang hoạt động và Bị bỏ dở. Thẻ phân trang 10 mục mỗi lần, chỉ đăng ký chế độ xem WebSocket đang hoạt động, giữ nguyên tiêu đề đầy đủ và giải thích lý do chờ như yêu cầu quyền, kết thúc lượt, đang ở dấu nhắc hoặc bị gián đoạn. |
-| **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. |
+| **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. Ý tưởng chính được đánh dấu xuất hiện trực tiếp qua bong bóng, chấm và dòng thời gian phiên được lưu. |
 | **Phiên** | Lịch sử có thể tìm kiếm, lọc và phân trang phía máy chủ, với chi phí chỉ tính trên trang đang hiển thị và một hàng khởi động Codex tạm thời trong bộ nhớ. Tìm kiếm bao quát `id`, `name` và `cwd` với debounce 300 ms. Tên được lấy lần lượt từ tiêu đề rõ ràng, tiêu đề AI rồi lời nhắc người dùng có ý nghĩa đầu tiên. |
 | **Chi tiết phiên** | Thống kê trực tiếp, công việc hiện tại, mức dùng công cụ, Subagent, token, hệ thống phân cấp, dòng thời gian sự kiện có bộ lọc, nhóm theo `tool_use_id` và trình kết xuất riêng cho từng công cụ. Chế độ Hội thoại kết xuất lượt chờ, thông báo hệ thống, Markdown, mã được tô sáng và công cụ có kiểu riêng; banner chờ hiển thị lý do và thời gian đã trôi qua. |
 | **Luồng hoạt động** | Sự kiện thời gian thực có thể tạm dừng, với bộ lọc dùng chung, phân trang phía máy chủ, nhóm, nguồn dự án/phiên/Subagent, liên kết phiên và badge trạng thái Claude/Codex nhất quán. |
@@ -372,6 +372,24 @@ Ghi chú tự chuyển giữa **Đang làm việc**, **Đang chờ tôi xác nh�
 Bốn bộ đếm hiển thị phiên hoàn tất, token hiệu dụng gồm baseline, thời gian làm việc và chuỗi ngày hoàn tất không giới hạn. Tổng hợp theo khoảng thời gian và Agent đã chọn; số liệu sân khấu luôn là hôm nay. Nhịp độ nhóm theo giờ cho hôm nay, theo ngày cho 7 ngày và mỗi ba ngày cho 30 ngày. Bản đồ nhiệt phủ 35 ngày địa phương gần nhất và đánh dấu hôm nay. Claude màu cam (`#D46F3A`), Codex màu xanh ngọc (`#2BA394`). Với `prefers-reduced-motion`, bộ đếm, chuyển động, linh vật và giấy màu đều dừng hoạt ảnh. Nhịp độ hôm nay bắt đầu từ giờ đầu tiên có tác vụ hoặc 08:00, tùy giờ nào sớm hơn, đến giờ hiện tại với ít nhất tám cột. Phạm vi mở rộng về trước khi cần; trước 07:00 sẽ hiển thị 00:00–07:00.
 
 Tệp gồm đường dẫn Claude `Edit` / `Write` / `MultiEdit` và đường dẫn từ các lệnh Codex `apply_patch` mới được nạp. Rollout và hook `PreToolUse` trích `*** Add File:`, `*** Update File:` và `*** Delete File:` vào `data.files` (tối đa 50). Thống kê phiên trả tối đa 50 đường dẫn duy nhất đã sắp xếp; không bổ sung ngược các lệnh Codex đã nạp trước đó.
+
+#### Ý tưởng chính
+
+Ý tưởng chính chỉ ghi nhận quyết định của trợ lý được đánh dấu rõ ràng trong bản ghi phiên Claude chính và sự kiện `event_msg` / `agent_message` của rollout Codex, khi nạp trực tiếp hoặc nhập lịch sử. Viết một dòng riêng bắt đầu bằng `[approach]`, `[pivot]`, `[risk]` hoặc `[improvement]`; các bí danh tiếng Tây Ban Nha `[enfoque]`, `[giro]`, `[riesgo]` và `[mejora]` cũng dùng được, không phân biệt hoa thường. Khối mã được bỏ qua, `**` và dấu backtick được loại bỏ, văn bản giới hạn 120 ký tự, bỏ bản trùng và giữ 12 ý tưởng mới nhất trong metadata phiên. Tin nhắn người dùng, kết quả công cụ và Claude Subagent không đóng góp ý tưởng.
+
+Ý tưởng được giữ lại sau khi hoàn tất và cập nhật trực tiếp. Ghi chú đang làm việc và thẻ sân khấu hiển thị bong bóng màu mới nhất; ghi chú đang chờ và hoàn tất hiển thị các chấm ý tưởng cùng số lượng. Bảng chi tiết phiên gồm dòng thời gian được lưu và đoạn cấu hình có thể sao chép khi trống. Thêm đoạn sau vào chỉ dẫn dự án Claude Code (`CLAUDE.md`) hoặc Codex (`AGENTS.md`) để bật các dòng ý tưởng được đánh dấu:
+
+Dấu đánh dấu có thể có tiền tố danh sách (`-`, `*`, `•`, `1.`), nhấn mạnh Markdown (`**`, `_`, `__`) và dấu phân cách `:`, `-` hoặc `—`; ví dụ, `- **[risk]**: Giữ metadata` chỉ lưu nội dung ý tưởng.
+
+```markdown
+## Ý tưởng chính (Muro)
+Khi đưa ra quyết định làm thay đổi kết quả cuối cùng, hãy viết một dòng riêng ngắn gọn (tối đa 90 ký tự), bắt đầu bằng một trong các dấu sau:
+[approach] cách bạn sẽ giải quyết
+[pivot] thay đổi kế hoạch
+[risk] điều có thể làm hỏng kết quả
+[improvement] điều làm kết quả tốt hơn hoặc đơn giản hơn
+Chỉ ghi ý tưởng tổng thể, không phải từng bước: từ 2 đến 6 ý tưởng mỗi tác vụ.
+```
 
 ---
 

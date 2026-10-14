@@ -12,6 +12,7 @@ const dbModule = require("../db");
 const { stmts, db } = dbModule;
 const { broadcast } = require("../websocket");
 const TranscriptCache = require("../lib/transcript-cache");
+const { storeSessionKeyIdeas } = require("../lib/key-ideas");
 const {
   scanAndImportSubagents,
   findSessionSubagents,
@@ -960,6 +961,15 @@ const processEvent = db.transaction((hookType, data, origin = null) => {
     const result = transcriptCache.extract(data.transcript_path);
     if (result) {
       const { compaction, latestModel } = result;
+      // Only the main Claude transcript owns session-level decisions. Subagent
+      // usage is still reconciled below, but its text must never enter the wall.
+      if (
+        (!session.provider || session.provider === "claude") &&
+        !/(^|[/\\])(subagents[/\\]|agent-[^/\\]*\.jsonl$)/i.test(data.transcript_path) &&
+        storeSessionKeyIdeas(stmts, sessionId, result.keyIdeas)
+      ) {
+        broadcast("session_updated", stmts.getSession.get(sessionId));
+      }
 
       // Keep session.model in sync with the user's *current* model — the
       // transcript's most recent assistant entry is the source of truth, since

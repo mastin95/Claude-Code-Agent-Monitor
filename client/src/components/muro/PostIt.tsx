@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { formatDuration, formatTime, getCurrentLocale } from "../../lib/format";
 import { AWAITING_REASON_CONFIG, sessionAwaitingReason } from "../../lib/types";
 import { Mascot } from "./Mascot";
+import { IdeaBubble, IdeaDots, sessionIdeas } from "./KeyIdeas";
 import { modeFor, paper, rotation, sessionTitle, type Lane, type MuroSession } from "./model";
 
 export function PostIt({
@@ -34,6 +35,8 @@ export function PostIt({
         ? t(`note.reason.${reason}`)
         : t("note.done", { time: formatTime(session.ended_at!) });
   const progress = lane === "working" && session.todo_summary?.total ? session.todo_summary : null;
+  const ideas = sessionIdeas(session);
+  const latest = ideas[ideas.length - 1];
   return (
     <button
       ref={buttonRef}
@@ -45,10 +48,10 @@ export function PostIt({
           "--rotation": `${rotation(session.id)}deg`,
         } as CSSProperties
       }
-      aria-label={t("note.open", { title, agent, state: label })}
+      aria-label={`${t("note.open", { title, agent, state: label })}${latest ? `. ${t("ideas.latest", { kind: t(`ideas.kinds.${latest.kind}`), text: latest.text })}` : ""}`}
       onClick={onOpen}
     >
-      <span className="muro-scene">
+      <span className={`muro-scene${lane === "working" && latest ? " muro-scene-ideas" : ""}`}>
         <span
           className={`muro-tag ${lane === "waiting" && AWAITING_REASON_CONFIG[reason].urgent ? "muro-urgent" : ""}`}
         >
@@ -60,6 +63,7 @@ export function PostIt({
           size={98}
           reducedMotion={reducedMotion}
         />
+        {lane === "working" && <IdeaBubble ideas={ideas} reducedMotion={reducedMotion} />}
       </span>
       <span className="muro-note-title">{title}</span>
       {progress && (
@@ -95,6 +99,7 @@ export function PostIt({
           <span>{t("note.steps", { completed: progress.completed, total: progress.total })}</span>
         )}
       </span>
+      {lane !== "working" && <IdeaDots ideas={ideas} count />}
     </button>
   );
 }

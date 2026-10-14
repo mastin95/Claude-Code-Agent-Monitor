@@ -1,11 +1,12 @@
 /**
  * @file TranscriptCache class for efficient extraction of token usage,
  * compaction data, titles, interruption state, and compact recent human-turn
- * context from JSONL transcript files with stat-based incremental reads.
+ * context and marked assistant ideas from JSONL files with incremental reads.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
 const fs = require("fs");
+const { extractKeyIdeas, mergeKeyIdeas } = require("./key-ideas");
 const {
   bucketKey,
   emptyBucket,
@@ -202,6 +203,7 @@ class TranscriptCache {
             aiTitle: merged.aiTitle || null,
             firstUserMessage: merged.firstUserMessage || null,
             recentUserMessages: merged.recentUserMessages || [],
+            keyIdeas: merged.keyIdeas || [],
             lastInterruptTs: merged.lastInterruptTs || null,
             lastTurnTs: merged.lastTurnTs || null,
             pendingInterrupt: computePendingInterrupt(merged.lastInterruptTs, merged.lastTurnTs),
@@ -218,6 +220,7 @@ class TranscriptCache {
             !result.aiTitle &&
             !result.firstUserMessage &&
             result.recentUserMessages.length === 0 &&
+            result.keyIdeas.length === 0 &&
             !result.lastInterruptTs &&
             !result.lastTurnTs
           ) {
@@ -435,6 +438,7 @@ class TranscriptCache {
       // descriptor: compact session and agent cards use them as a bounded
       // chronological context, so a terse follow-up is still intelligible.
       recentUserMessages: [],
+      keyIdeas: [],
       // Timestamps (ISO 8601, all from Claude Code's clock) used to recover a
       // turn cancelled with no hook. `lastInterruptTs` is the most recent
       // user-interrupt (Esc) entry; `lastTurnTs` is the most recent real turn
@@ -538,6 +542,13 @@ class TranscriptCache {
     }
 
     const msg = entry.message || entry;
+    if (entry.type === "assistant" && !entry.isSidechain && Array.isArray(msg.content)) {
+      const text = msg.content
+        .filter((block) => block?.type === "text" && typeof block.text === "string")
+        .map((block) => block.text)
+        .join("\n");
+      state.keyIdeas = mergeKeyIdeas(state.keyIdeas, extractKeyIdeas(text, entry.timestamp));
+    }
     if (msg.type === "error" && msg.error) {
       state.errors.push({
         type: msg.error.type || "unknown_error",
@@ -643,6 +654,7 @@ class TranscriptCache {
       !state.aiTitle &&
       !state.firstUserMessage &&
       state.recentUserMessages.length === 0 &&
+      state.keyIdeas.length === 0 &&
       !state.lastInterruptTs &&
       !state.lastTurnTs
     ) {
@@ -683,6 +695,7 @@ class TranscriptCache {
       aiTitle: state.aiTitle,
       firstUserMessage: state.firstUserMessage,
       recentUserMessages: state.recentUserMessages,
+      keyIdeas: state.keyIdeas,
       lastInterruptTs: state.lastInterruptTs,
       lastTurnTs: state.lastTurnTs,
       pendingInterrupt: computePendingInterrupt(state.lastInterruptTs, state.lastTurnTs),
@@ -843,6 +856,7 @@ class TranscriptCache {
       aiTitle,
       firstUserMessage,
       recentUserMessages,
+      keyIdeas: mergeKeyIdeas(cached.result?.keyIdeas, incremental?.keyIdeas),
       lastInterruptTs,
       lastTurnTs,
     };

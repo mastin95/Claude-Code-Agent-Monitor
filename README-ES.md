@@ -313,7 +313,7 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 | **Progreso de tareas** | Progreso por propietario a partir de las herramientas de tareas de Claude, el `TodoWrite` heredado y `update_plan` de Codex. Las tarjetas y filas muestran vistas previas compactas. Detalles de la sesión añade segmentos de estado, trabajo activo, propietarios y paginación de 10 filas. El trabajo principal nuevo elimina el estado incompleto obsoleto, mientras que se conserva el historial completado. |
 | **Panel** | Las pestañas persistentes **Monitor** y **Salud** combinan totales del conjunto, jerarquías activas, actividad reciente, estado ponderado de éxito, caché, errores y heap, almacenamiento, herramientas, modelos, eficacia de subagentes y métricas de compactación. Salud se actualiza cada 5 segundos desde `/api/settings/info` y `/api/workflows`. |
 | **Tablero Kanban** | Las columnas de agentes cubren Trabajando, En espera, Completados y Error. Las columnas de sesiones añaden Activas y Abandonadas. Las tarjetas se paginan de 10 en 10, se suscriben solo a la vista WebSocket activa, conservan los títulos completos y explican motivos de espera como permisos, fin de turno, inactividad en el prompt o interrupción. |
-| **Muro** | Un muro visual de Claude/Codex en `/muro`: post-its de sesiones ilustrados, muñecos en vivo, tareas completadas, tokens, tiempo trabajado, racha, donut de reparto, barras de ritmo y mapa de calor de cinco semanas. Hoy / 7 días / 30 días y un filtro de agente compartido mantienen alineados el tablero y las gráficas; Cursor queda fuera. |
+| **Muro** | Un muro visual de Claude/Codex en `/muro`: post-its de sesiones ilustrados, muñecos en vivo, tareas completadas, tokens, tiempo trabajado, racha, donut de reparto, barras de ritmo y mapa de calor de cinco semanas. Hoy / 7 días / 30 días y un filtro de agente compartido mantienen alineados el tablero y las gráficas; Cursor queda fuera. Las ideas clave marcadas explícitamente aparecen en vivo como bocadillos, puntos y cronología de sesión. |
 | **Sesiones** | Historial con búsqueda, filtros y paginación del servidor, cálculo del costo de la página visible y una fila temporal en memoria para el inicio de Codex. La búsqueda cubre `id`, `name` y `cwd` con un debounce de 300 ms. Los nombres se obtienen del título explícito, el título de IA y, por último, el primer prompt relevante del usuario. |
 | **Detalles de la sesión** | Estadísticas en vivo, trabajo activo, uso de herramientas, subagentes, tokens, jerarquía, cronologías filtradas, agrupación por `tool_use_id` y renderizadores específicos por herramienta. La vista Conversación muestra turnos en cola, avisos del sistema, Markdown, código resaltado y herramientas con estilo. Los avisos de espera muestran el motivo y el tiempo transcurrido. |
 | **Feed de Actividad** | Eventos en tiempo real que se pueden pausar, con filtros compartidos, paginación del servidor, agrupación, origen por proyecto, sesión o subagente, enlaces a sesiones e insignias de estado coherentes para Claude y Codex. |
@@ -371,6 +371,24 @@ Los post-its cambian solos entre **Trabajando**, **Esperando mi OK** y **Hecho**
 Cuatro contadores muestran sesiones completadas, tokens efectivos con sus baselines, tiempo trabajado y racha de días sin límite. El resumen sigue el periodo y agente elegidos; las cifras del escenario siguen siendo de hoy. Ritmo agrupa por hora con Hoy, por día con 7 días y cada tres días con 30 días. El mapa de calor cubre los últimos 35 días locales y remarca hoy. Claude es naranja (`#D46F3A`) y Codex verde azulado (`#2BA394`). Con `prefers-reduced-motion` se paran contadores animados, transiciones, muñecos y confeti. Ritmo con Hoy empieza en la primera hora con tareas o a las 08:00, lo que ocurra antes, y termina en la hora actual con al menos ocho barras. Amplía el inicio hacia atrás cuando hace falta; antes de las 07:00 muestra 00:00–07:00.
 
 Los archivos incluyen las rutas de Claude `Edit` / `Write` / `MultiEdit` y las capturadas en nuevas llamadas Codex `apply_patch`. Los rollouts y hooks `PreToolUse` extraen `*** Add File:`, `*** Update File:` y `*** Delete File:` a `data.files` (máximo 50). Las estadísticas devuelven hasta 50 rutas únicas ordenadas; no se rellenan llamadas Codex ya ingeridas.
+
+#### Ideas clave
+
+Las ideas clave recogen solo decisiones del asistente marcadas explícitamente en el transcript de la sesión principal de Claude y en los eventos `event_msg` / `agent_message` del rollout de Codex, tanto en la ingesta en vivo como en las importaciones. Escribe una línea aparte que empiece por `[approach]`, `[pivot]`, `[risk]` o `[improvement]`; también se aceptan los alias `[enfoque]`, `[giro]`, `[riesgo]` y `[mejora]`, sin distinguir mayúsculas. Se ignoran los bloques de código, se quitan `**` y las comillas invertidas, el texto se limita a 120 caracteres, se omiten duplicados y se conservan las últimas 12 ideas en los metadatos de la sesión. Los mensajes del usuario, las salidas de herramientas y los subagentes de Claude no aportan ideas.
+
+Las ideas se conservan al completar la sesión y se actualizan en vivo. Las notas trabajando y las tarjetas del escenario muestran el último bocadillo de color; las notas en espera y hechas muestran puntos y un contador. La ficha incluye la cronología conservada y, si está vacía, un bloque de configuración que se puede copiar. Añade este bloque a las instrucciones de proyecto de Claude Code (`CLAUDE.md`) o Codex (`AGENTS.md`) para activar las líneas de ideas explícitas:
+
+Las marcas admiten una viñeta (`-`, `*`, `•`, `1.`), énfasis Markdown (`**`, `_`, `__`) y un separador `:`, `-` o `—`; por ejemplo, `- **[riesgo]**: Conservar los metadatos` guarda solo el texto de la idea.
+
+```markdown
+## Ideas clave (Muro)
+Cuando tomes una decisión que cambie el resultado final, escribe una línea aparte, corta (máx. 90 letras), que empiece por una de estas marcas:
+[enfoque] cómo vas a resolverlo
+[giro] cambias de plan
+[riesgo] algo puede romper el resultado
+[mejora] algo lo hace mejor o más simple
+Solo ideas globales, no cada paso: entre 2 y 6 por tarea.
+```
 
 ---
 

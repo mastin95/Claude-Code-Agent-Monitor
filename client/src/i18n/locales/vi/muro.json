@@ -89,5 +89,26 @@
     "loading": "Đang tải tổng hợp công việc…"
   },
   "showMore": "Xem thêm {{formatted}}",
-  "showLess": "Thu gọn"
+  "showLess": "Thu gọn",
+  "ideas": {
+    "title": "Ý tưởng chính",
+    "empty": "Chưa có ý tưởng chính",
+    "enable": "Cách bật",
+    "copy": "Sao chép",
+    "copied": "Đã sao chép",
+    "copyError": "Không thể sao chép. Hãy chọn và sao chép văn bản.",
+    "kinds": {
+      "approach": "Cách tiếp cận",
+      "pivot": "Đổi hướng",
+      "risk": "Rủi ro",
+      "improvement": "Cải tiến"
+    },
+    "count_one": "{{count}} ý tưởng",
+    "count_other": "{{count}} ý tưởng",
+    "summary_one": "{{count}} ý tưởng: {{details}}",
+    "summary_other": "{{count}} ý tưởng: {{details}}",
+    "latest": "Ý tưởng mới nhất: {{kind}} — {{text}}",
+    "legend": "Loại ý tưởng chính",
+    "setup": "## Ý tưởng chính (Muro)\nKhi đưa ra quyết định làm thay đổi kết quả cuối cùng, hãy viết một dòng riêng ngắn gọn (tối đa 90 ký tự), bắt đầu bằng một trong các dấu sau:\n[approach] cách bạn sẽ giải quyết\n[pivot] thay đổi kế hoạch\n[risk] điều có thể làm hỏng kết quả\n[improvement] điều làm kết quả tốt hơn hoặc đơn giản hơn\nChỉ ghi ý tưởng tổng thể, không phải từng bước: từ 2 đến 6 ý tưởng mỗi tác vụ."
+  }
 }

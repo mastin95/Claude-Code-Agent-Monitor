@@ -144,6 +144,15 @@ cache during hooks, imports, and watchdog sweeps; Codex derives it from durable
 `codex_user_message` records. Historical rows fall back to the main-agent task. The detail route
 returns the same optional field.
 
+**Muro key ideas.** The session `metadata` JSON may contain `key_ideas`, an
+array of up to 12 items shaped as `{ kind, text, at }`. `kind` is `approach`,
+`pivot`, `risk` or `improvement`; `text` is the cleaned decision text (at most
+120 characters), and `at` is the originating transcript record’s ISO timestamp.
+Ideas are ordered chronologically, deduplicated by kind and cleaned text, and
+preserved when the session completes. They are available through ordinary
+session reads and the existing `session_updated` notification; there is no new
+endpoint, database column or WebSocket message type.
+
 **Query Parameters:**
 
 | Parameter | Type | Default | Description |

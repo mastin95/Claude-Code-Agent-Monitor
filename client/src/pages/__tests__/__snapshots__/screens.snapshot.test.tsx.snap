@@ -5692,7 +5692,7 @@ exports[`screen snapshots > Muro 1`] = `
       <button
         aria-label="Filter by Claude"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
+        class="muro-actor  relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
         type="button"
       >
         <span
@@ -5843,7 +5843,7 @@ exports[`screen snapshots > Muro 1`] = `
       <button
         aria-label="Filter by Codex"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light opacity-[0.45]"
+        class="muro-actor  relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light opacity-[0.45]"
         disabled=""
         type="button"
       >
@@ -6131,6 +6131,43 @@ exports[`screen snapshots > Muro 1`] = `
         class="muro-board"
         tabindex="-1"
       >
+        <div
+          aria-label="Key idea types"
+          class="muro-idea-legend"
+        >
+          <span
+            style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Approach
+          </span>
+          <span
+            style="--idea-bg: #FFE08A; --idea-ink: #9A5B00; --idea-dot: #E39B00;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Pivot
+          </span>
+          <span
+            style="--idea-bg: #FFC4BE; --idea-ink: #B42318; --idea-dot: #E5483F;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Risk
+          </span>
+          <span
+            style="--idea-bg: #C9F2C3; --idea-ink: #1F7A35; --idea-dot: #2EA44F;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Improvement
+          </span>
+        </div>
         <div
           class="muro-lanes"
         >
@@ -6534,7 +6571,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
       <button
         aria-label="Filter by Claude"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
+        class="muro-actor muro-actor-ideas relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
         type="button"
       >
         <span
@@ -6688,6 +6725,53 @@ exports[`screen snapshots > Muro working stage 1`] = `
           class="relative flex flex-col gap-1.5 min-w-0"
         >
           <span
+            class="muro-idea-bubble muro-idea-stage"
+            style="--idea-bg: #FFC4BE; --idea-ink: #B42318; --idea-dot: #E5483F;"
+          >
+            <span
+              class="muro-idea-heading"
+            >
+              <span
+                class="muro-idea-kind"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  !
+                </span>
+                 
+                Risk
+              </span>
+              <span
+                class="muro-idea-count"
+              >
+                <span
+                  class="sr-only"
+                >
+                  2 ideas: 1 Approach, 1 Risk
+                </span>
+                <span
+                  aria-hidden="true"
+                  class="muro-idea-dots"
+                >
+                  <span
+                    class=""
+                    style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
+                  />
+                  <span
+                    class="latest"
+                    style="--idea-bg: #FFC4BE; --idea-ink: #B42318; --idea-dot: #E5483F;"
+                  />
+                </span>
+              </span>
+            </span>
+            <span
+              class="muro-idea-text"
+            >
+              Keep subagent ideas separate.
+            </span>
+          </span>
+          <span
             class="flex items-center gap-2 text-[17px] font-bold text-gray-100"
           >
             <span
@@ -6718,7 +6802,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
       <button
         aria-label="Filter by Codex"
         aria-pressed="false"
-        class="muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
+        class="muro-actor muro-actor-ideas relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default border-border hover:border-border-light "
         type="button"
       >
         <span
@@ -6828,6 +6912,53 @@ exports[`screen snapshots > Muro working stage 1`] = `
         <span
           class="relative flex flex-col gap-1.5 min-w-0"
         >
+          <span
+            class="muro-idea-bubble muro-idea-stage"
+            style="--idea-bg: #FFE08A; --idea-ink: #9A5B00; --idea-dot: #E39B00;"
+          >
+            <span
+              class="muro-idea-heading"
+            >
+              <span
+                class="muro-idea-kind"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  ↪
+                </span>
+                 
+                Pivot
+              </span>
+              <span
+                class="muro-idea-count"
+              >
+                <span
+                  class="sr-only"
+                >
+                  2 ideas: 1 Approach, 1 Pivot
+                </span>
+                <span
+                  aria-hidden="true"
+                  class="muro-idea-dots"
+                >
+                  <span
+                    class=""
+                    style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
+                  />
+                  <span
+                    class="latest"
+                    style="--idea-bg: #FFE08A; --idea-ink: #9A5B00; --idea-dot: #E39B00;"
+                  />
+                </span>
+              </span>
+            </span>
+            <span
+              class="muro-idea-text"
+            >
+              Reuse the session update stream.
+            </span>
+          </span>
           <span
             class="flex items-center gap-2 text-[17px] font-bold text-gray-100"
           >
@@ -7018,6 +7149,43 @@ exports[`screen snapshots > Muro working stage 1`] = `
         tabindex="-1"
       >
         <div
+          aria-label="Key idea types"
+          class="muro-idea-legend"
+        >
+          <span
+            style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Approach
+          </span>
+          <span
+            style="--idea-bg: #FFE08A; --idea-ink: #9A5B00; --idea-dot: #E39B00;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Pivot
+          </span>
+          <span
+            style="--idea-bg: #FFC4BE; --idea-ink: #B42318; --idea-dot: #E5483F;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Risk
+          </span>
+          <span
+            style="--idea-bg: #C9F2C3; --idea-ink: #1F7A35; --idea-dot: #2EA44F;"
+          >
+            <i
+              aria-hidden="true"
+            />
+            Improvement
+          </span>
+        </div>
+        <div
           class="muro-lanes"
         >
           <section
@@ -7044,13 +7212,13 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 data-session-id="claude"
               >
                 <button
-                  aria-label="claude task, Claude, Cleaning. View session summary"
+                  aria-label="claude task, Claude, Cleaning. View session summary. Latest idea: Risk — Keep subagent ideas separate."
                   class="muro-note muro-mascot-hover"
                   style="--paper: #FFCFB0; --rotation: 2.4000000000000004deg;"
                   type="button"
                 >
                   <span
-                    class="muro-scene"
+                    class="muro-scene muro-scene-ideas"
                   >
                     <span
                       class="muro-tag "
@@ -7200,6 +7368,53 @@ exports[`screen snapshots > Muro working stage 1`] = `
                         />
                       </g>
                     </svg>
+                    <span
+                      class="muro-idea-bubble muro-idea-still"
+                      style="--idea-bg: #FFC4BE; --idea-ink: #B42318; --idea-dot: #E5483F;"
+                    >
+                      <span
+                        class="muro-idea-heading"
+                      >
+                        <span
+                          class="muro-idea-kind"
+                        >
+                          <span
+                            aria-hidden="true"
+                          >
+                            !
+                          </span>
+                           
+                          Risk
+                        </span>
+                        <span
+                          class="muro-idea-count"
+                        >
+                          <span
+                            class="sr-only"
+                          >
+                            2 ideas: 1 Approach, 1 Risk
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            class="muro-idea-dots"
+                          >
+                            <span
+                              class=""
+                              style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
+                            />
+                            <span
+                              class="latest"
+                              style="--idea-bg: #FFC4BE; --idea-ink: #B42318; --idea-dot: #E5483F;"
+                            />
+                          </span>
+                        </span>
+                      </span>
+                      <span
+                        class="muro-idea-text"
+                      >
+                        Keep subagent ideas separate.
+                      </span>
+                    </span>
                   </span>
                   <span
                     class="muro-note-title"
@@ -7247,7 +7462,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 data-session-id="codex"
               >
                 <button
-                  aria-label="codex task, Codex, Permission needed. View session summary"
+                  aria-label="codex task, Codex, Permission needed. View session summary. Latest idea: Pivot — Reuse the session update stream."
                   class="muro-note muro-mascot-hover"
                   style="--paper: #F6E7A6; --rotation: 2.4000000000000004deg;"
                   type="button"
@@ -7379,6 +7594,33 @@ exports[`screen snapshots > Muro working stage 1`] = `
                       299K tokens
                     </span>
                   </span>
+                  <span
+                    class="muro-idea-count"
+                  >
+                    <span
+                      class="sr-only"
+                    >
+                      2 ideas: 1 Approach, 1 Pivot
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      class="muro-idea-dots"
+                    >
+                      <span
+                        class=""
+                        style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
+                      />
+                      <span
+                        class="latest"
+                        style="--idea-bg: #FFE08A; --idea-ink: #9A5B00; --idea-dot: #E39B00;"
+                      />
+                    </span>
+                    <span
+                      aria-hidden="true"
+                    >
+                      2 ideas
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -7407,7 +7649,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
                 data-session-id="done"
               >
                 <button
-                  aria-label="Completed design, Claude, Done 11:00 AM. View session summary"
+                  aria-label="Completed design, Claude, Done 11:00 AM. View session summary. Latest idea: Improvement — Keep the live session history."
                   class="muro-note muro-mascot-hover"
                   style="--paper: #FFCFB0; --rotation: -0.8deg;"
                   type="button"
@@ -7557,6 +7799,29 @@ exports[`screen snapshots > Muro working stage 1`] = `
                     </span>
                     <span>
                       12K tokens
+                    </span>
+                  </span>
+                  <span
+                    class="muro-idea-count"
+                  >
+                    <span
+                      class="sr-only"
+                    >
+                      1 idea: 1 Improvement
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      class="muro-idea-dots"
+                    >
+                      <span
+                        class="latest"
+                        style="--idea-bg: #C9F2C3; --idea-ink: #1F7A35; --idea-dot: #2EA44F;"
+                      />
+                    </span>
+                    <span
+                      aria-hidden="true"
+                    >
+                      1 idea
                     </span>
                   </span>
                 </button>

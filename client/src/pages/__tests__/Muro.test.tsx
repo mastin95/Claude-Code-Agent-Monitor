@@ -91,6 +91,39 @@ describe("Muro", () => {
     });
   });
 
+  it("refreshes both agents' idea bubbles on the existing session_updated event", async () => {
+    vi.mocked(api.sessions.list).mockResolvedValue(list([session("claude"), session("codex")]));
+    const { container } = render(<Muro />);
+    await screen.findByText("Limpiando: Task claude");
+    expect(container.querySelector(".muro-idea-bubble")).toBeNull();
+    vi.mocked(api.sessions.list).mockResolvedValue(
+      list(
+        (["claude", "codex"] as const).map((provider) =>
+          session(provider, {
+            metadata: JSON.stringify({
+              key_ideas: [
+                { kind: "approach", text: `Idea ${provider}`, at: "2026-10-14T10:00:00Z" },
+              ],
+            }),
+          })
+        )
+      )
+    );
+    act(() => publish("session_updated"));
+    await waitFor(() => expect(container.querySelectorAll(".muro-idea-bubble")).toHaveLength(4));
+    for (const agent of ["Claude", "Codex"]) {
+      expect(
+        within(screen.getByRole("button", { name: `Filtrar por ${agent}` })).getByText(
+          `Idea ${agent.toLowerCase()}`
+        )
+      ).toBeVisible();
+    }
+    act(() => setScope({ mode: "all", selected: [], provider: "claude" }));
+    const codex = await screen.findByRole("button", { name: "Filtrar por Codex" });
+    expect(codex).toBeDisabled();
+    expect(within(codex).queryByText("Idea codex")).not.toBeInTheDocument();
+  });
+
   it("uses the freshest working session for each provider and today's independent totals", async () => {
     vi.mocked(api.sessions.list).mockResolvedValue(
       list([

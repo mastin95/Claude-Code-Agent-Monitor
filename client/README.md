@@ -538,6 +538,14 @@ heatmap covers the last 35 dates (up to six partial calendar columns), marks
 today and exposes date/count tooltips. Claude is `#D46F3A`, Codex `#2BA394`.
 Reduced motion disables counter animations and chart transitions as well as board motion.
 
+Key ideas read the retained `metadata.key_ideas` array from each session. Working
+notes and stage cards show the latest colored idea; waiting and completed notes
+show type dots and a count. The session sheet presents the retained timeline and,
+when empty, localized instructions with a copyable setup snippet. Only explicit
+assistant markers are captured: no user-message, tool-output or subagent
+inference. Ordinary `session_updated` refreshes keep ideas live after capture;
+completed sessions retain their ideas.
+
 ### Route Structure
 
 ```mermaid
