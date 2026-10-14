@@ -657,6 +657,24 @@ graph TB
     style Broadcast fill:#F59E0B
 ```
 
+### Muro key ideas
+
+Transcript ingestion also extracts explicitly marked assistant decisions for Muro.
+For Claude, only `text` blocks in assistant messages from the main session
+transcript qualify; subagent transcripts, user messages and tool output are
+excluded. For Codex, only rollout `event_msg` records with type `agent_message`
+qualify. Live ingestion and history imports share this behavior.
+
+A separate line must start with `[approach]`, `[pivot]`, `[risk]` or
+`[improvement]`, or the Spanish aliases `[enfoque]`, `[giro]`, `[riesgo]` and
+`[mejora]`, case-insensitively. Fenced code is ignored, `**` and backticks are
+removed, and text is limited to 120 characters. The originating record timestamp
+becomes `at`. The latest 12 unique ideas merge into `sessions.metadata.key_ideas`
+without clearing unrelated metadata or the completed session’s idea history.
+The ordinary `session_updated` broadcast refreshes the Muro; no hook event,
+WebSocket message type or database schema is added. See the [setup snippet](../README-EN.md#key-ideas)
+for project instructions that opt in to these markers.
+
 ### Transcript-derived sync
 
 Cursor uses the same fail-safe hook transport where available, but its native lifecycle starts under `~/.cursor/chats`, not in the later JSONL. The watcher creates `provider = 'cursor'` rows from `meta.json` at CLI launch, changes the main agent from waiting to working when `prompt_history.json` gains a submitted turn, persists a deduplicated `cursor_user_message` for Timeline/last-active state, and broadcasts the same session/agent/event WebSocket frames as hooks. A hook payload whose `transcript_path` matches `~/.cursor/projects/*/agent-transcripts/<session>/<session>.jsonl` is still classified as Cursor. The enrichment pass joins the canonical transcript when it arrives, updates native title/cwd/turn metadata, imports sibling `subagents/*.jsonl`, and snapshots the files under the dashboard data directory.

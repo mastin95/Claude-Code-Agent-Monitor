@@ -89,5 +89,24 @@
     "loading": "Cargando el resumen de trabajo…"
   },
   "showMore": "Ver {{formatted}} más",
-  "showLess": "Ver menos"
+  "showLess": "Ver menos",
+  "ideas": {
+    "title": "Ideas clave",
+    "empty": "Aún no hay ideas clave",
+    "enable": "Cómo activarlas",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "copyError": "No se pudo copiar. Selecciona y copia el texto.",
+    "kinds": {
+      "approach": "Enfoque",
+      "pivot": "Giro",
+      "risk": "Riesgo",
+      "improvement": "Mejora"
+    },
+    "count": "{{count}} ideas",
+    "summary": "{{count}} ideas: {{details}}",
+    "latest": "Última idea: {{kind}} — {{text}}",
+    "legend": "Tipos de ideas clave",
+    "setup": "## Ideas clave (Muro)\nCuando tomes una decisión que cambie el resultado final, escribe una línea aparte, corta (máx. 90 letras), que empiece por una de estas marcas:\n[enfoque] cómo vas a resolverlo\n[giro] cambias de plan\n[riesgo] algo puede romper el resultado\n[mejora] algo lo hace mejor o más simple\nSolo ideas globales, no cada paso: entre 2 y 6 por tarea."
+  }
 }

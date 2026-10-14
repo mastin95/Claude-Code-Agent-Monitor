@@ -18,6 +18,7 @@ import { isSessionAwaitingInput, type MuroSummary, type Session } from "../lib/t
 import { Mascot, type MuroAgent } from "../components/muro/Mascot";
 import { Board } from "../components/muro/Board";
 import { Kpis, Charts } from "../components/muro/Insights";
+import { IdeaBubble, sessionIdeas } from "../components/muro/KeyIdeas";
 import { isMuroSession, sessionTitle } from "../components/muro/model";
 import { mergeFreshestById } from "../lib/merge-by-id";
 import "@fontsource/caveat/latin-400.css";
@@ -257,6 +258,7 @@ export function Muro() {
                 (candidate) => candidate.provider === agent && isSessionAwaitingInput(candidate)
               );
               const session = working || waiting;
+              const ideas = excluded ? [] : sessionIdeas(session);
               const title = session ? sessionTitle(session, t("stage.untitled")) : "";
               const totals = data.summary.totals[agent];
               const name = agent === "claude" ? "Claude" : "Codex";
@@ -268,7 +270,7 @@ export function Muro() {
                   disabled={excluded}
                   aria-label={t("stage.filter", { agent: name })}
                   onClick={() => toggleAgent(agent)}
-                  className={`muro-actor relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default ${effectiveFilter === agent ? "border-accent" : "border-border hover:border-border-light"} ${excluded || (effectiveFilter && effectiveFilter !== agent) ? "opacity-[0.45]" : ""}`}
+                  className={`muro-actor ${ideas.length ? "muro-actor-ideas" : ""} relative overflow-hidden flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default ${effectiveFilter === agent ? "border-accent" : "border-border hover:border-border-light"} ${excluded || (effectiveFilter && effectiveFilter !== agent) ? "opacity-[0.45]" : ""}`}
                 >
                   <span className="muro-floor" aria-hidden="true" />
                   <Mascot
@@ -278,6 +280,7 @@ export function Muro() {
                     reducedMotion={excluded}
                   />
                   <span className="relative flex flex-col gap-1.5 min-w-0">
+                    <IdeaBubble ideas={ideas} stage />
                     <span className="flex items-center gap-2 text-[17px] font-bold text-gray-100">
                       <span
                         aria-hidden="true"

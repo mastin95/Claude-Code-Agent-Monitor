@@ -11,6 +11,7 @@ import { getCurrentLocale, parseDate } from "../../lib/format";
 import { LANES, sessionLane, type Lane, type MuroSession } from "./model";
 import { PostIt } from "./PostIt";
 import { SessionSheet } from "./SessionSheet";
+import { IdeaLegend } from "./KeyIdeas";
 import { confetti, useReducedMotion } from "./motion";
 import "./board.css";
 
@@ -132,6 +133,7 @@ export function Board({
     selected && (entries.find(({ session }) => session.id === selected.session.id) ?? selected);
   return (
     <section ref={root} className="muro-board" aria-label={t("board")} tabIndex={-1}>
+      <IdeaLegend />
       <div className="muro-lanes">
         {LANES.map((lane) => {
           const list = entries

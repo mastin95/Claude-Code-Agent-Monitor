@@ -20,6 +20,7 @@ const {
 } = require("./codex-home");
 const { getDataDir } = require("./claude-home");
 const { updatePlanArgumentIndexes } = require("./codex-plan-call");
+const { extractKeyIdeas, mergeKeyIdeas, storeSessionKeyIdeas } = require("./key-ideas");
 
 const MAX_EVENT_SUMMARY = 500;
 const CONTEXT_SHORT_LIMIT = 272000;
@@ -1238,6 +1239,7 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
   // across windows so a windowed read names the session exactly as a single
   // pass would.
   const nameOpen = carry?.nameOpen ?? (!session.name || session.name === "Codex session");
+  let keyIdeas = [];
   for (const record of records) {
     if (record.type === "session_meta") {
       meta = record.payload;
@@ -1257,6 +1259,9 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
     }
     if (record.type === "event_msg" && record.payload?.type === "token_count") {
       counters = applyTokenSnapshot(session.id, model, speed, record.payload.info || {}, counters);
+    }
+    if (record.type === "event_msg" && record.payload?.type === "agent_message") {
+      keyIdeas = mergeKeyIdeas(keyIdeas, extractKeyIdeas(record.payload.message, record.timestamp));
     }
     const userMessage = codexUserMessage(record);
     const promptKey = codexUserMessageKey(record, userMessage);
@@ -1294,6 +1299,7 @@ function ingestCodexTranscriptWindow(transcriptPath, options, carry) {
   }
 
   syncCodexCardContext(session.id, agentId);
+  storeSessionKeyIdeas(stmts, session.id, keyIdeas);
   setSessionMetadataFlag(session.id, "card_context_version", CARD_CONTEXT_VERSION);
 
   stmts.upsertCodexIngestState.run(

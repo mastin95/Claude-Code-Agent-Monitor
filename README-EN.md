@@ -314,7 +314,7 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 | **Task Progress** | Owner-aware progress from Claude task tools, legacy `TodoWrite`, and Codex `update_plan`. Compact previews appear on cards and rows; Session Detail adds status segments, active work, owners, and 10-row paging. New top-level work clears stale unfinished state, while completed history remains. |
 | **Dashboard** | Persistent **Monitor** and **Health** tabs combine fleet totals, active hierarchies, recent activity, weighted success/cache/error/heap health, storage, tools, models, subagent effectiveness, and compaction metrics. Health refreshes every 5 seconds from `/api/settings/info` and `/api/workflows`. |
 | **Kanban Board** | Agent columns cover Working, Waiting, Completed, and Error; session columns add Active and Abandoned. Cards page 10 at a time, subscribe only to the active WebSocket view, preserve full titles, and explain waiting reasons such as permission input, turn completion, prompt idle, or interruption. |
-| **Muro** | A visual Claude/Codex wall at `/muro`: illustrated session post-its, live mascots, completed tasks, tokens, worked time, streaks, a completion donut, rhythm bars and a five-week heatmap. Today / 7 days / 30 days and a shared agent filter keep the board and charts aligned; Cursor is excluded. |
+| **Muro** | A visual Claude/Codex wall at `/muro`: illustrated session post-its, live mascots, completed tasks, tokens, worked time, streaks, a completion donut, rhythm bars and a five-week heatmap. Today / 7 days / 30 days and a shared agent filter keep the board and charts aligned; Cursor is excluded. Explicitly marked key ideas appear live as bubbles, dots and a retained session timeline. |
 | **Sessions** | Searchable, filterable, server-paginated history with visible-page cost calculation and a temporary in-memory Codex startup row. Search covers `id`, `name`, and `cwd` with a 300 ms debounce. Names resolve from explicit title, AI title, then the first meaningful user prompt. |
 | **Session Detail** | Live stats, active work, tool usage, subagents, tokens, hierarchy, filtered event timelines, `tool_use_id` grouping, and tool-specific renderers. Conversation view renders queued turns, system notices, Markdown, highlighted code, and styled tools; waiting banners show the reason and elapsed time. |
 | **Activity Feed** | Pausable real-time events with shared filters, server pagination, grouping, project/session/subagent origin, session links, and consistent Claude/Codex status badges. |
@@ -372,6 +372,22 @@ Post-its move automatically between **Working**, **Waiting for my OK** and **Don
 Four counters show completed sessions, effective tokens including baselines, worked time and the uncapped completion streak. The summary follows the selected period and agent; stage figures stay on today. Rhythm groups completions hourly for today, daily for 7 days and in three-day groups for 30 days. The heatmap covers the last 35 local days and marks today. Claude is orange (`#D46F3A`), Codex teal (`#2BA394`). Counter animations, transitions, mascot movement and confetti are disabled with `prefers-reduced-motion`. Today’s rhythm starts at the first active hour or 08:00, whichever is earlier, and ends at the current hour with at least eight bars. It extends backwards when needed; before 07:00 it shows 00:00–07:00.
 
 Files include Claude `Edit` / `Write` / `MultiEdit` paths and paths captured from newly ingested Codex `apply_patch` calls. Rollouts and `PreToolUse` hooks extract `*** Add File:`, `*** Update File:` and `*** Delete File:` into `data.files` (up to 50). Session statistics return up to 50 unique sorted paths; previously ingested Codex calls are not backfilled.
+
+#### Key ideas
+
+Key ideas capture only explicitly marked assistant decisions from the main Claude session transcript and Codex rollout `event_msg` / `agent_message` events, during live ingestion and imports. Write a separate line starting with `[approach]`, `[pivot]`, `[risk]` or `[improvement]`; the Spanish aliases `[enfoque]`, `[giro]`, `[riesgo]` and `[mejora]` also work, without case sensitivity. Fenced code is ignored, `**` and backticks are removed, text is limited to 120 characters, duplicates are omitted and the latest 12 ideas are retained in session metadata. User messages, tool output and Claude subagents do not contribute ideas.
+
+Ideas survive completion and update live. Working notes and stage cards show the latest colored bubble; waiting and done notes show idea dots and a count. The session sheet includes the retained timeline and a copyable setup snippet when empty. Add this snippet to your Claude Code (`CLAUDE.md`) or Codex (`AGENTS.md`) project instructions to enable explicit idea lines:
+
+```markdown
+## Key ideas (Muro)
+When you make a decision that changes the final result, write a short separate line (max. 90 characters) starting with one of these markers:
+[approach] how you will solve it
+[pivot] changing the plan
+[risk] something could break the result
+[improvement] something makes it better or simpler
+Only global ideas, not every step: between 2 and 6 per task.
+```
 
 ---
 

@@ -583,7 +583,19 @@ describe("screen snapshots", () => {
         total_tokens: provider === "claude" ? 150000 : 299000,
         cwd: null,
         model: null,
-        metadata: null,
+        metadata: JSON.stringify({
+          key_ideas: [
+            { kind: "approach", text: "Share the incremental parser.", at: "2026-06-10T12:01:00Z" },
+            {
+              kind: provider === "claude" ? "risk" : "pivot",
+              text:
+                provider === "claude"
+                  ? "Keep subagent ideas separate."
+                  : "Reuse the session update stream.",
+              at: "2026-06-10T12:02:00Z",
+            },
+          ],
+        }),
         started_at: "2026-06-10T12:00:00Z",
         ended_at: null,
       })),
@@ -600,7 +612,20 @@ describe("screen snapshots", () => {
           status: "completed",
           cwd: null,
           model: null,
-          metadata: null,
+          metadata: JSON.stringify({
+            key_ideas: [
+              {
+                kind: "approach",
+                text: "Share the incremental parser.",
+                at: "2026-06-10T10:01:00Z",
+              },
+              {
+                kind: "improvement",
+                text: "Keep the live session history.",
+                at: "2026-06-10T10:02:00Z",
+              },
+            ],
+          }),
           started_at: "2026-06-10T10:00:00Z",
           ended_at: "2026-06-10T11:00:00Z",
           total_tokens: 12000,

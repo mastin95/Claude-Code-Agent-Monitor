@@ -1,0 +1,210 @@
+/**
+ * @file ideas.css
+ * @description Decision colors, compact thought bubbles, idea dots and the session timeline.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+.muro-idea-bubble,
+.muro-idea-timeline li {
+  color: var(--idea-ink);
+  background: var(--idea-bg);
+  border: 2px solid color-mix(in srgb, var(--idea-ink) 55%, transparent);
+  border-radius: 12px;
+  padding: 6px 8px;
+  min-width: 0;
+}
+.muro-idea-bubble {
+  display: block;
+  position: relative;
+  animation: muro-idea-arrive 180ms ease-out;
+}
+.muro-idea-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  min-width: 0;
+  font-size: 10px;
+}
+.muro-idea-kind {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.muro-idea-text {
+  display: block;
+  font-family: "Caveat", cursive;
+  font-size: 20px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+  margin-top: 3px;
+}
+.muro-idea-count {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 10px;
+}
+.muro-idea-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.muro-idea-dots > span {
+  width: 4px;
+  height: 4px;
+  background: var(--idea-dot);
+  border-radius: 50%;
+}
+.muro-idea-dots .latest {
+  outline: 1px solid var(--idea-ink);
+  outline-offset: 1px;
+}
+.muro-scene.muro-scene-ideas {
+  height: 128px;
+  justify-content: flex-start;
+}
+.muro-scene-ideas > svg {
+  width: 72.52px;
+  height: 72.52px;
+  flex-shrink: 0;
+}
+.muro-scene-ideas > .muro-idea-bubble {
+  position: absolute;
+  left: 72px;
+  right: 5px;
+  top: 34px;
+}
+.muro-scene-ideas .muro-idea-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 18px;
+  line-height: 20px;
+}
+.muro-idea-bubble::before,
+.muro-idea-bubble::after {
+  content: "";
+  position: absolute;
+  background: var(--idea-bg);
+  border: 1px solid color-mix(in srgb, var(--idea-ink) 55%, transparent);
+  border-radius: 50%;
+  width: 9px;
+  height: 9px;
+  bottom: -10px;
+  left: 3px;
+}
+.muro-idea-bubble::after {
+  width: 5px;
+  height: 5px;
+  left: -7px;
+  bottom: -17px;
+}
+.muro-idea-stage {
+  max-width: 380px;
+  width: 100%;
+  margin-bottom: 9px;
+}
+.muro-idea-stage .muro-idea-text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.muro-actor-ideas {
+  min-height: 178px;
+}
+.muro-idea-legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+.muro-idea-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.muro-idea-legend i {
+  width: 6px;
+  height: 6px;
+  background: var(--idea-dot);
+  border-radius: 50%;
+}
+.muro-idea-timeline {
+  border-left: 2px solid #1b1a2433;
+  margin-left: 5px;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.muro-idea-timeline li {
+  position: relative;
+  list-style: none;
+  padding: 10px 12px;
+}
+.muro-idea-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -23px;
+  top: 13px;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--idea-dot);
+}
+.muro-idea-help {
+  margin-top: 8px;
+  font-size: 12px;
+}
+.muro-idea-help summary {
+  cursor: pointer;
+}
+.muro-idea-help pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #ffffff66;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+.muro-idea-help button {
+  text-decoration: underline;
+  margin-right: 10px;
+}
+/* Give thought bubbles enough room before the narrow-screen single-column board. */
+@media (min-width: 901px) and (max-width: 1400px) {
+  .muro-body:has(.muro-scene-ideas) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .muro-body:has(.muro-scene-ideas) .muro-charts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@keyframes muro-idea-arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.muro-idea-still {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .muro-idea-bubble {
+    animation: none;
+    transition: none;
+  }
+}

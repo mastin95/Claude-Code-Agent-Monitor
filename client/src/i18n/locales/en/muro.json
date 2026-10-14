@@ -89,5 +89,24 @@
     "loading": "Loading work summary…"
   },
   "showMore": "Show {{formatted}} more",
-  "showLess": "Show less"
+  "showLess": "Show less",
+  "ideas": {
+    "title": "Key ideas",
+    "empty": "No key ideas yet",
+    "enable": "How to enable them",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyError": "Could not copy. Select and copy the text.",
+    "kinds": {
+      "approach": "Approach",
+      "pivot": "Pivot",
+      "risk": "Risk",
+      "improvement": "Improvement"
+    },
+    "count": "{{count}} ideas",
+    "summary": "{{count}} ideas: {{details}}",
+    "latest": "Latest idea: {{kind}} — {{text}}",
+    "legend": "Key idea types",
+    "setup": "## Key ideas (Muro)\nWhen you make a decision that changes the final result, write a short separate line (max. 90 characters) starting with one of these markers:\n[approach] how you will solve it\n[pivot] changing the plan\n[risk] something could break the result\n[improvement] something makes it better or simpler\nOnly global ideas, not every step: between 2 and 6 per task."
+  }
 }

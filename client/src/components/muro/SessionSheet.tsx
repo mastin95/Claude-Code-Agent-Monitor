@@ -13,6 +13,7 @@ import type { SessionStats } from "../../lib/types";
 import { formatDuration, getCurrentLocale } from "../../lib/format";
 import { Skeleton } from "../Skeleton";
 import { Mascot } from "./Mascot";
+import { IdeaTimeline, sessionIdeas } from "./KeyIdeas";
 import { modeFor, paper, rotation, sessionTitle, type Lane, type MuroSession } from "./model";
 
 export function SessionSheet({
@@ -143,7 +144,7 @@ export function SessionSheet({
         }
         if (event.key !== "Tab") return;
         const elements = panel.current?.querySelectorAll<HTMLElement>(
-          "button:not(:disabled), a[href]"
+          ":is(button:not(:disabled), a[href], summary)"
         );
         if (!elements?.length) return;
         const first = elements[0],
@@ -189,6 +190,7 @@ export function SessionSheet({
         <p className="muro-ask">
           <b>{t("sheet.ask")}</b> {session.prompt_preview || t("sheet.noPrompt")}
         </p>
+        <IdeaTimeline ideas={sessionIdeas(session)} />
         {error ? (
           <div role="alert" className="muro-sheet-message">
             <p>{t("sheet.error")}</p>
