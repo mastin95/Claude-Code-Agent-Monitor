@@ -76,6 +76,35 @@ it("normalizes bilingual markers, strips markup, clips Unicode, and ignores code
   assert.deepEqual(mergeKeyIdeas(many, [many[14]]), many.slice(3));
 });
 
+it("accepts list bullets, emphasized markers and separators without including them in the idea", () => {
+  for (const [line, kind, text] of [
+    ["**[riesgo]** texto", "risk", "texto"],
+    ["- [giro] texto", "pivot", "texto"],
+    ["[Mejora]: texto", "improvement", "texto"],
+    ["* [ENFOQUE] texto", "approach", "texto"],
+    ["• _[Risk]_ — texto", "risk", "texto"],
+    ["1. **[Pivot]** - texto", "pivot", "texto"],
+    ["12. _[improvement]_: **menos** `código`", "improvement", "menos código"],
+    ["  - __[approach]__ : una fuente", "approach", "una fuente"],
+    ["[risk]—texto", "risk", "texto"],
+    [
+      "_[enfoque]_ texto: conserva - el resto — aquí",
+      "approach",
+      "texto: conserva - el resto — aquí",
+    ],
+  ]) {
+    assert.deepEqual(extractKeyIdeas(line, at), [{ kind, text, at }], line);
+  }
+  assert.deepEqual(
+    extractKeyIdeas(
+      "```md\n- **[risk]** código\n```\n~~~\n1. _[giro]_: código\n~~~\n    * [risk] código indentado\nTexto - [giro] inline\n**[risk]_ mal cerrado\n[mejora]:",
+      at
+    ),
+    []
+  );
+  assert.equal(extractKeyIdeas("[giro] texto\n- **[PIVOT]**: texto", at).length, 1);
+});
+
 it("carries Claude ideas across incremental reads and excludes user, thinking and sidechain text", () => {
   const file = path.join(temp, "cache.jsonl");
   append(file, [

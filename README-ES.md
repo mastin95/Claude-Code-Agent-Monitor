@@ -378,6 +378,8 @@ Las ideas clave recogen solo decisiones del asistente marcadas explícitamente e
 
 Las ideas se conservan al completar la sesión y se actualizan en vivo. Las notas trabajando y las tarjetas del escenario muestran el último bocadillo de color; las notas en espera y hechas muestran puntos y un contador. La ficha incluye la cronología conservada y, si está vacía, un bloque de configuración que se puede copiar. Añade este bloque a las instrucciones de proyecto de Claude Code (`CLAUDE.md`) o Codex (`AGENTS.md`) para activar las líneas de ideas explícitas:
 
+Las marcas admiten una viñeta (`-`, `*`, `•`, `1.`), énfasis Markdown (`**`, `_`, `__`) y un separador `:`, `-` o `—`; por ejemplo, `- **[riesgo]**: Conservar los metadatos` guarda solo el texto de la idea.
+
 ```markdown
 ## Ideas clave (Muro)
 Cuando tomes una decisión que cambie el resultado final, escribe una línea aparte, corta (máx. 90 letras), que empiece por una de estas marcas:

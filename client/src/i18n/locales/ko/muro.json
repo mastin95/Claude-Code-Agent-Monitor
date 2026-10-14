@@ -103,8 +103,10 @@
       "risk": "위험",
       "improvement": "개선"
     },
-    "count": "아이디어 {{count}}개",
-    "summary": "아이디어 {{count}}개: {{details}}",
+    "count_one": "아이디어 {{count}}개",
+    "count_other": "아이디어 {{count}}개",
+    "summary_one": "아이디어 {{count}}개: {{details}}",
+    "summary_other": "아이디어 {{count}}개: {{details}}",
     "latest": "최신 아이디어: {{kind}} — {{text}}",
     "legend": "핵심 아이디어 유형",
     "setup": "## 핵심 아이디어 (Muro)\n최종 결과를 바꾸는 결정을 내릴 때 다음 표식 중 하나로 시작하는 짧은 별도 줄(최대 90자)을 작성하세요:\n[approach] 해결할 방법\n[pivot] 계획 변경\n[risk] 결과를 망칠 수 있는 요소\n[improvement] 더 좋거나 간단하게 만드는 요소\n매 단계가 아닌 전체적인 아이디어만 기록하세요. 작업당 2~6개입니다."

@@ -379,6 +379,8 @@ Tệp gồm đường dẫn Claude `Edit` / `Write` / `MultiEdit` và đường 
 
 Ý tưởng được giữ lại sau khi hoàn tất và cập nhật trực tiếp. Ghi chú đang làm việc và thẻ sân khấu hiển thị bong bóng màu mới nhất; ghi chú đang chờ và hoàn tất hiển thị các chấm ý tưởng cùng số lượng. Bảng chi tiết phiên gồm dòng thời gian được lưu và đoạn cấu hình có thể sao chép khi trống. Thêm đoạn sau vào chỉ dẫn dự án Claude Code (`CLAUDE.md`) hoặc Codex (`AGENTS.md`) để bật các dòng ý tưởng được đánh dấu:
 
+Dấu đánh dấu có thể có tiền tố danh sách (`-`, `*`, `•`, `1.`), nhấn mạnh Markdown (`**`, `_`, `__`) và dấu phân cách `:`, `-` hoặc `—`; ví dụ, `- **[risk]**: Giữ metadata` chỉ lưu nội dung ý tưởng.
+
 ```markdown
 ## Ý tưởng chính (Muro)
 Khi đưa ra quyết định làm thay đổi kết quả cuối cùng, hãy viết một dòng riêng ngắn gọn (tối đa 90 ký tự), bắt đầu bằng một trong các dấu sau:

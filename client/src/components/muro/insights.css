@@ -191,7 +191,7 @@
 .muro-note-wrap.muro-dimmed {
   opacity: 0.25;
 }
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   .muro-body {
     grid-template-columns: minmax(0, 1fr);
   }

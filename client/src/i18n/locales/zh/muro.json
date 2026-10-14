@@ -103,8 +103,10 @@
       "risk": "风险",
       "improvement": "改进"
     },
-    "count": "{{count}} 条想法",
-    "summary": "{{count}} 条想法：{{details}}",
+    "count_one": "{{count}} 条想法",
+    "count_other": "{{count}} 条想法",
+    "summary_one": "{{count}} 条想法：{{details}}",
+    "summary_other": "{{count}} 条想法：{{details}}",
     "latest": "最新想法：{{kind}} — {{text}}",
     "legend": "关键想法类型",
     "setup": "## 关键想法（Muro）\n当你做出会改变最终结果的决定时，单独写一行简短文字（最多 90 个字符），以以下标记之一开头：\n[approach] 你将如何解决问题\n[pivot] 改变计划\n[risk] 可能破坏结果的因素\n[improvement] 让结果更好或更简单的改进\n只记录全局想法，不记录每一步：每项任务 2 到 6 条。"

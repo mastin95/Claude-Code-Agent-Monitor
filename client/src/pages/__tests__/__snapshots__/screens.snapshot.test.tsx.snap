@@ -7807,16 +7807,12 @@ exports[`screen snapshots > Muro working stage 1`] = `
                     <span
                       class="sr-only"
                     >
-                      2 ideas: 1 Approach, 1 Improvement
+                      1 idea: 1 Improvement
                     </span>
                     <span
                       aria-hidden="true"
                       class="muro-idea-dots"
                     >
-                      <span
-                        class=""
-                        style="--idea-bg: #E4DCFF; --idea-ink: #5536D6; --idea-dot: #7B5CFF;"
-                      />
                       <span
                         class="latest"
                         style="--idea-bg: #C9F2C3; --idea-ink: #1F7A35; --idea-dot: #2EA44F;"
@@ -7825,7 +7821,7 @@ exports[`screen snapshots > Muro working stage 1`] = `
                     <span
                       aria-hidden="true"
                     >
-                      2 ideas
+                      1 idea
                     </span>
                   </span>
                 </button>

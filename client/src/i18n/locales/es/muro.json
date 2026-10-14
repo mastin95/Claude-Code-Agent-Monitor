@@ -103,8 +103,10 @@
       "risk": "Riesgo",
       "improvement": "Mejora"
     },
-    "count": "{{count}} ideas",
-    "summary": "{{count}} ideas: {{details}}",
+    "count_one": "{{count}} idea",
+    "count_other": "{{count}} ideas",
+    "summary_one": "{{count}} idea: {{details}}",
+    "summary_other": "{{count}} ideas: {{details}}",
     "latest": "Última idea: {{kind}} — {{text}}",
     "legend": "Tipos de ideas clave",
     "setup": "## Ideas clave (Muro)\nCuando tomes una decisión que cambie el resultado final, escribe una línea aparte, corta (máx. 90 letras), que empiece por una de estas marcas:\n[enfoque] cómo vas a resolverlo\n[giro] cambias de plan\n[riesgo] algo puede romper el resultado\n[mejora] algo lo hace mejor o más simple\nSolo ideas globales, no cada paso: entre 2 y 6 por tarea."

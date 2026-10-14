@@ -615,11 +615,6 @@ describe("screen snapshots", () => {
           metadata: JSON.stringify({
             key_ideas: [
               {
-                kind: "approach",
-                text: "Share the incremental parser.",
-                at: "2026-06-10T10:01:00Z",
-              },
-              {
                 kind: "improvement",
                 text: "Keep the live session history.",
                 at: "2026-06-10T10:02:00Z",

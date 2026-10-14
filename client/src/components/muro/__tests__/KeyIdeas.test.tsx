@@ -101,6 +101,21 @@ it("labels all four legend types and leaves empty dot lists hidden", () => {
     expect(screen.getByText(name)).toBeVisible();
   expect(container.querySelector(".muro-idea-count")).toBeNull();
 });
+it.each([
+  ["en", "1 idea", "2 ideas", ":"],
+  ["es", "1 idea", "2 ideas", ":"],
+  ["zh", "1 条想法", "2 条想法", "："],
+  ["vi", "1 ý tưởng", "2 ý tưởng", ":"],
+  ["ko", "아이디어 1개", "아이디어 2개", ":"],
+])("uses localized singular and plural idea labels in %s", async (language, one, other, colon) => {
+  await i18n.changeLanguage(language);
+  const { container, rerender } = render(<IdeaDots ideas={ideas.slice(0, 1)} count />);
+  expect(screen.getByText(one, { exact: true })).toBeVisible();
+  expect(container.querySelector(".sr-only")?.textContent).toMatch(new RegExp(`^${one}${colon}`));
+  rerender(<IdeaDots ideas={ideas.slice(0, 2)} count />);
+  expect(screen.getByText(other, { exact: true })).toBeVisible();
+  expect(container.querySelector(".sr-only")?.textContent).toMatch(new RegExp(`^${other}${colon}`));
+});
 it.each(["working", "waiting", "done"] as const)(
   "renders the correct %s note treatment and includes the last idea in its name",
   (lane) => {

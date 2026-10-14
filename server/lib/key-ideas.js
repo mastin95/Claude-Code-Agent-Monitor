@@ -42,13 +42,13 @@ function extractKeyIdeas(text, at) {
     // Four-space/tab indented Markdown code is code too.
     if (/^( {4}|\t)/.test(line)) continue;
     const match = line.match(
-      /^\s*\[(enfoque|approach|giro|pivot|riesgo|risk|mejora|improvement)\]\s*(.*)$/i
+      /^\s*(?:(?:[-*•]|\d+\.)\s+)?(\*\*|_{1,2})?\[(enfoque|approach|giro|pivot|riesgo|risk|mejora|improvement)\]\1\s*[:—-]?\s*(.*)$/i
     );
     if (!match) continue;
-    const value = Array.from(match[2].replace(/\*\*|`/g, "").trim())
+    const value = Array.from(match[3].replace(/\*\*|`/g, "").trim())
       .slice(0, 120)
       .join("");
-    if (value) ideas.push({ kind: KINDS[match[1].toLowerCase()], text: value, at: time });
+    if (value) ideas.push({ kind: KINDS[match[2].toLowerCase()], text: value, at: time });
   }
   return mergeKeyIdeas([], ideas);
 }

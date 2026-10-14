@@ -379,6 +379,8 @@ Key ideas capture only explicitly marked assistant decisions from the main Claud
 
 Ideas survive completion and update live. Working notes and stage cards show the latest colored bubble; waiting and done notes show idea dots and a count. The session sheet includes the retained timeline and a copyable setup snippet when empty. Add this snippet to your Claude Code (`CLAUDE.md`) or Codex (`AGENTS.md`) project instructions to enable explicit idea lines:
 
+Markers may have a list prefix (`-`, `*`, `•`, `1.`), Markdown emphasis (`**`, `_`, `__`) and a `:`, `-` or `—` separator; for example, `- **[risk]**: Keep metadata` stores only the idea text.
+
 ```markdown
 ## Key ideas (Muro)
 When you make a decision that changes the final result, write a short separate line (max. 90 characters) starting with one of these markers:

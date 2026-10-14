@@ -675,6 +675,11 @@ The ordinary `session_updated` broadcast refreshes the Muro; no hook event,
 WebSocket message type or database schema is added. See the [setup snippet](../README-EN.md#key-ideas)
 for project instructions that opt in to these markers.
 
+Markers also accept an optional list prefix (`-`, `*`, `•` or `1.`), matching
+Markdown emphasis (`**`, `_` or `__`) around the marker, and a trailing `:`, `-`
+or `—` separator. For example, `- **[risk]**: Keep metadata` records only
+`Keep metadata`; these variants still ignore code blocks and deduplicate normally.
+
 ### Transcript-derived sync
 
 Cursor uses the same fail-safe hook transport where available, but its native lifecycle starts under `~/.cursor/chats`, not in the later JSONL. The watcher creates `provider = 'cursor'` rows from `meta.json` at CLI launch, changes the main agent from waiting to working when `prompt_history.json` gains a submitted turn, persists a deduplicated `cursor_user_message` for Timeline/last-active state, and broadcasts the same session/agent/event WebSocket frames as hooks. A hook payload whose `transcript_path` matches `~/.cursor/projects/*/agent-transcripts/<session>/<session>.jsonl` is still classified as Cursor. The enrichment pass joins the canonical transcript when it arrives, updates native title/cwd/turn metadata, imports sibling `subagents/*.jsonl`, and snapshots the files under the dashboard data directory.
