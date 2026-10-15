@@ -1948,7 +1948,8 @@ export interface WSMessage {
     | "conductor_round"
     | "conductor_approval"
     | "conductor_agent"
-    | "conductor_pitch";
+    | "conductor_pitch"
+    | "conductor_sheet";
   /** The message body, whose concrete shape is selected by `type` above. */
   data:
     | Session
@@ -1968,7 +1969,8 @@ export interface WSMessage {
     | ConductorRound
     | ConductorApproval
     | ConductorAgentState
-    | ConductorPitch;
+    | ConductorPitch
+    | ConductorSheet;
   /** ISO timestamp the server broadcast this message (not necessarily the
    *  same instant the underlying event occurred). */
   timestamp: string;
@@ -3008,4 +3010,58 @@ export interface ConductorOrder extends ConductorOrderRow {
   approvals: ConductorApproval[];
   runs: Partial<Record<ConductorAgentName, ConductorRunSnapshot | null>>;
   agents: Partial<Record<ConductorAgentName, ConductorAgentState>>;
+}
+
+/** One element of a whiteboard, as an agent drew it with an `@pizarra {json}` line. */
+export interface ConductorBoardElement {
+  id: string;
+  kind: "title" | "text" | "list" | "chart" | "image" | "code" | "arrow";
+  title?: string;
+  text?: string;
+  items?: string[];
+  chart?: { type: "bar" | "line" | "pie"; labels: string[]; values: number[]; unit?: string };
+  /** Agent-written mockup HTML or SVG; render only in a sandboxed, script-less iframe. */
+  html?: string;
+  code?: string;
+  /** Arrows link two element ids. */
+  from?: string;
+  to?: string;
+  label?: string;
+}
+
+/** Martin's live comment on a board still being drawn. */
+export interface ConductorBoardComment {
+  id: string;
+  element_id: string | null;
+  text: string;
+  status: "pending" | "sent" | "dropped";
+  created_at: string;
+}
+
+/** One agent's whiteboard inside a sheet. */
+export interface ConductorBoard {
+  id: string;
+  agent: ConductorAgentName;
+  status: "waiting" | "drafting" | "ready" | "error" | "stopped";
+  runId: string | null;
+  error: string | null;
+  elements: ConductorBoardElement[];
+  comments: ConductorBoardComment[];
+  created_at: string;
+  ended_at: string | null;
+}
+
+/** GET /api/conductor/sheets/:id (and WS `conductor_sheet`): one timeline item. */
+export interface ConductorSheet {
+  id: string;
+  project_id: string;
+  n: number;
+  prompt: string;
+  agents: ConductorAgentName[];
+  status: "drafting" | "done" | "error" | "stopped";
+  source_board_id: string | null;
+  source_element_id: string | null;
+  created_at: string;
+  ended_at: string | null;
+  boards: ConductorBoard[];
 }

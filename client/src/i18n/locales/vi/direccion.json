@@ -169,5 +169,55 @@
       "toque": "ĐIỂM NHẤN",
       "otra": "Ý TƯỞNG"
     }
+  },
+  "pizarra": {
+    "useFolder": "Dùng thư mục này",
+    "folder": "Dự án",
+    "noFolder": "Chọn nơi lưu dự án",
+    "load": "Mở dự án khác…",
+    "choose": "Chọn thư mục…",
+    "otherFolder": "Thư mục khác hoặc mới…",
+    "describe": "Mô tả dự án",
+    "busy": "Bảng trắng đang được vẽ. Nhấn vào bất kỳ phần tử nào để bình luận.",
+    "placeholder": "Mô tả dự án và yêu cầu mọi thứ bạn cần để chuẩn bị…",
+    "enterHint": "Enter để bắt đầu · Shift+Enter để xuống dòng",
+    "start": "Bắt đầu",
+    "drawing": "Đang vẽ: {{what}}",
+    "reading": "Đang đọc mô tả của bạn…",
+    "boardStatus": {
+      "waiting": "Đang chờ",
+      "drafting": "Đang vẽ",
+      "ready": "Hoàn tất",
+      "error": "Lỗi",
+      "stopped": "Đã dừng"
+    },
+    "count_one": "{{count}} phần tử",
+    "count_other": "{{count}} phần tử",
+    "stop": "Dừng",
+    "idle": "Viết điều bạn muốn và nhấn Enter.",
+    "pickFirst": "Trước tiên hãy chọn thư mục dự án.",
+    "boardOf": "Bảng của {{name}}",
+    "emptyTitle": "Bảng trắng sẽ hiện ở đây",
+    "emptyText": "Mô tả dự án ở trên và nhấn Enter. Claude vẽ bảng trực tiếp, sau đó Codex vẽ bảng của mình.",
+    "timeline": "Dòng thời gian",
+    "timelineEmpty": "Mỗi bảng hoàn tất được lưu ở đây.",
+    "mockup": "Bản phác",
+    "waiting": "{{name}} sẽ bắt đầu khi bảng trước hoàn tất.",
+    "commentBoard": "Bình luận bảng",
+    "askAboutBoard": "Yêu cầu về bảng này",
+    "wholeBoard": "Cả bảng",
+    "zoom": "Phóng to",
+    "correction": "Viết chỉnh sửa…",
+    "request": "Bạn muốn họ làm gì với phần này?",
+    "sendTo": "Gửi cho {{name}}",
+    "askAgent": "Nhờ {{name}}",
+    "correctionHint": "{{name}} sẽ nhận ngay khi xong bước vẽ hiện tại.",
+    "requestHint": "Mở một bảng mới trong dòng thời gian.",
+    "busyHint": "Hãy chờ bảng đang vẽ hoàn tất.",
+    "commentStatus": {
+      "pending": "đang chờ",
+      "sent": "đã gửi",
+      "dropped": "không gửi được"
+    }
   }
 }

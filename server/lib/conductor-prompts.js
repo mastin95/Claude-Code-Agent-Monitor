@@ -1,6 +1,7 @@
 /**
- * @file Spanish instructions for the conductor lead, the programming collaborator and the
- *   pitch duel (each agent proposes the project before Martin mixes ideas and picks a lead).
+ * @file Spanish instructions for the conductor lead, the programming collaborator, the
+ *   pitch duel (each agent proposes the project before Martin mixes ideas and picks a lead)
+ *   and the whiteboards (each agent draws its view of the project live, element by element).
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 function leadPrompt(text) {
@@ -71,4 +72,49 @@ ${blocks.join("\n\n")}
 ${note ? `\nNota de Martin: ${note}\n` : ""}
 Si dos ideas chocan (por ejemplo un estilo de una propuesta y las pantallas de la otra), adáptalas para que todo case y explícalo en una línea [giro].`;
 }
-module.exports = { leadPrompt, collaboratorPrompt, pitchPrompt, mixOrderText };
+const BOARD_FORMAT = `Martin ve tu pizarra en directo. Dibújala escribiendo, a medida que avanzas, una línea por elemento con este formato exacto (una sola línea, JSON válido, sin bloque de código):
+@pizarra {"id":"objetivo","kind":"text","title":"Objetivo","text":"Una frase clara"}
+Tipos de elemento:
+- title: título de la pizarra (title) y subtítulo (text). Empieza siempre por uno.
+- text: una idea (title, text).
+- list: una lista (title, items: ["…", "…"]).
+- chart: un gráfico (title, chart: {"type": "bar" | "line" | "pie", "labels": ["…"], "values": [números], "unit": "horas"}).
+- image: una maqueta o un esquema (title, html: HTML con estilos en línea o SVG en línea, sin <script> ni imágenes o fuentes externas, como mucho 640x400 px).
+- code: un fragmento corto de código o de estructura de carpetas (title, code).
+- arrow: una relación entre dos elementos ya dibujados (from, to: sus id; label opcional).
+Escribe cada elemento en cuanto lo tengas claro, no todos al final: Martin quiere ver cómo crece. Entre 6 y 14 elementos, y usa flechas para relacionar ideas. Para corregir un elemento vuelve a escribirlo con el mismo id.
+Puedes leer la carpeta actual para entender el contexto, pero NO cambies ningún archivo ni ejecutes nada que modifique el sistema.
+Estilo serio y ordenado, como una buena clase: frases cortas, en español, sin emojis.`;
+/** First turn of a whiteboard; `before` lists the boards already drawn on the same sheet. */
+function boardPrompt({ prompt, agent, before = [], source = null }) {
+  const lines = [`Martin pide: ${prompt}`];
+  if (source)
+    lines.push(
+      `Te lo pide desde la pizarra de ${source.agent === "claude" ? "Claude" : "Codex"}${
+        source.element ? `, sobre el elemento «${source.element}»` : ""
+      }. Esa pizarra decía:\n${source.summary}`
+    );
+  for (const board of before)
+    lines.push(
+      `Antes que tú, ${board.agent === "claude" ? "Claude" : "Codex"} dibujó esta pizarra:\n${board.summary}\nHaz la tuya con tu propio punto de vista${
+        agent === "codex" ? " (técnica, cómo lo construirías, riesgos y pruebas)" : ""
+      }, sin repetir lo mismo.`
+    );
+  lines.push(BOARD_FORMAT);
+  return lines.join("\n\n");
+}
+/** Martin's live corrections, delivered when the agent's current turn ends. */
+function boardCommentPrompt(comments) {
+  const lines = comments.map(
+    (c) => `- ${c.element ? `Sobre «${c.element}» (id ${c.elementId}): ` : ""}${c.text}`
+  );
+  return `Martin ha comentado tu pizarra:\n${lines.join("\n")}\nCorrígela: vuelve a escribir con @pizarra los elementos afectados (mismo id) o añade nuevos. Cuando acabes, termina.`;
+}
+module.exports = {
+  leadPrompt,
+  collaboratorPrompt,
+  pitchPrompt,
+  mixOrderText,
+  boardPrompt,
+  boardCommentPrompt,
+};

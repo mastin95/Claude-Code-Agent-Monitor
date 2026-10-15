@@ -169,5 +169,55 @@
       "toque": "SPECIAL TOUCH",
       "otra": "IDEA"
     }
+  },
+  "pizarra": {
+    "useFolder": "Use this folder",
+    "folder": "Project",
+    "noFolder": "Choose where the project will be saved",
+    "load": "Load another…",
+    "choose": "Choose folder…",
+    "otherFolder": "Another or new folder…",
+    "describe": "Describe the project",
+    "busy": "A whiteboard is being drawn. Click any element to comment on it.",
+    "placeholder": "Describe the project and ask for everything you need to prepare it…",
+    "enterHint": "Enter to start · Shift+Enter for a new line",
+    "start": "Start",
+    "drawing": "Drawing: {{what}}",
+    "reading": "Reading your description…",
+    "boardStatus": {
+      "waiting": "Waiting",
+      "drafting": "Drawing",
+      "ready": "Finished",
+      "error": "Failed",
+      "stopped": "Stopped"
+    },
+    "count_one": "{{count}} element",
+    "count_other": "{{count}} elements",
+    "stop": "Stop",
+    "idle": "Write what you want and press Enter.",
+    "pickFirst": "First choose the project folder.",
+    "boardOf": "{{name}}'s board",
+    "emptyTitle": "The whiteboard will appear here",
+    "emptyText": "Describe the project above and press Enter. Claude draws its board live, then Codex draws its own.",
+    "timeline": "Timeline",
+    "timelineEmpty": "Every finished board is saved here.",
+    "mockup": "Mockup",
+    "waiting": "{{name}} starts when the previous board is finished.",
+    "commentBoard": "Comment on the board",
+    "askAboutBoard": "Ask about this board",
+    "wholeBoard": "Whole board",
+    "zoom": "Zoom",
+    "correction": "Write a correction…",
+    "request": "What should they do with this?",
+    "sendTo": "Send to {{name}}",
+    "askAgent": "Ask {{name}}",
+    "correctionHint": "{{name}} gets it as soon as the current drawing step ends.",
+    "requestHint": "Opens a new board in the timeline.",
+    "busyHint": "Wait until the board being drawn is finished.",
+    "commentStatus": {
+      "pending": "queued",
+      "sent": "sent",
+      "dropped": "not delivered"
+    }
   }
 }

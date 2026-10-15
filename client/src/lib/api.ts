@@ -394,7 +394,9 @@ import type {
   ConductorOrderRow,
   ConductorProject,
   ConductorProjectInput,
+  ConductorAgentName,
   ConductorPitch,
+  ConductorSheet,
   ConductorPitchDepth,
   ConductorPitchPick,
   ConductorBrowse,
@@ -1970,6 +1972,29 @@ export const api = {
       request<ConductorOrder>(`/conductor/pitches/${encodeURIComponent(id)}/order`, {
         method: "POST",
         body: JSON.stringify(note ? { picks, note, lead: "claude" } : { picks, lead: "claude" }),
+      }),
+    /** POST /api/conductor/sheets - Claude then Codex draw the project on whiteboards (or one agent, called from a board). */
+    sheet: (body: {
+      projectId: string;
+      prompt: string;
+      agent?: ConductorAgentName;
+      sourceBoardId?: string;
+      sourceElementId?: string;
+    }) =>
+      request<ConductorSheet>("/conductor/sheets", { method: "POST", body: JSON.stringify(body) }),
+    /** GET /api/conductor/sheets?projectId= - the project's timeline, newest first. */
+    sheets: (projectId: string, limit = 30) =>
+      request<{ items: ConductorSheet[] }>(
+        `/conductor/sheets?${new URLSearchParams({ projectId, limit: String(limit) })}`
+      ),
+    /** DELETE /api/conductor/sheets/:id - stop the boards still being drawn. */
+    stopSheet: (id: string) =>
+      request<ConductorSheet>(`/conductor/sheets/${encodeURIComponent(id)}`, { method: "DELETE" }),
+    /** POST /api/conductor/boards/:id/comments - a live correction for the agent drawing it. */
+    commentBoard: (id: string, text: string, elementId?: string | null) =>
+      request<ConductorSheet>(`/conductor/boards/${encodeURIComponent(id)}/comments`, {
+        method: "POST",
+        body: JSON.stringify(elementId ? { text, elementId } : { text }),
       }),
   },
 

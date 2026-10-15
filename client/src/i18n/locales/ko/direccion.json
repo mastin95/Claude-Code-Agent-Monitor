@@ -169,5 +169,55 @@
       "toque": "특별한 한 수",
       "otra": "아이디어"
     }
+  },
+  "pizarra": {
+    "useFolder": "이 폴더 사용",
+    "folder": "프로젝트",
+    "noFolder": "프로젝트를 저장할 위치를 선택하세요",
+    "load": "다른 프로젝트 열기…",
+    "choose": "폴더 선택…",
+    "otherFolder": "다른 폴더 또는 새 폴더…",
+    "describe": "프로젝트 설명",
+    "busy": "화이트보드를 그리는 중입니다. 아무 요소나 클릭해 의견을 남기세요.",
+    "placeholder": "프로젝트를 설명하고 준비에 필요한 모든 것을 요청하세요…",
+    "enterHint": "Enter로 시작 · Shift+Enter로 줄바꿈",
+    "start": "시작",
+    "drawing": "그리는 중: {{what}}",
+    "reading": "설명을 읽는 중…",
+    "boardStatus": {
+      "waiting": "대기 중",
+      "drafting": "그리는 중",
+      "ready": "완료",
+      "error": "오류",
+      "stopped": "중지됨"
+    },
+    "count_one": "요소 {{count}}개",
+    "count_other": "요소 {{count}}개",
+    "stop": "중지",
+    "idle": "원하는 내용을 쓰고 Enter를 누르세요.",
+    "pickFirst": "먼저 프로젝트 폴더를 선택하세요.",
+    "boardOf": "{{name}}의 보드",
+    "emptyTitle": "여기에 화이트보드가 나타납니다",
+    "emptyText": "위에 프로젝트를 설명하고 Enter를 누르세요. Claude가 실시간으로 보드를 그리고, 이어서 Codex가 자신의 보드를 그립니다.",
+    "timeline": "타임라인",
+    "timelineEmpty": "완료된 보드는 모두 여기에 저장됩니다.",
+    "mockup": "목업",
+    "waiting": "이전 보드가 끝나면 {{name}}이(가) 시작합니다.",
+    "commentBoard": "보드에 의견 남기기",
+    "askAboutBoard": "이 보드에 대해 요청하기",
+    "wholeBoard": "보드 전체",
+    "zoom": "확대",
+    "correction": "수정 사항을 쓰세요…",
+    "request": "이것으로 무엇을 해 주길 원하나요?",
+    "sendTo": "{{name}}에게 보내기",
+    "askAgent": "{{name}}에게 요청",
+    "correctionHint": "현재 그리기 단계가 끝나면 {{name}}에게 전달됩니다.",
+    "requestHint": "타임라인에 새 보드를 엽니다.",
+    "busyHint": "그리는 중인 보드가 끝날 때까지 기다리세요.",
+    "commentStatus": {
+      "pending": "대기 중",
+      "sent": "전송됨",
+      "dropped": "전달 안 됨"
+    }
   }
 }
