@@ -1,0 +1,120 @@
+{
+  "title": "Conductor",
+  "project": {
+    "label": "Project",
+    "pick": "Pick a project",
+    "new": "＋ New"
+  },
+  "lead": {
+    "label": "Lead",
+    "badge": "★ LEAD",
+    "soon": "Soon"
+  },
+  "newProject": {
+    "title": "New project",
+    "folder": "Folder",
+    "folderHint": "/absolute/path/to/project",
+    "name": "Name",
+    "create": "Create the folder and run git init",
+    "lead": "Lead",
+    "model": "Model",
+    "effort": "Effort",
+    "default": "Default",
+    "save": "CREATE!",
+    "cancel": "Cancel",
+    "codexSoon": "Codex as lead arrives in phase 2."
+  },
+  "order": {
+    "title": "Your order",
+    "placeholder": "Tell me what you want and I'll split the work…",
+    "cta": "ON STAGE!",
+    "onoma": "TA-DA!",
+    "needProject": "Pick or create a project first.",
+    "busy": "An order is already running: send an indication."
+  },
+  "stage": {
+    "tokens": "{{value}} tokens",
+    "effort": "effort {{effort}}",
+    "defaultModel": "default model",
+    "session": "Open session",
+    "handoff": "Hand-off {{n}} · {{from}} → {{to}}",
+    "stamp": "ZAP!",
+    "since": "since {{time}}",
+    "noHandoff": "No hand-off in flight",
+    "quiet": "…"
+  },
+  "doing": {
+    "idle": "Waiting for your order",
+    "done": "Done!",
+    "stopped": "Stopped",
+    "waitingHandoff": "Waiting for a hand-off",
+    "handoff": "Waiting for Codex",
+    "waitingOk": "Waiting for your OK",
+    "command": "Running a command",
+    "editing": "Editing files",
+    "reading": "Reading code",
+    "web": "Searching the web",
+    "thinking": "Thinking",
+    "subagent": "With a helper"
+  },
+  "ok": {
+    "title": "Your OK",
+    "empty": "Nothing pending. The show goes on!",
+    "approve": "✅ Approve",
+    "change": "✏️ Change",
+    "stop": "⛔ Stop",
+    "notePlaceholder": "What should change?",
+    "send": "Send",
+    "question": "asks",
+    "permission": "asks permission",
+    "options": "Options: {{options}}",
+    "count_one": "{{count}} OK pending",
+    "count_other": "{{count}} OKs pending",
+    "detail": "Show details"
+  },
+  "score": {
+    "title": "Score",
+    "empty": "No music yet.",
+    "order": "Your order",
+    "plan": "Plan",
+    "handoff": "Hand-off {{n}} → {{to}}",
+    "reply": "Done! {{n}}",
+    "failed": "Failed! {{n}}",
+    "ok": "Your OK",
+    "result": "Result",
+    "charla": "Open in Charla",
+    "more": "Show more",
+    "less": "Show less",
+    "answer": {
+      "approve": "approved",
+      "change": "change asked",
+      "stop": "stopped",
+      "pending": "pending"
+    }
+  },
+  "status": {
+    "planning": "Planning",
+    "delegating": "Hand-off running",
+    "waiting_ok": "Waiting for your OK",
+    "done": "Done!",
+    "error": "Error",
+    "stopped": "Stopped"
+  },
+  "foot": {
+    "placeholder": "New indication for the lead…",
+    "send": "Send",
+    "stop": "Stop order",
+    "confirmStop": "Stop both agents?",
+    "yes": "Yes, stop",
+    "no": "No",
+    "queued": "Queued: it arrives when the turn ends."
+  },
+  "error": {
+    "load": "Conductor could not load.",
+    "retry": "Retry"
+  },
+  "empty": {
+    "noProjects": "Create your first project to start.",
+    "noOrder": "Give your first order."
+  }
+}

@@ -388,6 +388,60 @@ vi.mock("../../lib/api", async (importOriginal) => {
         get: r({ id: "run-1", status: "running", messages: [], envelopes: [] }),
         send: r({ messageId: "m-1" }),
         kill: r({ ok: true }),
+        models: r({ provider: "claude", dynamic: false, source: "test", items: [] }),
+      },
+      conductor: {
+        projects: r({
+          items: [
+            {
+              id: "p1",
+              cwd: "/home/martin/demo",
+              name: "Demo",
+              lead: "claude",
+              claude_model: "opus",
+              claude_effort: "high",
+              codex_model: "gpt-6-astra",
+              codex_effort: "medium",
+              codex_sandbox: "workspace-write",
+              created_at: "2026-06-10T12:00:00.000Z",
+            },
+          ],
+        }),
+        orders: r({ items: [{ id: "o1" }] }),
+        getOrder: r({
+          id: "o1",
+          project_id: "p1",
+          text: "Crea un README con el título del proyecto",
+          status: "delegating",
+          lead_run_id: "run-claude",
+          created_at: "2026-06-10T12:40:00.000Z",
+          ended_at: null,
+          plan: "1 README · 2 revisión",
+          result: null,
+          rounds: [
+            {
+              id: "r1",
+              order_id: "o1",
+              n: 1,
+              from: "claude",
+              to: "codex",
+              ask: "Escribe el README",
+              ask_at: "2026-06-10T12:41:00.000Z",
+              reply: null,
+              reply_at: null,
+              run_id: "run-codex",
+              status: "pending",
+            },
+          ],
+          approvals: [],
+          runs: {},
+          agents: {},
+        }),
+        createProject: r({}),
+        order: r({}),
+        indication: r({ queued: false }),
+        approve: r({}),
+        stopOrder: r({}),
       },
       alerts: {
         list: r({ alerts: [], total: 0, unacked: 0, limit: 50, offset: 0 }),
@@ -436,6 +490,7 @@ vi.mock("../../lib/push", () => ({
 import { Dashboard } from "../Dashboard";
 import { KanbanBoard } from "../KanbanBoard";
 import { Muro } from "../Muro";
+import { Direccion } from "../Direccion";
 import { Sessions } from "../Sessions";
 import { SessionDetail } from "../SessionDetail";
 import { ActivityFeed } from "../ActivityFeed";
@@ -733,6 +788,9 @@ describe("screen snapshots", () => {
   });
   it("Run", async () => {
     await snapshot(<Run />, "/run");
+  });
+  it("Dirección", async () => {
+    await snapshot(<Direccion />, "/direccion");
   });
   it("Settings", async () => {
     await snapshot(<Settings />, "/settings");

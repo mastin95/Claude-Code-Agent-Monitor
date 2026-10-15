@@ -301,7 +301,7 @@ La interfaz oscura y adaptable cubre todo el flujo de trabajo. Cada vista previa
   <em>⌘ <strong>Paleta de comandos</strong> · un iniciador de teclado para páginas, sesiones, proyectos, filtros y acciones</em>
 </p>
 
-La barra lateral enlaza Panel, Tablero Kanban, Muro, Charla, Sesiones, Feed de Actividad, Analíticas, Flujos, Configuración del agente, Ejecutar agente y Configuración. Las secciones siguientes describen el comportamiento completo detrás de estas vistas.
+La barra lateral enlaza Panel, Tablero Kanban, Muro, Charla, Dirección, Sesiones, Feed de Actividad, Analíticas, Flujos, Configuración del agente, Ejecutar agente y Configuración. Las secciones siguientes describen el comportamiento completo detrás de estas vistas.
 
 ---
 ## Características
@@ -315,6 +315,7 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 | **Tablero Kanban** | Las columnas de agentes cubren Trabajando, En espera, Completados y Error. Las columnas de sesiones añaden Activas y Abandonadas. Las tarjetas se paginan de 10 en 10, se suscriben solo a la vista WebSocket activa, conservan los títulos completos y explican motivos de espera como permisos, fin de turno, inactividad en el prompt o interrupción. |
 | **Muro** | Un muro visual de Claude/Codex en `/muro`: post-its de sesiones ilustrados, muñecos en vivo, tareas completadas, tokens, tiempo trabajado, racha, donut de reparto, barras de ritmo y mapa de calor de cinco semanas. Hoy / 7 días / 30 días y un filtro de agente compartido mantienen alineados el tablero y las gráficas; Cursor queda fuera. Las ideas clave marcadas explícitamente aparecen en vivo como bocadillos, puntos y cronología de sesión. Los encargos de Claude a Codex muestran peticiones, respuestas y conversaciones enlazadas. |
 | **Charla** | Lee Claude y Codex lado a lado en `/charla` con el estilo fijo Telegram Atardecer. |
+| **Dirección** | Da una orden en `/direccion`: Claude dirige, reparte el trabajo a Codex y tú solo respondes tarjetas de OK. |
 | **Sesiones** | Historial con búsqueda, filtros y paginación del servidor, cálculo del costo de la página visible y una fila temporal en memoria para el inicio de Codex. La búsqueda cubre `id`, `name` y `cwd` con un debounce de 300 ms. Los nombres se obtienen del título explícito, el título de IA y, por último, el primer prompt relevante del usuario. |
 | **Detalles de la sesión** | Estadísticas en vivo, trabajo activo, uso de herramientas, subagentes, tokens, jerarquía, cronologías filtradas, agrupación por `tool_use_id` y renderizadores específicos por herramienta. La vista Conversación muestra turnos en cola, avisos del sistema, Markdown, código resaltado y herramientas con estilo. Los avisos de espera muestran el motivo y el tiempo transcurrido. |
 | **Feed de Actividad** | Eventos en tiempo real que se pueden pausar, con filtros compartidos, paginación del servidor, agrupación, origen por proyecto, sesión o subagente, enlaces a sesiones e insignias de estado coherentes para Claude y Codex. |
@@ -366,6 +367,10 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 ### Charla
 
 Lee Claude y Codex lado a lado en `/charla` con el estilo fijo Telegram Atardecer. Selecciona un encargo para unir la sesión padre de Claude con una sesión Codex enlazada; por defecto se elige el encargo en curso más reciente. Las transcripciones reales distinguen peticiones y respuestas, razonamiento desplegable, comandos de shell con salida, diferencias de edición, lecturas y envíos y vueltas del encargo. Las cabeceras muestran estado, modelo, esfuerzo y tokens. Razonamiento, Comandos y Cambios muestran u ocultan sus bloques; las salidas largas se despliegan cuando lo necesitas. Los eventos WebSocket de la sesión solicitan nuevas líneas de transcripción mediante el cursor `after` / `last_line`. Por debajo de 900 px las columnas se apilan y la preferencia de movimiento reducido desactiva las animaciones de actividad.
+
+### Dirección
+
+Dirige a Claude y Codex desde una sola pantalla en `/direccion` (barra lateral **Dirección**). Elige o crea la carpeta del proyecto (opcionalmente con `git init`), mira quién es el jefe y da tu orden. El panel lanza al jefe —Claude en la fase 1, en modo conversación con `acceptEdits`—, que planifica y reparte el trabajo de programación a Codex con la herramienta MCP `dashboard_handoff`; el panel ejecuta al colaborador Codex en la misma carpeta y devuelve su respuesta al jefe. Todo lo que te necesita llega como tarjeta de OK: permisos de Claude (`dashboard_permission`), aprobaciones de comandos y archivos de Codex y preguntas explícitas (`dashboard_ask_user`). Apruebas, pides un cambio con una nota o paras. El escenario muestra qué hace cada agente ahora mismo con modelo, esfuerzo y tokens, y el encargo en vuelo; la Partitura guarda orden → plan → encargos → respuestas → resultado. Las indicaciones enviadas a mitad de turno esperan a que termine el turno del jefe. Los encargos también aparecen en Muro y Charla. La página escucha los mensajes WebSocket `conductor_order`, `conductor_round`, `conductor_approval` y `conductor_agent`; la API REST es `/api/conductor/*` (ver [docs/API.md](docs/API.md)).
 
 ### Muro
 

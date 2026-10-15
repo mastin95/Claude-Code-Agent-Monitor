@@ -65,6 +65,10 @@ class CodexAppServer extends EventEmitter {
         continue;
       }
       if (Object.prototype.hasOwnProperty.call(message, "id")) {
+        if (message.method) {
+          this.emit("request", message);
+          continue;
+        }
         const pending = this.pending.get(message.id);
         if (!pending) {
           this.emit("response", message);
@@ -110,6 +114,18 @@ class CodexAppServer extends EventEmitter {
         reject(err);
       }
     });
+  }
+
+  respond(id, result) {
+    if (this.closed || !this.child.stdin?.writable) return false;
+    this.child.stdin.write(JSON.stringify({ id, result }) + "\n");
+    return true;
+  }
+
+  respondError(id, code = -32601, message = "Unsupported request") {
+    if (this.closed || !this.child.stdin?.writable) return false;
+    this.child.stdin.write(JSON.stringify({ id, error: { code, message } }) + "\n");
+    return true;
   }
 
   async initialize() {

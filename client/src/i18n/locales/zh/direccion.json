@@ -1,0 +1,120 @@
+{
+  "title": "指挥",
+  "project": {
+    "label": "项目",
+    "pick": "选择项目",
+    "new": "＋ 新建"
+  },
+  "lead": {
+    "label": "负责人",
+    "badge": "★ 负责人",
+    "soon": "即将推出"
+  },
+  "newProject": {
+    "title": "新项目",
+    "folder": "文件夹",
+    "folderHint": "项目的绝对路径",
+    "name": "名称",
+    "create": "创建文件夹并执行 git init",
+    "lead": "负责人",
+    "model": "模型",
+    "effort": "推理强度",
+    "default": "默认",
+    "save": "创建！",
+    "cancel": "取消",
+    "codexSoon": "Codex 担任负责人将在第 2 阶段推出。"
+  },
+  "order": {
+    "title": "你的指令",
+    "placeholder": "告诉我你想要什么，我来分配…",
+    "cta": "开演！",
+    "onoma": "噔噔！",
+    "needProject": "请先选择或创建一个项目。",
+    "busy": "已有指令在进行中：请发送补充说明。"
+  },
+  "stage": {
+    "tokens": "{{value}} tokens",
+    "effort": "强度 {{effort}}",
+    "defaultModel": "默认模型",
+    "session": "查看会话",
+    "handoff": "委派 {{n}} · {{from}} → {{to}}",
+    "stamp": "唰！",
+    "since": "自 {{time}} 起",
+    "noHandoff": "没有进行中的委派",
+    "quiet": "…"
+  },
+  "doing": {
+    "idle": "等待你的指令",
+    "done": "完成！",
+    "stopped": "已停止",
+    "waitingHandoff": "等待委派",
+    "handoff": "等待 Codex",
+    "waitingOk": "等待你的确认",
+    "command": "正在运行命令",
+    "editing": "正在编辑文件",
+    "reading": "正在阅读代码",
+    "web": "正在搜索网络",
+    "thinking": "思考中",
+    "subagent": "与助手协作"
+  },
+  "ok": {
+    "title": "你的确认",
+    "empty": "没有待处理事项。演出继续！",
+    "approve": "✅ 批准",
+    "change": "✏️ 修改",
+    "stop": "⛔ 停止",
+    "notePlaceholder": "需要改什么？",
+    "send": "发送",
+    "question": "提问",
+    "permission": "请求权限",
+    "options": "选项：{{options}}",
+    "count_one": "{{count}} 项待确认",
+    "count_other": "{{count}} 项待确认",
+    "detail": "查看详情"
+  },
+  "score": {
+    "title": "乐谱",
+    "empty": "还没有乐章。",
+    "order": "你的指令",
+    "plan": "计划",
+    "handoff": "委派 {{n}} → {{to}}",
+    "reply": "完成！{{n}}",
+    "failed": "失败！{{n}}",
+    "ok": "你的确认",
+    "result": "结果",
+    "charla": "在 Charla 中查看",
+    "more": "展开",
+    "less": "收起",
+    "answer": {
+      "approve": "已批准",
+      "change": "已要求修改",
+      "stop": "已停止",
+      "pending": "待处理"
+    }
+  },
+  "status": {
+    "planning": "规划中",
+    "delegating": "委派进行中",
+    "waiting_ok": "等待你的确认",
+    "done": "完成！",
+    "error": "错误",
+    "stopped": "已停止"
+  },
+  "foot": {
+    "placeholder": "给负责人的新说明…",
+    "send": "发送",
+    "stop": "停止指令",
+    "confirmStop": "停止两个代理？",
+    "yes": "是，停止",
+    "no": "否",
+    "queued": "已排队：本轮结束后送达。"
+  },
+  "error": {
+    "load": "无法加载指挥页面。",
+    "retry": "重试"
+  },
+  "empty": {
+    "noProjects": "创建你的第一个项目开始吧。",
+    "noOrder": "下达你的第一条指令。"
+  }
+}

@@ -1769,3 +1769,15 @@ The server is production-ready with:
 - 📈 **Scalable** - Handles 1000s of sessions, 100+ concurrent clients
 
 For client documentation, see [client/README.md](../client/README.md).
+
+## Conductor backend (phase 1)
+
+`routes/conductor.js` mounts `/api/conductor` with the Run loopback-origin guard.
+`lib/conductor.js` orchestrates a Claude lead and a Codex collaborator through the
+existing spawners and `dashboard-runs` persistence. Projects, orders, rounds and
+approvals live in four additive `conductor_*` tables. Indications wait for Claude's
+`result`; handoffs and approvals use creation plus bounded long-poll endpoints.
+New WS types are `conductor_order`, `conductor_round`, `conductor_approval`, and
+`conductor_agent`. Session handoff metadata is retried after delayed ingestion.
+See [API contract](../docs/API.md#conductor-dirección-backend-phase-1) for payloads,
+timeouts, MCP environment and recovery behavior. UI/MCP tool wiring is separate.

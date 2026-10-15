@@ -109,7 +109,17 @@ function tail(s, n) {
  */
 const EFFORT_LEVELS = new Set(["low", "medium", "high", "xhigh", "max"]);
 
-function buildArgv({ prompt, mode, model, permissionMode, resumeSessionId, effort }) {
+function buildArgv({
+  prompt,
+  mode,
+  model,
+  permissionMode,
+  resumeSessionId,
+  effort,
+  mcpConfig,
+  allowedTools,
+  permissionPromptTool,
+}) {
   const argv = [];
   argv.push("--output-format", "stream-json");
   argv.push("--verbose");
@@ -136,6 +146,13 @@ function buildArgv({ prompt, mode, model, permissionMode, resumeSessionId, effor
   if (resumeSessionId) {
     argv.push("--resume", resumeSessionId);
   }
+  if (mcpConfig) argv.push("--mcp-config", mcpConfig);
+  if (allowedTools)
+    argv.push(
+      "--allowedTools",
+      Array.isArray(allowedTools) ? allowedTools.join(",") : allowedTools
+    );
+  if (permissionPromptTool) argv.push("--permission-prompt-tool", permissionPromptTool);
   return argv;
 }
 
@@ -194,6 +211,7 @@ function attachStreamHandlers(handle) {
         handle.envelopes.splice(0, handle.envelopes.length - MAX_ENVELOPES_PER_HANDLE);
       }
       broadcast("run_stream", { id: handle.id, envelope });
+      handle.onEnvelope?.(envelope, handle);
     },
     (err, raw) => {
       handle.stderrBuffer += `[parse-error] ${err.message}: ${raw}\n`;
@@ -219,6 +237,7 @@ function attachStreamHandlers(handle) {
       at: handle.endedAt,
     });
     patchRun({ id: handle.id, status: "error", endedAt: handle.endedAt });
+    handle.onStatus?.(handle.status, handle);
     scheduleReap(handle.id);
   });
   handle.child.on("exit", (code, signal) => {
@@ -245,6 +264,7 @@ function attachStreamHandlers(handle) {
         endedAt: handle.endedAt,
       });
     }
+    handle.onStatus?.(handle.status, handle);
     scheduleReap(handle.id);
   });
 }
@@ -307,11 +327,11 @@ function spawnRun(args) {
   }
 
   const id = randomUUID();
-  const argv = buildArgv({ prompt, mode, model, permissionMode, resumeSessionId, effort });
+  const argv = buildArgv({ ...args, prompt, mode, model, permissionMode, resumeSessionId, effort });
   // cross-spawn handles the Windows `.cmd` shim safely (see the require above);
   // deliberately no `shell` option, so argv is never parsed by cmd.exe.
   const child = spawn("claude", argv, {
-    env: cleanSpawnEnv(),
+    env: { ...cleanSpawnEnv(), ...args.env },
     cwd: cwd || process.cwd(),
     stdio: ["pipe", "pipe", "pipe"],
     windowsHide: true,
@@ -341,6 +361,8 @@ function spawnRun(args) {
     stdoutBuffer: "",
     stderrBuffer: "",
     child,
+    onEnvelope: args.onEnvelope,
+    onStatus: args.onStatus,
   };
   handles.set(id, handle);
   recordRun(handle);
@@ -425,6 +447,7 @@ function killRun(id) {
   handle.endedAt = Date.now();
   broadcast("run_status", { id, status: "killed", at: handle.endedAt });
   patchRun({ id, status: "killed", endedAt: handle.endedAt });
+  handle.onStatus?.("killed", handle);
   scheduleReap(id);
   return true;
 }

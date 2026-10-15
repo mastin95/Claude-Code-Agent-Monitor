@@ -2048,3 +2048,104 @@ The Agent Dashboard API provides:
 - ✅ **Pricing management** with custom rule support
 
 For interactive API exploration with live request/response examples, see the built-in Swagger UI at `/api/docs` and ReDoc at `/api/redoc`. For MCP integration, see [MCP.md](./MCP.md).
+
+## Conductor (Dirección, backend phase 1)
+
+All `/api/conductor/*` routes use the same loopback Origin/Referer guard as
+`/api/run`: non-loopback browser origins receive `403 EBADORIGIN`; CLI requests
+without those headers are accepted. Normal dashboard authentication still applies.
+Phase 1 supports **Claude lead → Codex collaborator**. The UI and MCP tool
+implementations are separate tasks; these endpoints are the backend contract.
+
+| Method | Path | Request / response |
+| --- | --- | --- |
+| GET | `/api/conductor/projects` | `{items: Project[]}` |
+| POST | `/api/conductor/projects` | `{cwd, name?, lead?: "claude", create?, models?}` → `201 Project` |
+| GET | `/api/conductor/orders?projectId=…&limit=20` | `{items: Order[]}` newest first (`limit` 1–100) |
+| POST | `/api/conductor/orders` | `{projectId, text}` → `201 OrderDetail` |
+| GET | `/api/conductor/orders/:id` | `OrderDetail` (order fields, `rounds`, `approvals`, `runs: {claude, codex}`, `agents`) |
+| DELETE | `/api/conductor/orders/:id` | Stop both runs, deny pending approvals, fail pending rounds; returns `OrderDetail` |
+| POST | `/api/conductor/orders/:id/indication` | `{text}` → `{queued: boolean}` |
+| POST | `/api/conductor/handoffs` | `{orderId?, leadSessionId?, cwd?, to: "codex", ask}` → `202 {roundId}` |
+| GET | `/api/conductor/handoffs/:roundId?waitMs=100000` | `{status: "pending" \| "done" \| "error", reply: string \| null}` |
+| POST | `/api/conductor/approvals` | `{orderId?, leadSessionId?, agent: "claude" \| "codex", kind: "permission" \| "question", summary, detail?, options?: string[]}` → `202 {approvalId}` |
+| GET | `/api/conductor/approvals/:id?waitMs=100000` | `{status: "pending" \| "answered", answer: "approve" \| "change" \| "stop" \| null, note: string \| null}` |
+| POST | `/api/conductor/approvals/:id` | `{answer: "approve" \| "change" \| "stop", note?}` → answered approval row |
+
+`cwd` must be absolute and an existing directory. `create:true` creates missing
+directories and executes `git init` with argument arrays, without a shell. A Codex
+lead returns a clear `400` in phase 1. Model settings can be nested:
+
+```json
+{
+  "cwd": "C:\\Projects\\demo",
+  "lead": "claude",
+  "models": {
+    "claude": { "model": "sonnet", "effort": "high" },
+    "codex": { "model": "your-codex-model", "effort": "high", "sandbox": "workspace-write" }
+  }
+}
+```
+
+Flat `claude_model`, `claude_effort`, `codex_model`, `codex_effort`, and
+`codex_sandbox` are also accepted. Omitted model/effort uses provider defaults.
+Codex always uses `on-request` approval; sandbox defaults to `workspace-write`.
+Allowed sandboxes are `read-only`, `workspace-write`, and explicitly selected
+`danger-full-access`. Invalid settings receive `400` before directory creation.
+
+Orders transition through `planning`, `delegating`, `waiting_ok`, `done`, `error`
+and `stopped`. Indications received during a Claude turn are FIFO queued (up to
+100); one is sent after each `result` envelope, never on an intermediate assistant
+message. A completed order can receive another indication while its lead process
+is still alive. Terminal errors/stops reject further work with `409`. Missing IDs
+return `404`. Only one handoff per order can be pending; overlap receives `409`.
+
+The MCP client must poll repeatedly: each HTTP wait is **0–100000 ms**, default
+0, and an expired wait returns `pending`. Disconnecting a caller removes its
+waiter without cancelling the work. Handoffs and approvals expire after 30 minutes,
+failing/stopping the order and releasing outstanding polls. On dashboard restart,
+unfinished orders become `error`, pending rounds become `error`, and pending
+approvals are answered `stop`; runs are not automatically relaunched. Repeating an
+identical approval answer is idempotent; conflicting answers receive `409`.
+Question option selections or change instructions belong in `note`.
+
+The lead receives `CONDUCTOR_ORDER_ID`; MCP tools should forward it as `orderId`.
+Without it, `leadSessionId` is resolved against active leads. A cwd-only handoff
+is accepted only when exactly one active order matches. The temporary MCP JSON
+contains a server named `ccam`, using `process.execPath` and the absolute
+`mcp/build/index.js` path. Its environment sets `MCP_DASHBOARD_BASE_URL` to the
+actual local listening port, `MCP_DASHBOARD_ALLOW_MUTATIONS=true`, and
+`MCP_DASHBOARD_TIMEOUT_MS=120000`. The lead sets `MCP_TOOL_TIMEOUT=2100000`, uses
+`--permission-mode default`, `--permission-prompt-tool mcp__ccam__dashboard_permission`,
+and allows `mcp__ccam__dashboard_handoff`, `mcp__ccam__dashboard_ask_user`, and
+`mcp__ccam__dashboard_permission`. Config files are removed on stop/error/process
+completion. The MCP build and the three tools must exist before using the workflow.
+
+Codex server requests for command/file approval are persisted before returning
+control. `approve` responds `{decision:"accept"}`; `change` and `stop` respond
+`{decision:"decline"}`, with `stop` also stopping the order. Unhandled requests
+are declined (unknown request methods receive a JSON-RPC method error).
+The collaborator run is reused for successive turns. The final `item/*` agent
+message is returned when `turn/completed` arrives; replies over 8000 characters
+are shortened with a notice pointing to the session transcript.
+
+Round API objects expose `from` and `to`; SQLite stores these fields as
+`from_agent` and `to_agent` to avoid reserved SQL identifiers. Handoff session
+metadata is `{from:"claude", parent_session_id, rounds:[{ask,ask_at,reply,reply_at}]}`
+with `metadata.handoff_parent_evidence="conductor"`. Dates are ISO strings.
+Reconciliation retries every two seconds and at round boundaries if the Codex
+session has not yet been ingested; transcript reconciliation preserves this evidence.
+
+### Conductor WebSocket messages
+
+These are additive message types using the existing broadcast envelope:
+
+| Type | Data |
+| --- | --- |
+| `conductor_order` | Persisted order row, including `id`, `project_id`, `status`, `lead_run_id`, `plan` (lead text before its first handoff), `result` (lead final summary), timestamps |
+| `conductor_round` | Persisted round with API `from`/`to`, `order_id`, `n`, `ask`, `reply`, `status`, `run_id`, timestamps |
+| `conductor_approval` | Approval row with `order_id`, `agent`, `kind`, `summary`, `detail`, parsed `options`, `status`, `answer`, `note`, timestamps |
+| `conductor_agent` | `{orderId, agent, runId, sessionId, doing, model, effort, tokens}`; `doing` is a short tool/item name or `pensando`; `tokens` is the latest provider usage object or null |
+
+Existing `run_stream`/`run_status` messages remain unchanged. A handoff metadata
+update also emits the existing `session_updated` message for Muro/Charla consumers.

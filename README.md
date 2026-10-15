@@ -88,6 +88,7 @@ CCAM combines native hooks with provider-aware transcript discovery. It stays lo
 - **One live fleet:** Claude Code, Cursor, and Codex sessions appear in the same Dashboard, Sessions, Activity Feed, and Kanban views.
 - **Muro:** A visual Claude/Codex wall with live mascots, session post-its, Claude-to-Codex handoffs with round-by-round replies, shared agent filters, completion and usage counters, rhythm charts and a five-week heatmap.
 - **Charla:** Read real Claude and Codex transcripts side by side, with live assignment selection, reasoning, commands and edit diffs in a fixed Telegram sunset style.
+- **Conductor (Dirección):** Give Claude and Codex one order; Claude leads, hands programming work to Codex through the dashboard, and you only answer OK cards, with a live stage and a score of every hand-off.
 - **Complete conversations:** Rendered Markdown, highlighted code, tool calls, command output, queued prompts, attachments, and provider-native titles.
 - **Agent orchestration:** Parent-child trees, background agents, dynamic workflow runs, tool-flow graphs, concurrency, delegation, and compaction analysis.
 - **Cost and usage:** Model-aware tokens, configurable pricing, introductory rates, subagent costs, trends, and budget-friendly CLI/MCP access.

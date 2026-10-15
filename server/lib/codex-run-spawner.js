@@ -62,6 +62,7 @@ function pushEnvelope(handle, envelope) {
     handle.envelopes.splice(0, handle.envelopes.length - MAX_ENVELOPES_PER_HANDLE);
   }
   broadcast("run_stream", { id: handle.id, envelope });
+  handle.onEnvelope?.(envelope, handle);
 }
 function setStatus(handle, status, extra = {}) {
   if (!handle || handle.status === "killed") return;
@@ -86,6 +87,7 @@ function setStatus(handle, status, extra = {}) {
     exitCode: handle.exitCode,
     endedAt: handle.endedAt,
   });
+  handle.onStatus?.(status, handle);
   if (!isLive(handle)) scheduleReap(handle.id);
 }
 function sandboxPolicy(sandbox) {
@@ -205,9 +207,23 @@ function spawnRun(args = {}) {
     stdoutBuffer: "",
     stderrBuffer: "",
     server,
+    onEnvelope: args.onEnvelope,
+    onStatus: args.onStatus,
   };
   handles.set(id, handle);
   recordRun(handle);
+  server.on("request", (message) => {
+    const decline = () => {
+      if (message.method.endsWith("/requestApproval"))
+        server.respond(message.id, { decision: "decline" });
+      else server.respondError(message.id);
+    };
+    try {
+      if (!args.onRequest || args.onRequest(message, server, handle) !== true) decline();
+    } catch {
+      decline();
+    }
+  });
   server.on("notification", (message) => notificationFor(handle, message));
   server.on("exit", ({ code, signal, stderr }) => {
     handle.stderrBuffer = tail(`${handle.stderrBuffer}${stderr || ""}`);
@@ -252,6 +268,7 @@ function killRun(id) {
   broadcast("run_status", { id, provider: "codex", status: "killed", at: handle.endedAt });
   patchRun({ id, status: "killed", sessionId: handle.sessionId, endedAt: handle.endedAt });
   handle.server.close();
+  handle.onStatus?.("killed", handle);
   scheduleReap(id);
   return true;
 }

@@ -135,3 +135,8 @@ export function errorResult(error: unknown): CallToolResult {
     ],
   };
 }
+
+/** Explicit plain text response, without the default tool title or JSON wrapper. */
+export class ToolText {
+  constructor(public readonly text: string) {}
+}

@@ -142,6 +142,7 @@ Redacted previews are read-only. Use `edit=true` only for the explicit editable 
 - `dashboard_list_run_directories`, `dashboard_list_run_files`
 - `dashboard_get_run_binary`, `dashboard_list_run_models`, `dashboard_get_run`
 - `dashboard_start_run`, `dashboard_send_run_message`, `dashboard_stop_run`
+- `dashboard_handoff`, `dashboard_ask_user`, `dashboard_permission` (Conductor; mutations required)
 
 These tools launch or control real local Claude Code/Codex processes and require the mutation gate.
 
@@ -261,3 +262,36 @@ npm run extensions:validate
 - Streamable HTTP requests fail with `Bad Request: No valid session or initialization`: send the `mcp-session-id` header returned by `initialize` on every later request. A session ends when the client sends `DELETE /mcp` with that header, and `/health` reports the live count as `activeSessions`.
 - stdio server exited on its own: check stderr for `shutting down orphaned stdio server` and its `reason` (`stdin_end`, `stdin_close`, or `reparented`) — the host process ended or the server was re-parented.
 - Never write protocol logs to stdout in stdio mode. MCP logs use stderr.
+
+### Conductor tools (Dirección)
+
+All three tools require `MCP_DASHBOARD_ALLOW_MUTATIONS=true`. The lead's
+`ccam` MCP server exposes them as `mcp__ccam__dashboard_handoff`,
+`mcp__ccam__dashboard_ask_user`, and `mcp__ccam__dashboard_permission`.
+
+| Tool | Input | Result |
+| --- | --- | --- |
+| `dashboard_handoff` | `to: "codex" \| "claude", ask, order_id?` | Collaborator reply as plain text; terminal errors fail the call. Phase 1 backend accepts Codex only. |
+| `dashboard_ask_user` | `question, options?: string[], order_id?` | Martin's `approve/change/stop` decision and note as readable text. |
+| `dashboard_permission` | `tool_name, input, tool_use_id?` | Exactly one text block containing Claude Code permission JSON; no title or extra wrapper. |
+
+`order_id` defaults to `CONDUCTOR_ORDER_ID`; permission requests always use that
+environment variable. Missing order context fails before HTTP writes. Handoffs POST
+to `/api/conductor/handoffs`; questions and permissions POST to
+`/api/conductor/approvals`, then poll the returned ID until completion.
+`CONDUCTOR_HANDOFF_TIMEOUT_MS` sets the total deadline (default `1800000`, 30 minutes)
+for each of these tools. Polls use `waitMs=100000`, reduced when the configured
+HTTP timeout or remaining total deadline is shorter. Each HTTP request is capped
+by `MCP_DASHBOARD_TIMEOUT_MS` (maximum 120 seconds) and the remaining deadline;
+Conductor calls disable automatic HTTP retries and never repeat a POST.
+
+An approved permission returns `{"behavior":"allow","updatedInput":<original input>}`.
+Change, stop, timeout, policy refusal, or HTTP failure returns
+`{"behavior":"deny","message":"<reason or Martin's note>"}`. Approval cards show
+a short tool/command/path summary and at most 50,000 characters of input detail;
+the allowed input remains intact. A local timeout does not cancel the backend order.
+
+The lead starts Node with the absolute `mcp/build/index.js` path and uses
+`--permission-prompt-tool mcp__ccam__dashboard_permission`. Its permission mode is
+`acceptEdits`: edits within the working directory proceed automatically while
+other permission requests go through Martin's approval cards.

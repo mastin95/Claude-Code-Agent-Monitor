@@ -79,6 +79,8 @@ const MAX_BINARY_RESPONSE_BYTES = 10 * 1024 * 1024;
 
 /** Per-request options for the dashboard API client. */
 interface RequestOptions {
+  /** Optional smaller per-request deadline, bounded by the configured timeout. */
+  timeoutMs?: number;
   /** Query params; `undefined`/`null` values are omitted, not stringified. */
   query?: Record<string, string | number | boolean | Array<string | number | boolean> | undefined>;
   /** Request body, JSON-stringified as-is; omitted when `undefined`. */
@@ -173,7 +175,7 @@ export class DashboardApiClient {
    * @throws {ApiError} When every attempt fails.
    */
   async get<T>(path: string, options: Omit<RequestOptions, "body"> = {}): Promise<T> {
-    return this.request<T>("GET", path, { ...options, idempotent: true });
+    return this.request<T>("GET", path, { ...options, idempotent: options.idempotent ?? true });
   }
 
   /**
@@ -426,12 +428,20 @@ export class DashboardApiClient {
    * @returns The parsed JSON response.
    */
   private async request<T>(method: HttpMethod, path: string, options: RequestOptions): Promise<T> {
+    const requestTimeoutMs = Math.max(
+      1,
+      Math.min(
+        this.config.requestTimeoutMs,
+        120_000,
+        options.timeoutMs ?? this.config.requestTimeoutMs
+      )
+    );
     const maxAttempts = options.idempotent ? this.config.retryCount + 1 : 1;
     const url = this.buildUrl(path, options.query);
 
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       const abortController = new AbortController();
-      const timeout = setTimeout(() => abortController.abort(), this.config.requestTimeoutMs);
+      const timeout = setTimeout(() => abortController.abort(), requestTimeoutMs);
 
       try {
         const response = await fetch(url, {
@@ -477,7 +487,7 @@ export class DashboardApiClient {
 
         if (isAbortError(error)) {
           throw new ApiError(
-            `Request timed out after ${this.config.requestTimeoutMs}ms: ${method} ${url.pathname}`,
+            `Request timed out after ${requestTimeoutMs}ms: ${method} ${url.pathname}`,
             { code: "TIMEOUT" }
           );
         }

@@ -574,6 +574,10 @@ Read Claude and Codex side by side at `/charla` in a fixed Telegram sunset style
 
 The page reuses `sessionHandoff`, `childHandoffs` and `handoffsInPeriod` from the shared handoff model and `api.sessions.transcript(id)`. Empty Claude thinking retains its duration and explanatory placeholder; available Codex reasoning summaries remain expandable. Loading, empty-assignment and request-error states are explicit. It introduces no API, database or WebSocket contract changes.
 
+### Dirección
+
+`/direccion` (sidebar **Conductor**) is where Martin gives orders. It lists `/api/conductor/projects`, follows the selected project's latest order (`/api/conductor/orders?projectId=…&limit=1`, then `/api/conductor/orders/:id`), and renders the manga «¡Batuta!» layout from `components/muro/direccion.css`: header with project and lead, order stand, stage with both agents and the hand-off in flight, OK cards, Score and a sticky indication bar. `components/muro/direccion-model.ts` is the pure model (score rows, current round, pending approvals, stage cards, token totals). `conductor_agent` messages merge into the stage in place; `conductor_order`, `conductor_round` and `conductor_approval` refetch the followed order with a 300 ms debounce. The last project is remembered in `localStorage` (`direccion.project`). Stopping an order asks for confirmation inside the page.
+
 ### Route Structure
 
 ```mermaid
@@ -583,6 +587,7 @@ graph TB
     Kanban["/kanban"]
     Muro["/muro"]
     Charla["/charla"]
+    Direccion["/direccion"]
     Sessions["/sessions"]
     Detail["/sessions/:id"]
     Feed["/activity"]
@@ -593,7 +598,7 @@ graph TB
     Settings["/settings"]
     NF["/* (NotFound)"]
 
-    Root --> Dashboard & Kanban & Muro & Charla & Sessions & Detail & Feed & Analytics & Workflows & CcConfig & Run & Settings & NF
+    Root --> Dashboard & Kanban & Muro & Charla & Direccion & Sessions & Detail & Feed & Analytics & Workflows & CcConfig & Run & Settings & NF
 
     style Dashboard fill:#3B82F6
     style Detail fill:#3B82F6
@@ -615,6 +620,7 @@ function App() {
           <Route path="kanban" element={<KanbanBoard />} />
           <Route path="muro" element={<Muro />} />
           <Route path="charla" element={<Charla />} />
+          <Route path="direccion" element={<Direccion />} />
           <Route path="sessions" element={<Sessions />} />
           <Route path="sessions/:id" element={<SessionDetail />} />
           <Route path="activity" element={<ActivityFeed />} />
