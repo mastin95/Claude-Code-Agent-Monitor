@@ -394,6 +394,7 @@ import type {
   ConductorOrderRow,
   ConductorProject,
   ConductorProjectInput,
+  ConductorBrowse,
   CostResult,
   CursorModelPricing,
   DashboardEvent,
@@ -1888,6 +1889,11 @@ export const api = {
   /** The conductor behind /direccion: projects, Martin's orders, indications and
    *  approval cards. Maps to `server/routes/conductor.js`. */
   conductor: {
+    /** GET /api/conductor/browse?path= - sub-folders of a folder (home when omitted), for the folder picker. */
+    browse: (path?: string) =>
+      request<ConductorBrowse>(
+        `/conductor/browse${path ? `?${new URLSearchParams({ path })}` : ""}`
+      ),
     /** GET /api/conductor/projects - every project, newest first. */
     projects: () => request<{ items: ConductorProject[] }>("/conductor/projects"),
     /** POST /api/conductor/projects - register (or create + git init) a project folder. */

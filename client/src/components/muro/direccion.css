@@ -799,3 +799,191 @@ select.dir-folder {
 .dir-new {
   white-space: nowrap;
 }
+/* Folder picker: «Examinar» next to Folder opens a manga popup over the PC's drives and folders. */
+.dir-folder-row {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+.dir-folder-row input {
+  flex: 1;
+}
+.dir-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: #171321b3;
+}
+.dir-picker {
+  width: min(860px, 100%);
+  max-height: min(680px, calc(100vh - 32px));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  background: var(--cream);
+  background-image: var(--halftone);
+  border: 4px solid var(--ink);
+  border-radius: 16px;
+  padding: 14px 16px 16px;
+  box-shadow: 8px 8px 0 var(--pink);
+  outline: none;
+  font-weight: 800;
+}
+.dir-picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dir-picker-head .dir-title {
+  background: var(--violet);
+  color: #fff;
+  transform: rotate(-2deg);
+}
+.dir-picker-x {
+  font: inherit;
+  font-weight: 900;
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--acid);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+}
+.dir-picker-body {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+}
+.dir-picker-side {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: auto;
+}
+.dir-picker-side .dir-label {
+  margin-top: 4px;
+}
+.dir-picker-place {
+  font: inherit;
+  font-weight: 900;
+  text-align: left;
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  padding: 6px 10px;
+  background: var(--teal);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dir-picker-place[data-kind="drive"] {
+  background: var(--orange);
+}
+.dir-picker-place[aria-current="true"] {
+  background: var(--acid);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.dir-picker-main {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: 8px;
+  min-height: 0;
+}
+.dir-picker-path {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.dir-picker-path code {
+  flex: 1;
+  min-width: 0;
+  background: var(--ink);
+  color: var(--acid);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dir-picker-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  align-content: start;
+  overflow: auto;
+  min-height: 160px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+}
+.dir-picker-list[aria-busy="true"] {
+  opacity: 0.6;
+}
+.dir-picker-folder {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 6px 8px;
+  background: #fff3b0;
+  cursor: pointer;
+}
+.dir-picker-folder:hover,
+.dir-picker-folder:focus-visible {
+  background: var(--acid);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.dir-picker-folder span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dir-picker-empty {
+  grid-column: 1 / -1;
+  padding: 12px;
+  font-weight: 900;
+}
+.dir-picker-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.dir-picker-foot .dir-picker-new {
+  flex: 1 1 220px;
+}
+@media (max-width: 640px) {
+  .dir-picker-body {
+    grid-template-columns: 1fr;
+  }
+  .dir-picker-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-height: 110px;
+  }
+  .dir-picker-side .dir-label {
+    display: none;
+  }
+}
+.dir-picker-side .dir-label {
+  color: var(--violet);
+}

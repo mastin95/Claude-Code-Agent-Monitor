@@ -22,7 +22,8 @@
     "default": "Mặc định",
     "save": "TẠO!",
     "cancel": "Hủy",
-    "codexSoon": "Codex làm trưởng nhóm sẽ có ở giai đoạn 2."
+    "codexSoon": "Codex làm trưởng nhóm sẽ có ở giai đoạn 2.",
+    "browse": "Duyệt"
   },
   "order": {
     "title": "Lệnh của bạn",
@@ -116,5 +117,19 @@
   "empty": {
     "noProjects": "Tạo dự án đầu tiên để bắt đầu.",
     "noOrder": "Ra lệnh đầu tiên."
+  },
+  "picker": {
+    "title": "Chọn thư mục",
+    "close": "Đóng",
+    "drives": "Ổ đĩa",
+    "places": "Vị trí",
+    "home": "Thư mục chính",
+    "up": "Lên",
+    "empty": "Không có thư mục nào ở đây.",
+    "truncated": "Chỉ hiển thị 500 thư mục đầu tiên.",
+    "newFolder": "Thư mục mới tại đây",
+    "newHint": "du-an-cua-toi",
+    "createHere": "Tạo tại đây",
+    "use": "DÙNG THƯ MỤC NÀY!"
   }
 }

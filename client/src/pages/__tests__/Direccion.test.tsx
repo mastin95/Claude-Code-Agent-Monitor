@@ -18,6 +18,7 @@ vi.mock("../../lib/api", () => ({
     conductor: {
       projects: vi.fn(),
       createProject: vi.fn(),
+      browse: vi.fn(),
       orders: vi.fn(),
       order: vi.fn(),
       getOrder: vi.fn(),
@@ -219,6 +220,41 @@ it("opens the new-project form when there are no projects", async () => {
       models: { claude: {}, codex: {} },
     })
   );
+});
+
+it("picks the project folder from the folder popup and can create a new one there", async () => {
+  conductor.projects.mockResolvedValue({ items: [] });
+  conductor.orders.mockResolvedValue({ items: [] });
+  const listing = (path: string, dirs: string[]) => ({
+    path,
+    parent: path === "C:\\" ? null : "C:\\",
+    sep: "\\",
+    dirs: dirs.map((name) => ({ name, path: `${path}\\${name}`.replace("\\\\", "\\") })),
+    truncated: false,
+    roots: [{ name: "C:\\", path: "C:\\" }],
+    places: [{ name: "Martin", path: "C:\\Users\\Martin" }],
+  });
+  conductor.browse.mockImplementation(async (path?: string) =>
+    path === "C:\\Users\\Martin\\Documents"
+      ? listing(path, ["Card_Game"])
+      : listing("C:\\Users\\Martin", ["Documents"])
+  );
+  renderPage();
+  fireEvent.click(await screen.findByText("Examinar"));
+  fireEvent.click(await screen.findByText("Documents"));
+  expect(await screen.findByText("Card_Game")).toBeTruthy();
+  fireEvent.click(screen.getByText("¡USAR ESTA!"));
+  const folder = screen.getByPlaceholderText(
+    "C:\\ruta\\absoluta\\del\\proyecto"
+  ) as HTMLInputElement;
+  expect(folder.value).toBe("C:\\Users\\Martin\\Documents");
+  expect(screen.queryByRole("dialog")).toBeNull();
+
+  fireEvent.click(screen.getByText("Examinar"));
+  await screen.findByText("Card_Game");
+  fireEvent.change(screen.getByPlaceholderText("mi-proyecto"), { target: { value: "Nuevo" } });
+  fireEvent.click(screen.getByText("Crear aquí"));
+  expect(folder.value).toBe("C:\\Users\\Martin\\Documents\\Nuevo");
 });
 
 it("shows OK card details and keeps the indication bar while a finished lead still listens", async () => {
