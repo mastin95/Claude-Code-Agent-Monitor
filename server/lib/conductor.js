@@ -187,28 +187,40 @@ function createConductor({
   function agent(id, who, envelope, handle) {
     const runtime = active.get(id);
     if (!runtime) return;
-    const content = envelope.message?.content;
-    const tool = Array.isArray(content) && content.find((b) => b.type === "tool_use");
-    const item = envelope.params?.item;
-    const usage = envelope.usage || envelope.message?.usage || envelope.params?.tokenUsage;
     const previous = runtime.agents[who] || {};
+    // Only complete messages say what the agent is doing; partial stream events, tool
+    // results and other notifications keep the last activity (e.g. a pending handoff).
+    let doing = previous.doing || "pensando";
+    const content = envelope.type === "assistant" ? envelope.message?.content : null;
+    if (Array.isArray(content)) {
+      const tool = content.find((b) => b.type === "tool_use");
+      doing = tool?.name || "pensando";
+    }
+    const item = envelope.params?.item;
+    if (envelope.method === "item/started" && item?.type) {
+      doing = ["agentMessage", "agent_message", "final_answer"].includes(item.type)
+        ? "pensando"
+        : item.type;
+    }
+    // Claude reports the resolved model on init; Codex uses the project's model.
+    const model =
+      (envelope.type === "system" && envelope.subtype === "init" && envelope.model) ||
+      previous.model ||
+      handle.model ||
+      null;
+    const usage = envelope.message?.usage || envelope.params?.tokenUsage || envelope.usage;
     const value = {
       orderId: id,
       agent: who,
       runId: handle.id,
       sessionId: handle.sessionId || null,
-      doing: String(
-        tool?.name ||
-          (item && !["agentMessage", "agent_message", "final_answer"].includes(item.type)
-            ? item.type
-            : "pensando")
-      ).slice(0, 100),
-      model: handle.model || null,
+      doing: String(doing).slice(0, 100),
+      model,
       effort: handle.effort || null,
       tokens: usage || previous.tokens || null,
     };
     runtime.agents[who] = value;
-    broadcast("conductor_agent", value);
+    if (JSON.stringify(value) !== JSON.stringify(previous)) broadcast("conductor_agent", value);
   }
   async function dispatch(id) {
     const runtime = active.get(id);
@@ -623,8 +635,9 @@ function createConductor({
     reconcile,
     close,
     stop: (id) => {
-      need("orders", id);
-      return finish(id, "stopped", "Stopped by Martin");
+      // Stopping a finished order only releases its idle agents; the result stays "done".
+      const order = need("orders", id);
+      return finish(id, order.status === "done" ? "done" : "stopped", "Stopped by Martin");
     },
     listProjects: () =>
       db.prepare("SELECT * FROM conductor_projects ORDER BY created_at DESC").all(),

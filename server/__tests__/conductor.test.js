@@ -521,3 +521,25 @@ test("one lead per project: working orders block new ones, finished ones are ret
   assert.equal(conductor.getOrder(first.id).status, "done");
   assert.equal(conductor.getOrder(second.id).status, "planning");
 });
+test("agent activity survives partial stream events and is only broadcast on change", () => {
+  setup();
+  claude.emit({ type: "system", subtype: "init", model: "claude-opus-5-5", session_id: "s" });
+  claude.emit({
+    type: "assistant",
+    message: { content: [{ type: "tool_use", name: "mcp__ccam__dashboard_handoff" }] },
+  });
+  const before = messages.filter((m) => m.type === "conductor_agent").length;
+  claude.emit({ type: "stream_event", event: { type: "content_block_delta" } });
+  claude.emit({ type: "user", message: { content: [{ type: "tool_result" }] } });
+  const states = messages.filter((m) => m.type === "conductor_agent");
+  assert.equal(states.length, before);
+  assert.equal(states.at(-1).data.doing, "mcp__ccam__dashboard_handoff");
+  assert.equal(states.at(-1).data.model, "claude-opus-5-5");
+});
+test("stopping a finished order releases its agents but keeps it done", () => {
+  const order = setup();
+  claude.emit({ type: "result", subtype: "success", result: "Listo" });
+  const lead = [...claude.handles.values()][0];
+  assert.equal(conductor.stop(order.id).status, "done");
+  assert.equal(lead.status, "killed");
+});
