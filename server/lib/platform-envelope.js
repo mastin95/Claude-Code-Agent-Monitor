@@ -7,47 +7,83 @@
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
-// Opening tags that only ever appear in platform routing envelopes.
-const ENVELOPE_TAG_RE = /<(?:wake|relay|coordinator-relay|cross-session-message)\b/i;
+// Attribute list of an opening tag; quoted values may contain `>`.
+const ATTRS = `((?:[^>"']|"[^"]*"|'[^']*')*)`;
+
+// A routing envelope is only recognised when one of its opening tags is
+// paired with the matching closing tag, so an ordinary prompt that merely
+// mentions "<wake" is left alone.
+const ENVELOPE_TAGS = ["wake", "relay", "coordinator-relay", "cross-session-message"];
+const ENVELOPE_RES = ENVELOPE_TAGS.map(
+  (tag) => new RegExp(`<${tag}(?:\\s${ATTRS})?>[\\s\\S]*</${tag}>`, "i")
+);
+
+// Labels stored before unwrapping existed: they BEGIN with an envelope tag
+// (often truncated, so no closing tag survives).
+const ENVELOPE_LABEL_RE =
+  /^\s*(?:Main Agent - )?(?:<(?:wake|relay|coordinator-relay|cross-session-message)[\s>]|A message from this project.s coordinator session)/i;
 
 // Shown when an envelope carries no human message at all (e.g. a pure
 // harness notice). Short and neutral so it reads like the other auto labels.
 const PLATFORM_MESSAGE_LABEL = "Platform message";
 
-/** True when `text` contains a platform routing envelope. */
+/** True when `text` contains a complete platform routing envelope. */
 function hasPlatformEnvelope(text) {
-  return typeof text === "string" && ENVELOPE_TAG_RE.test(text);
+  return typeof text === "string" && ENVELOPE_RES.some((re) => re.test(text));
+}
+
+/** True when a stored name/task is a raw envelope copied verbatim. */
+function isPlatformEnvelopeLabel(text) {
+  return typeof text === "string" && ENVELOPE_LABEL_RE.test(text);
 }
 
 function attr(attrs, name) {
-  const m = new RegExp(`\\b${name}="([^"]*)"`, "i").exec(attrs);
-  return m ? m[1] : null;
+  const m = new RegExp(`(?:^|\\s)${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, "i").exec(attrs);
+  return m ? (m[1] ?? m[2]) : null;
 }
 
 function decodeEntities(text) {
+  const fromCode = (code) => {
+    try {
+      return String.fromCodePoint(code);
+    } catch {
+      return "";
+    }
+  };
   return text
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => fromCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => fromCode(parseInt(dec, 10)))
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/&quot;|&#34;/g, '"')
-    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
     .replace(/&amp;/g, "&");
 }
 
 function cleanBody(body) {
   const text = decodeEntities(
-    body.replace(/<system-note>[\s\S]*?<\/system-note>/gi, "").replace(/<\/?[a-z][^>]*>/gi, " ")
+    body
+      .replace(/<system-note\b[\s\S]*?<\/system-note>/gi, "")
+      .replace(new RegExp(`</?[a-z][\\w-]*${ATTRS}>`, "gi"), " ")
   )
     .replace(/\s+/g, " ")
     .trim();
   return text || null;
 }
 
+function tagRe(tag) {
+  // Bodies are lazy: platforms escape `<` in the human's own words, so an
+  // unescaped closing tag inside a body does not occur in real envelopes.
+  return new RegExp(`<${tag}(?:\\s${ATTRS})?>([\\s\\S]*?)</${tag}>`, "gi");
+}
+
 function lastMatchBody(text, re, accept) {
   let found = null;
   for (const m of text.matchAll(re)) {
-    if (accept && !accept(m[1] || "")) continue;
+    const attrs = m[1] || "";
+    if (accept && !accept(attrs)) continue;
     const body = cleanBody(m[2]);
-    if (body) found = { body, attrs: m[1] || "" };
+    if (body) found = body;
   }
   return found;
 }
@@ -62,34 +98,36 @@ function lastMatchBody(text, re, accept) {
 function unwrapPlatformEnvelope(text) {
   if (!hasPlatformEnvelope(text)) return text;
 
-  const messageRe = /<message\b([^>]*)>([\s\S]*?)<\/message>/gi;
+  const messageRe = tagRe("message");
   const isHuman = (attrs) => (attr(attrs, "from") || "").toLowerCase() === "human";
   const trigger = lastMatchBody(
     text,
     messageRe,
     (attrs) => isHuman(attrs) && attr(attrs, "trigger") === "true"
   );
-  if (trigger) return trigger.body;
+  if (trigger) return trigger;
   const human = lastMatchBody(text, messageRe, isHuman);
-  if (human) return human.body;
+  if (human) return human;
 
   const cited = lastMatchBody(
     text,
-    /<cited\b([^>]*)>([\s\S]*?)<\/cited>/gi,
+    tagRe("cited"),
     (attrs) => (attr(attrs, "author") || "").toLowerCase() === "user"
   );
-  if (cited) return cited.body;
+  if (cited) return cited;
 
-  const note = lastMatchBody(text, /<note\b([^>]*)>([\s\S]*?)<\/note>/gi);
-  if (note) return note.body;
+  const note = lastMatchBody(text, tagRe("note"));
+  if (note) return note;
 
-  const peer = lastMatchBody(
-    text,
-    /<cross-session-message\b([^>]*)>([\s\S]*?)<\/cross-session-message>/gi
-  );
-  if (peer) return peer.body;
+  const peer = lastMatchBody(text, tagRe("cross-session-message"));
+  if (peer) return peer;
 
   return PLATFORM_MESSAGE_LABEL;
 }
 
-module.exports = { hasPlatformEnvelope, unwrapPlatformEnvelope, PLATFORM_MESSAGE_LABEL };
+module.exports = {
+  hasPlatformEnvelope,
+  isPlatformEnvelopeLabel,
+  unwrapPlatformEnvelope,
+  PLATFORM_MESSAGE_LABEL,
+};

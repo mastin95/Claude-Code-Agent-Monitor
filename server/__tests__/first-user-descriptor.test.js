@@ -431,8 +431,29 @@ describe("platform envelopes — human words only", () => {
     );
   });
 
-  it("leaves ordinary prompts (even ones with markup) untouched", () => {
+  it("leaves ordinary prompts (even ones mentioning the tags) untouched", () => {
     assert.equal(unwrapPlatformEnvelope("fix the <div> padding"), "fix the <div> padding");
+    assert.equal(unwrapPlatformEnvelope("Please fix <wake parsing"), "Please fix <wake parsing");
+  });
+
+  it("reads quoted attributes strictly and decodes numeric entities", () => {
+    const wrap = (inner) => `<wake reason="x">${inner}</wake>`;
+    assert.equal(
+      unwrapPlatformEnvelope(wrap("<message from='human'>caf&#233; &#x2713;</message>")),
+      "café ✓"
+    );
+    assert.equal(
+      unwrapPlatformEnvelope(
+        wrap(
+          '<message data-from="human" from="system">sys</message><cited author="user">real</cited>'
+        )
+      ),
+      "real"
+    );
+    assert.equal(
+      unwrapPlatformEnvelope(wrap('<message title="a > b" from="human">hola</message>')),
+      "hola"
+    );
   });
 
   it("names the session from the unwrapped words and replaces stale envelope labels", async () => {
@@ -468,6 +489,30 @@ describe("platform envelopes — human words only", () => {
     const main = stmts.getAgent.get(`${sid}-main`);
     assert.equal(main.name, "Main Agent - si por favor & gracias");
     assert.equal(main.task, "si por favor & gracias");
+  });
+});
+
+describe("platform envelopes — never clobber real names", () => {
+  it("keeps a /rename title and a real task that merely mention a tag", async () => {
+    const cwd = "/tmp/fud-hook-envelope-keep";
+    const sid = "10000000-0000-0000-0000-000000000021";
+    const tpath = writeTranscript(cwd, sid, [
+      { type: "custom-title", customTitle: "debug <wake handling" },
+      { type: "user", message: { role: "user", content: "look at the wake parser" } },
+    ]);
+    await req("POST", "/api/hooks/event", {
+      hook_type: "SessionStart",
+      data: { session_id: sid, cwd },
+    });
+    stmts.updateAgent.run(null, null, "review the <relay> parser", null, null, null, `${sid}-main`);
+    for (let i = 0; i < 2; i++) {
+      await req("POST", "/api/hooks/event", {
+        hook_type: "Stop",
+        data: { session_id: sid, cwd, transcript_path: tpath },
+      });
+      assert.equal(stmts.getSession.get(sid).name, "debug <wake handling");
+    }
+    assert.equal(stmts.getAgent.get(`${sid}-main`).task, "review the <relay> parser");
   });
 });
 
