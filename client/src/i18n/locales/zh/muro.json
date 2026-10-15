@@ -1,7 +1,11 @@
 {
   "title": "Muro",
   "handoffs": {
-    "heading": { "today": "今日委派", "7d": "委派 · 7 天", "30d": "委派 · 30 天" },
+    "heading": {
+      "today": "今日委派",
+      "7d": "委派 · 7 天",
+      "30d": "委派 · 30 天"
+    },
     "count_one": "{{count}} 项委派",
     "count_other": "{{count}} 项委派",
     "average": "平均往返时间：{{duration}}",
@@ -9,7 +13,11 @@
     "pending": "Codex 正在处理...",
     "sent": "发出 {{time}}",
     "returned": "返回 {{time}}",
-    "status": { "working": "处理中", "waiting": "等待我的确认", "delivered": "已交付" },
+    "status": {
+      "working": "处理中",
+      "waiting": "等待我的确认",
+      "delivered": "已交付"
+    },
     "rounds": "{{count}} 轮",
     "round": "第 {{count}} 轮",
     "from": "来自 Claude",
@@ -135,5 +143,37 @@
     "latest": "最新想法：{{kind}} — {{text}}",
     "legend": "关键想法类型",
     "setup": "## 关键想法（Muro）\n当你做出会改变最终结果的决定时，单独写一行简短文字（最多 90 个字符），以以下标记之一开头：\n[approach] 你将如何解决问题\n[pivot] 改变计划\n[risk] 可能破坏结果的因素\n[improvement] 让结果更好或更简单的改进\n只记录全局想法，不记录每一步：每项任务 2 到 6 条。"
+  },
+  "charla": {
+    "title": "实时对话",
+    "assignment": "任务",
+    "show": "显示",
+    "filter_think": "推理",
+    "filter_cmd": "命令",
+    "filter_diff": "更改",
+    "thought": "思考 · 时长不可用",
+    "noThinking": "Claude 不保存推理文本。此对话记录中没有时长信息。",
+    "martin": "Martin",
+    "forClaude": "给 Claude",
+    "forYou": "给你",
+    "cmd": "命令",
+    "diff": "更改",
+    "read": "已读取",
+    "sent": "已发送给 Codex",
+    "received": "已收到 Codex 回复",
+    "more": "显示全部",
+    "less": "收起",
+    "unknown": "未知",
+    "tokens": "{{value}} 个令牌",
+    "loading": "加载中…",
+    "error": "无法加载对话。",
+    "retry": "重试",
+    "noMessages": "暂无对话消息。",
+    "active": "工作中…",
+    "empty": "当前范围内没有带 Codex 子会话的 Claude 任务。",
+    "bothHint": "选择两个产品以阅读完整对话。",
+    "both": "显示 Claude 和 Codex",
+    "receivedFromClaude": "收到 Claude 的请求",
+    "sentToClaude": "已发送给 Claude"
   }
 }

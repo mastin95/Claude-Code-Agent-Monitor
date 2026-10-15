@@ -1,7 +1,11 @@
 {
   "title": "Muro",
   "handoffs": {
-    "heading": { "today": "오늘의 작업 위임", "7d": "작업 위임 · 7일", "30d": "작업 위임 · 30일" },
+    "heading": {
+      "today": "오늘의 작업 위임",
+      "7d": "작업 위임 · 7일",
+      "30d": "작업 위임 · 30일"
+    },
     "count_one": "위임 {{count}}건",
     "count_other": "위임 {{count}}건",
     "average": "평균 응답 시간: {{duration}}",
@@ -9,7 +13,11 @@
     "pending": "Codex가 작업 중입니다...",
     "sent": "보낸 시간 {{time}}",
     "returned": "응답 시간 {{time}}",
-    "status": { "working": "작업 중", "waiting": "내 승인 대기 중", "delivered": "전달 완료" },
+    "status": {
+      "working": "작업 중",
+      "waiting": "내 승인 대기 중",
+      "delivered": "전달 완료"
+    },
     "rounds": "{{count}}회 대화",
     "round": "대화 {{count}}회차",
     "from": "Claude의 요청",
@@ -135,5 +143,37 @@
     "latest": "최신 아이디어: {{kind}} — {{text}}",
     "legend": "핵심 아이디어 유형",
     "setup": "## 핵심 아이디어 (Muro)\n최종 결과를 바꾸는 결정을 내릴 때 다음 표식 중 하나로 시작하는 짧은 별도 줄(최대 90자)을 작성하세요:\n[approach] 해결할 방법\n[pivot] 계획 변경\n[risk] 결과를 망칠 수 있는 요소\n[improvement] 더 좋거나 간단하게 만드는 요소\n매 단계가 아닌 전체적인 아이디어만 기록하세요. 작업당 2~6개입니다."
+  },
+  "charla": {
+    "title": "실시간 대화",
+    "assignment": "작업",
+    "show": "표시",
+    "filter_think": "추론",
+    "filter_cmd": "명령",
+    "filter_diff": "변경",
+    "thought": "생각함 · 시간 정보 없음",
+    "noThinking": "Claude는 추론 텍스트를 저장하지 않습니다. 이 대화 기록에는 시간 정보가 없습니다.",
+    "martin": "Martin",
+    "forClaude": "Claude에게",
+    "forYou": "사용자에게",
+    "cmd": "명령",
+    "diff": "변경",
+    "read": "읽음",
+    "sent": "Codex에 보냄",
+    "received": "Codex에서 받음",
+    "more": "모두 보기",
+    "less": "접기",
+    "unknown": "알 수 없음",
+    "tokens": "토큰 {{value}}개",
+    "loading": "로딩 중…",
+    "error": "대화를 불러올 수 없습니다.",
+    "retry": "다시 시도",
+    "noMessages": "아직 대화 메시지가 없습니다.",
+    "active": "작업 중…",
+    "empty": "현재 범위에 Codex 하위 세션이 있는 Claude 작업이 없습니다.",
+    "bothHint": "전체 대화를 읽으려면 두 제품을 선택하세요.",
+    "both": "Claude와 Codex 표시",
+    "receivedFromClaude": "Claude에서 받음",
+    "sentToClaude": "Claude에게 보냄"
   }
 }

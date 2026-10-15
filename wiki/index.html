@@ -1576,6 +1576,9 @@
           <p>Key ideas capture only explicitly marked assistant decisions from the main Claude session transcript and Codex rollout <code>event_msg</code> / <code>agent_message</code> events, during live ingestion and imports. Write a separate line starting with <code>[approach]</code>, <code>[pivot]</code>, <code>[risk]</code> or <code>[improvement]</code>; the Spanish aliases <code>[enfoque]</code>, <code>[giro]</code>, <code>[riesgo]</code> and <code>[mejora]</code> also work, without case sensitivity. Fenced code is ignored, <code>**</code> and backticks are removed, text is limited to 120 characters, duplicates are omitted and the latest 12 ideas are retained in session metadata. User messages, tool output and Claude subagents do not contribute ideas.</p>
           <p>Ideas survive completion and update live. Working notes and stage cards show the latest colored bubble; waiting and done notes show idea dots and a count. The session sheet includes the retained timeline and a copyable setup snippet when empty.</p>
 
+          <h3 id="charla">Charla</h3>
+          <p><strong>Charla</strong>: Read Claude and Codex side by side at <code>/charla</code> in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show session status, model, effort and tokens. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the <code>after</code> / <code>last_line</code> cursor. Below 900 px the columns stack, and reduced motion disables activity animations.</p>
+
           <h3>Screenshots</h3>
           <div class="screenshot-gallery">
             <div class="screenshot-card" id="ss-dashboard">
@@ -7271,7 +7274,7 @@ npm run install-hooks</code></pre>
     <!-- Body-content translations — must load before script.js so the
          i18n engine sees window.__WIKI_CONTENT_I18N. Both are deferred, so they
          run in document order. -->
-    <script src="i18n-content.js?v=116" defer></script>
+    <script src="i18n-content.js?v=117" defer></script>
     <script src="script.js?v=61" defer></script>
     <script>
       (function () {

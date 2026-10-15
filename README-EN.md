@@ -301,7 +301,7 @@ The responsive dark interface covers the full workflow. Every preview uses a mob
   <em>⌘ <strong>Command Palette</strong> · one keyboard launcher for pages, sessions, projects, filters, and actions</em>
 </p>
 
-The sidebar links Dashboard, Kanban Board, Muro, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, and Settings. The sections below describe the complete behavior behind these views.
+The sidebar links Dashboard, Kanban Board, Muro, Charla, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, and Settings. The sections below describe the complete behavior behind these views.
 
 ---
 
@@ -315,6 +315,7 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 | **Dashboard** | Persistent **Monitor** and **Health** tabs combine fleet totals, active hierarchies, recent activity, weighted success/cache/error/heap health, storage, tools, models, subagent effectiveness, and compaction metrics. Health refreshes every 5 seconds from `/api/settings/info` and `/api/workflows`. |
 | **Kanban Board** | Agent columns cover Working, Waiting, Completed, and Error; session columns add Active and Abandoned. Cards page 10 at a time, subscribe only to the active WebSocket view, preserve full titles, and explain waiting reasons such as permission input, turn completion, prompt idle, or interruption. |
 | **Muro** | A visual Claude/Codex wall at `/muro`: illustrated session post-its, live mascots, completed tasks, tokens, worked time, streaks, a completion donut, rhythm bars and a five-week heatmap. Today / 7 days / 30 days and a shared agent filter keep the board and charts aligned; Cursor is excluded. Explicitly marked key ideas appear live as bubbles, dots and a retained session timeline. Claude-to-Codex handoffs show requests, replies and linked conversations. |
+| **Charla** | Read Claude and Codex side by side at `/charla` in a fixed Telegram sunset style. |
 | **Sessions** | Searchable, filterable, server-paginated history with visible-page cost calculation and a temporary in-memory Codex startup row. Search covers `id`, `name`, and `cwd` with a 300 ms debounce. Names resolve from explicit title, AI title, then the first meaningful user prompt. |
 | **Session Detail** | Live stats, active work, tool usage, subagents, tokens, hierarchy, filtered event timelines, `tool_use_id` grouping, and tool-specific renderers. Conversation view renders queued turns, system notices, Markdown, highlighted code, and styled tools; waiting banners show the reason and elapsed time. |
 | **Activity Feed** | Pausable real-time events with shared filters, server pagination, grouping, project/session/subagent origin, session links, and consistent Claude/Codex status badges. |
@@ -362,6 +363,10 @@ The dashboard covers the complete local agent lifecycle. Detailed operational co
 > **Provider scope and homes:** Settings keeps the Claude-compatible (Claude Code + Cursor) / Codex / Both choice globally consistent. Claude Code and Codex homes remain editable without restarting the dashboard; Cursor is discovered automatically from `~/.cursor` or `DASHBOARD_CURSOR_HOME`.
 >
 > **Local safety boundaries:** Run Agent accepts any existing absolute working directory and canonicalizes it before use, so home and recent-project launches remain supported. Hosted webhook providers require HTTPS; generic and n8n targets may use HTTP for local/self-hosted receivers, and delivery never follows redirects.
+
+### Charla
+
+Read Claude and Codex side by side at `/charla` in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show session status, model, effort and tokens. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the `after` / `last_line` cursor. Below 900 px the columns stack, and reduced motion disables activity animations.
 
 ### Muro
 
@@ -562,7 +567,7 @@ sequenceDiagram
    - Continuous project sync combines an immediate sweep, debounced `fs.watch`, and `DASHBOARD_SESSION_SYNC_MS` polling, default 30 seconds. One mtime cache reparses only new or grown transcripts and broadcasts the same session frames as hooks.
 4. **WebSocket** publishes the committed change.
 5. **The UI** refreshes the affected views without polling.
-6. **Muro** reloads scoped sessions and summary data after live events with a 300 ms debounce; changing the period or agent refreshes its charts. Handoff metadata and open conversation sheets refresh through the same session updates.
+6. **Muro** reloads scoped sessions and summary data after live events with a 300 ms debounce; changing the period or agent refreshes its charts. Handoff metadata and open conversation sheets refresh through the same session updates. **Charla**: Read Claude and Codex side by side at `/charla` in a fixed Telegram sunset style.
 
 ### Agent State Machine
 

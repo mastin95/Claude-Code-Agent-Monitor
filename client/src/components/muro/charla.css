@@ -1,499 +1,312 @@
 /**
  * @file charla.css
- * @description Manga styling for the side-by-side Claude / Codex conversation mockup.
+ * @description Fixed Telegram sunset conversations, accessible colours and responsive feeds.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 .charla-page {
-  --ink: #171321;
-  --acid: #dfff00;
-  --aubergine: #302044;
-  --pink: #ff3d8b;
-  --claude: #d46f3a;
-  --codex: #2ba394;
-  --display: "Bangers", "Impact", sans-serif;
-  --text: "Nunito", system-ui, sans-serif;
-  font-family: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  background: #262140;
+  color: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
-.charla-top {
+.charla-page .charla-top {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 14px;
-  margin-bottom: 22px;
+  align-items: center;
+  margin-bottom: 20px;
 }
-.charla-top h1 {
-  font: 400 34px/1 var(--display);
-  letter-spacing: 0.05em;
-  color: var(--ink);
-  background: var(--acid);
-  border: 3px solid var(--ink);
+.charla-page h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1a1530;
+  background: linear-gradient(90deg, #ff4f8b, #ff9f1c);
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+.charla-page button,
+.charla-page select {
+  font: inherit;
+  cursor: pointer;
+  max-width: 100%;
   border-radius: 12px;
-  padding: 8px 14px 5px;
-  box-shadow: 4px 4px 0 #000;
-  transform: rotate(-2deg);
-}
-.charla-pick {
-  font: 800 15px var(--text);
-  color: var(--ink);
+  padding: 6px 10px;
   background: #fff;
-  border: 3px solid var(--ink);
-  border-radius: 999px;
-  padding: 7px 16px;
-  box-shadow: 3px 3px 0 #000;
+  color: #3b2f8f;
 }
-.charla-pick b {
-  font-weight: 900;
+.charla-page button:focus-visible,
+.charla-page select:focus-visible,
+.charla-page summary:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 3px;
 }
-.charla-filters {
-  margin-left: auto;
+.charla-page .charla-pick {
+  min-width: 0;
+  max-width: 100%;
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.charla-page select {
+  min-width: 0;
+  width: 300px;
+}
+.charla-page .charla-filters {
+  display: flex;
+  flex-wrap: wrap;
   gap: 6px;
+  margin-left: auto;
 }
-.charla-filters button {
-  font: 800 13px var(--text);
-  color: var(--ink);
-  background: #fff;
-  border: 2.5px solid var(--ink);
-  border-radius: 999px;
-  padding: 5px 11px;
+.charla-page button[aria-pressed="true"] {
+  background: #e8ff3a;
+  color: #1a1530;
 }
-.charla-filters button[aria-pressed="true"] {
-  background: var(--acid);
-}
-.ch-cols {
+.charla-page .ch-cols {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 18px;
 }
-.ch-col {
+.charla-page .ch-col {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  max-height: calc(100vh - 150px);
-  background: #1c1528;
-  border: 4px solid var(--ink);
-  border-radius: 18px;
-  box-shadow: 7px 7px 0 #000;
-  overflow: hidden;
-}
-.ch-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background:
-    radial-gradient(#ffffff14 1.4px, transparent 1.8px) 0 0 / 9px 9px,
-    var(--aubergine);
-  border-bottom: 4px solid var(--ink);
-}
-.ch-head svg {
-  background:
-    repeating-conic-gradient(from 0deg at 50% 100%, #ffffff8c 0 6deg, transparent 6deg 16deg),
-    var(--acid);
-  border: 3px solid var(--ink);
+  max-height: calc(100vh - 180px);
   border-radius: 14px;
+  overflow: hidden;
+  background:
+    var(--doodle) 0 0 / 120px 120px,
+    linear-gradient(165deg, #3b2f8f, #6a2c91 45%, #a3306f 80%, #c2463f);
+  box-shadow: 0 6px 24px #0006;
 }
-.ch-head h2 {
-  display: inline-block;
-  font: 400 28px/1 var(--display);
-  letter-spacing: 0.06em;
-  color: #fff;
-  background: var(--claude);
-  border: 3px solid var(--ink);
-  border-radius: 10px;
-  padding: 5px 12px 2px;
-  box-shadow: 3px 3px 0 var(--ink);
-  -webkit-text-stroke: 1.5px var(--ink);
-  paint-order: stroke fill;
-  transform: rotate(-2deg);
+.charla-page .ch-col.codex {
+  background:
+    var(--doodle) 60px 30px / 120px 120px,
+    linear-gradient(165deg, #c2463f, #a3306f 20%, #6a2c91 55%, #3b2f8f);
 }
-.ch-col.codex .ch-head h2 {
-  background: var(--codex);
+.charla-page .ch-head {
+  padding: 14px;
+  color: #1a1530;
+  background: linear-gradient(90deg, #d46f3a, #f0a04b);
 }
-.ch-head p {
+.charla-page .codex .ch-head {
+  background: linear-gradient(90deg, #1f9e8f, #3fd0b5);
+}
+.charla-page h2 {
+  font-size: 20px;
+  font-weight: 800;
+}
+.charla-page .ch-head p {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 8px;
 }
-.ch-state,
-.ch-chip {
-  font: 900 12px/1 var(--text);
-  color: var(--ink);
+.charla-page .ch-head span {
   background: #fff;
-  border: 2px solid var(--ink);
+  padding: 3px 9px;
   border-radius: 999px;
-  padding: 4px 9px;
+  font-size: 12px;
 }
-.ch-state.busy {
-  background: #ffe14d;
-}
-.ch-state.idle {
-  background: #ffa8d2;
-}
-.ch-feed {
-  overflow-y: auto;
-  padding: 16px;
+.charla-page .ch-feed {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  font: 700 14.5px/1.55 var(--text);
-  color: #ece8f6;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.6;
 }
-.ch-feed time {
-  font: 800 11px var(--text);
-  color: #8f86a6;
+.charla-page .ch-feed > * {
+  flex-shrink: 0;
+  min-width: 0;
 }
-.ch-feed code {
-  font: 600 12.5px "JetBrains Mono", ui-monospace, monospace;
-  background: #ffffff14;
-  border-radius: 5px;
-  padding: 1px 5px;
-}
-.ch-user {
-  align-self: flex-end;
+.charla-page article,
+.charla-page .ch-think {
   max-width: 88%;
-  background: #2c2340;
-  border: 2px solid #ffffff2a;
-  border-radius: 16px 16px 4px 16px;
-  padding: 9px 13px;
-}
-.ch-user header {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 2px;
-}
-.ch-user header b {
-  font: 400 15px/1 var(--display);
-  letter-spacing: 0.06em;
-  color: var(--codex);
-}
-.ch-user.martin header b {
-  color: var(--pink);
-}
-.ch-think {
-  border-left: 4px solid #b9a2ff;
-  background: #b9a2ff14;
-  border-radius: 0 12px 12px 0;
-  padding: 6px 12px;
-  color: #d6ccf5;
-}
-.ch-think summary {
-  cursor: pointer;
-  font: 900 13px var(--text);
-  color: #c9b8ff;
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-}
-.ch-think summary time {
-  margin-left: auto;
-}
-.ch-think p {
-  margin-top: 6px;
-  font-style: italic;
-}
-.ch-think p b {
-  font-style: normal;
-  color: #fff;
-}
-.ch-muted {
-  color: #8f86a6;
-  font-size: 13px;
-}
-.ch-say p + p {
-  margin-top: 8px;
-}
-.ch-say p {
-  white-space: pre-line;
-}
-.ch-say b {
-  color: #fff;
-  font-weight: 900;
-}
-.ch-say time {
-  display: block;
-  margin-top: 4px;
-}
-.ch-cmd,
-.ch-diff {
-  border: 2px solid #ffffff24;
-  border-radius: 12px;
+  align-self: flex-start;
+  border-radius: 14px 14px 14px 4px;
+  box-shadow:
+    0 3px 0 #0000004d,
+    0 6px 14px #00000040;
   overflow: hidden;
-  background: #0f0b17;
 }
-.ch-cmd header,
-.ch-diff header {
+.charla-page article header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
+}
+.charla-page time {
+  font-size: 11px;
+}
+.charla-page p {
+  white-space: pre-wrap;
+}
+.charla-page .ch-user {
+  align-self: flex-end;
+  padding: 9px 13px;
+  background: #ff4f8b;
+  color: #1a1530;
+  border-radius: 14px 14px 4px 14px;
+}
+.charla-page .codex .ch-user {
+  background: #ff8a3d;
+}
+.charla-page .ch-say {
+  background: #fff6dc;
+  color: #1a1530;
+  padding: 8px 12px;
+}
+.charla-page .ch-say b {
+  background: #ff4f8b;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+.charla-page .codex .ch-say b {
+  background: #ff8a3d;
+}
+.charla-page .ch-think {
+  background: #2a1858;
+  color: #e9ddff;
+  border-radius: 20px 20px 20px 6px;
+  outline: 2px dashed #b58cff;
+  outline-offset: -6px;
+  padding: 12px 16px;
+}
+.charla-page summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.charla-page .ch-cmd {
+  background: #0b0d12;
+  border-left: 5px solid #b6ff3b;
+  color: #d8dde6;
+}
+.charla-page .ch-diff {
+  background: #0c1f3f;
+  border-left: 5px solid #3be0ff;
+  color: #d8dde6;
+}
+.charla-page .ch-cmd header,
+.charla-page .ch-diff header {
   padding: 6px 10px;
-  font: 900 12px var(--text);
-  color: #c9c1dd;
-  background: #ffffff0d;
-  border-bottom: 2px solid #ffffff14;
+  background: #ffffff0f;
+  color: #fff;
 }
-.ch-cmd.fail header {
-  color: #ff929b;
+.charla-page .fail {
+  border-left: 5px solid #ff3b5c;
+  background: #1c0a10;
+  color: #ffb3c0;
 }
-.ch-cmd pre,
-.ch-diff pre {
+.charla-page .fail header {
+  color: #ffb3c0;
+}
+.charla-page pre {
   margin: 0;
   padding: 8px 12px;
-  font: 500 12.5px/1.5 "JetBrains Mono", ui-monospace, monospace;
+  font:
+    12px/1.6 ui-monospace,
+    monospace;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-.ch-cmdline {
-  color: var(--acid);
+.charla-page .add {
+  background: #183d35;
+  color: #a7f3c4;
 }
-.ch-out {
-  color: #b3abc6;
-  border-top: 1px dashed #ffffff1a;
+.charla-page .del {
+  background: #4d2237;
+  color: #ffc4cc;
 }
-.ch-cmd.fail .ch-out {
-  color: #ffb3ba;
-}
-.ch-diffstat .add,
-.ch-diff pre .add {
-  color: #8fe0a0;
-  font-style: normal;
-}
-.ch-diffstat .del,
-.ch-diff pre .del {
-  color: #ff929b;
-  font-style: normal;
-}
-.ch-diff pre .add {
-  background: #2ea44f1f;
-  display: block;
-}
-.ch-diff pre .del {
-  background: #e5483f1f;
-  display: block;
-}
-.ch-read {
-  font: 800 13px var(--text);
-  color: #b3abc6;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-}
-.ch-read time {
-  margin-left: auto;
-}
-.ch-handoff {
-  background: #fff8e7;
-  color: var(--ink);
-  border: 3px solid var(--ink);
+.charla-page .ch-read,
+.charla-page .ch-handoff {
+  align-self: center;
+  max-width: 90%;
+  padding: 6px 12px;
   border-radius: 14px;
-  box-shadow: 4px 4px 0 #000;
-  padding: 9px 14px;
-  font-weight: 800;
+  background: #1fd1b9;
+  color: #08302b;
 }
-.ch-handoff b {
-  display: block;
-  font: 400 17px/1 var(--display);
-  letter-spacing: 0.06em;
-  color: var(--pink);
-  margin-bottom: 4px;
+.charla-page .ch-handoff {
+  background: #e8ff3a;
+  color: #1a1530;
 }
-.ch-handoff.in {
-  background: #e3fbf6;
+.charla-page .ch-handoff.in {
+  background: #4cf2a0;
 }
-.ch-handoff time {
-  color: #6b6478;
+.charla-page .ch-live,
+.charla-page .ch-empty {
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: #fff;
+  color: #3b2f8f;
 }
-.ch-live {
+.charla-page .ch-live {
   display: flex;
   align-items: center;
   gap: 10px;
-  font: 800 14px var(--text);
-  font-style: italic;
-  color: var(--acid);
+  align-self: flex-start;
 }
-.ch-dots {
+.charla-page .ch-dots {
   display: inline-flex;
   gap: 4px;
 }
-.ch-dots i {
+.charla-page .ch-dots i {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--acid);
+  background: #a91b56;
   animation: ch-dot 1.2s infinite;
 }
-.ch-dots i:nth-child(2) {
+.charla-page .ch-dots i:nth-child(2) {
   animation-delay: 0.2s;
 }
-.ch-dots i:nth-child(3) {
+.charla-page .ch-dots i:nth-child(3) {
   animation-delay: 0.4s;
 }
 @keyframes ch-dot {
   50% {
-    opacity: 0.25;
+    opacity: 0.4;
     transform: translateY(-3px);
   }
 }
-@media (max-width: 900px) {
-  .ch-cols {
-    grid-template-columns: 1fr;
+@media (max-width: 899px) {
+  .charla-page {
+    padding: 12px;
   }
-  .ch-col {
+  .charla-page .ch-cols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .charla-page .ch-col {
     max-height: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ch-dots i {
+  .charla-page .ch-dots i {
     animation: none;
   }
 }
-.ch-feed > * {
+.charla-page {
+  --doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.13' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z'/%3E%3Cpath d='M78 20l-6 12h8l-6 12'/%3E%3Ccircle cx='96' cy='82' r='8'/%3E%3Cpath d='M20 80c6-8 14-8 20 0'/%3E%3Cpath d='M58 66l10 4-10 4'/%3E%3Cpath d='M44 104h14M51 97v14'/%3E%3Cpath d='M100 104l8-8M108 104l-8-8'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.charla-page .ch-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.charla-page .ch-head .ch-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-}
-/* v3: each kind of entry gets its own background so they read apart at a glance. */
-.ch-tag {
-  display: inline-block;
-  font: 400 14px/1 var(--display);
-  letter-spacing: 0.07em;
-  border: 2px solid var(--ink);
-  border-radius: 8px;
-  padding: 4px 8px 2px;
-  transform: rotate(-2deg);
-}
-.ch-say {
-  position: relative;
-  align-self: flex-start;
-  max-width: 94%;
-  background: #fff8e7;
-  color: var(--ink);
-  border: 3px solid var(--ink);
-  border-radius: 18px;
-  box-shadow: 4px 4px 0 #000;
-  padding: 12px 16px 10px;
-  margin-left: 10px;
-  font-weight: 800;
-}
-.ch-say::before {
-  content: "";
-  position: absolute;
-  left: -14px;
-  top: 18px;
-  border: 9px solid transparent;
-  border-right: 13px solid var(--ink);
-}
-.ch-say::after {
-  content: "";
-  position: absolute;
-  left: -8px;
-  top: 21px;
-  border: 6px solid transparent;
-  border-right: 9px solid #fff8e7;
-}
-.ch-say .ch-tag {
-  background: var(--pink);
-  color: #fff;
-  margin-bottom: 8px;
-}
-.ch-col.codex .ch-say .ch-tag {
-  background: var(--claude);
-}
-.ch-say b {
-  color: var(--ink);
-}
-.ch-say code {
-  background: #17132118;
-}
-.ch-say time {
-  color: #6b6478;
-}
-.ch-think {
-  background: radial-gradient(#ffffff12 1.2px, transparent 1.6px) 0 0 / 8px 8px, #3b2a66;
-  border: 2.5px dashed #b9a2ff;
-  border-radius: 22px;
-  padding: 10px 14px;
-  color: #e4dbff;
-}
-.ch-think summary .ch-tag {
-  background: #b9a2ff;
-  color: var(--ink);
-}
-.ch-think summary time {
-  color: #b7a9dd;
-}
-.ch-cmd {
-  background: #07060b;
-  border-color: #3a3550;
-}
-.ch-diff {
-  background: #0e1a2e;
-  border-color: #2f4f7a;
-}
-.ch-diff header {
-  background: #16294a;
-  color: #a9c6f0;
-}
-.ch-read {
-  background: #ffe14d;
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 12px;
-  padding: 6px 10px;
-}
-.ch-read code {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
   background: #fff;
-  border: 1.5px solid var(--ink);
-}
-.ch-read time {
-  color: #4a4256;
-}
-.ch-user {
-  border-width: 3px;
-}
-.ch-user.martin {
-  background: #ff3d8b;
-  border-color: var(--ink);
-  color: #fff;
-  box-shadow: 3px 3px 0 #000;
-}
-.ch-user.martin header b,
-.ch-user.martin time {
-  color: #fff;
-}
-.ch-col.codex .ch-user {
-  background: #4a2a1c;
-  border-color: var(--claude);
-}
-.ch-col.codex .ch-user header b {
-  color: #ffb38a;
-}
-.ch-handoff {
-  background:
-    repeating-linear-gradient(-45deg, #ffffff55 0 6px, transparent 6px 14px),
-    var(--acid);
-}
-.ch-handoff.in {
-  background:
-    repeating-linear-gradient(-45deg, #ffffff55 0 6px, transparent 6px 14px),
-    #9debab;
-}
-.ch-handoff b {
-  color: var(--ink);
-}
-.ch-handoff time {
-  color: #3b3546;
-}
-.ch-say::before {
-  left: -19px;
-  top: 16px;
-  border-width: 10px;
-  border-right-width: 16px;
-}
-.ch-say::after {
-  left: -11px;
-  top: 20px;
-  border-width: 6px;
-  border-right-width: 10px;
 }

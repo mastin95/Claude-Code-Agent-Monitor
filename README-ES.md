@@ -301,7 +301,7 @@ La interfaz oscura y adaptable cubre todo el flujo de trabajo. Cada vista previa
   <em>⌘ <strong>Paleta de comandos</strong> · un iniciador de teclado para páginas, sesiones, proyectos, filtros y acciones</em>
 </p>
 
-La barra lateral enlaza Panel, Tablero Kanban, Muro, Sesiones, Feed de Actividad, Analíticas, Flujos, Configuración del agente, Ejecutar agente y Configuración. Las secciones siguientes describen el comportamiento completo detrás de estas vistas.
+La barra lateral enlaza Panel, Tablero Kanban, Muro, Charla, Sesiones, Feed de Actividad, Analíticas, Flujos, Configuración del agente, Ejecutar agente y Configuración. Las secciones siguientes describen el comportamiento completo detrás de estas vistas.
 
 ---
 ## Características
@@ -314,6 +314,7 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 | **Panel** | Las pestañas persistentes **Monitor** y **Salud** combinan totales del conjunto, jerarquías activas, actividad reciente, estado ponderado de éxito, caché, errores y heap, almacenamiento, herramientas, modelos, eficacia de subagentes y métricas de compactación. Salud se actualiza cada 5 segundos desde `/api/settings/info` y `/api/workflows`. |
 | **Tablero Kanban** | Las columnas de agentes cubren Trabajando, En espera, Completados y Error. Las columnas de sesiones añaden Activas y Abandonadas. Las tarjetas se paginan de 10 en 10, se suscriben solo a la vista WebSocket activa, conservan los títulos completos y explican motivos de espera como permisos, fin de turno, inactividad en el prompt o interrupción. |
 | **Muro** | Un muro visual de Claude/Codex en `/muro`: post-its de sesiones ilustrados, muñecos en vivo, tareas completadas, tokens, tiempo trabajado, racha, donut de reparto, barras de ritmo y mapa de calor de cinco semanas. Hoy / 7 días / 30 días y un filtro de agente compartido mantienen alineados el tablero y las gráficas; Cursor queda fuera. Las ideas clave marcadas explícitamente aparecen en vivo como bocadillos, puntos y cronología de sesión. Los encargos de Claude a Codex muestran peticiones, respuestas y conversaciones enlazadas. |
+| **Charla** | Lee Claude y Codex lado a lado en `/charla` con el estilo fijo Telegram Atardecer. |
 | **Sesiones** | Historial con búsqueda, filtros y paginación del servidor, cálculo del costo de la página visible y una fila temporal en memoria para el inicio de Codex. La búsqueda cubre `id`, `name` y `cwd` con un debounce de 300 ms. Los nombres se obtienen del título explícito, el título de IA y, por último, el primer prompt relevante del usuario. |
 | **Detalles de la sesión** | Estadísticas en vivo, trabajo activo, uso de herramientas, subagentes, tokens, jerarquía, cronologías filtradas, agrupación por `tool_use_id` y renderizadores específicos por herramienta. La vista Conversación muestra turnos en cola, avisos del sistema, Markdown, código resaltado y herramientas con estilo. Los avisos de espera muestran el motivo y el tiempo transcurrido. |
 | **Feed de Actividad** | Eventos en tiempo real que se pueden pausar, con filtros compartidos, paginación del servidor, agrupación, origen por proyecto, sesión o subagente, enlaces a sesiones e insignias de estado coherentes para Claude y Codex. |
@@ -361,6 +362,10 @@ El panel cubre todo el ciclo de vida de los agentes locales. Los contratos opera
 > **Alcance y homes de los proveedores:** Configuración mantiene coherente en toda la aplicación la elección Claude-compatible (Claude Code + Cursor), Codex o Ambos. Los homes de Claude Code y Codex se pueden editar sin reiniciar el panel. Cursor se detecta automáticamente desde `~/.cursor` o `DASHBOARD_CURSOR_HOME`.
 >
 > **Límites de seguridad local:** Ejecutar agente acepta cualquier directorio de trabajo absoluto existente y lo canoniza antes de usarlo, por lo que se mantienen los inicios desde el home y proyectos recientes. Los proveedores de webhooks alojados exigen HTTPS. Los destinos generic y n8n pueden usar HTTP para receptores locales o autoalojados, y la entrega nunca sigue redirecciones.
+
+### Charla
+
+Lee Claude y Codex lado a lado en `/charla` con el estilo fijo Telegram Atardecer. Selecciona un encargo para unir la sesión padre de Claude con una sesión Codex enlazada; por defecto se elige el encargo en curso más reciente. Las transcripciones reales distinguen peticiones y respuestas, razonamiento desplegable, comandos de shell con salida, diferencias de edición, lecturas y envíos y vueltas del encargo. Las cabeceras muestran estado, modelo, esfuerzo y tokens. Razonamiento, Comandos y Cambios muestran u ocultan sus bloques; las salidas largas se despliegan cuando lo necesitas. Los eventos WebSocket de la sesión solicitan nuevas líneas de transcripción mediante el cursor `after` / `last_line`. Por debajo de 900 px las columnas se apilan y la preferencia de movimiento reducido desactiva las animaciones de actividad.
 
 ### Muro
 
@@ -561,7 +566,7 @@ sequenceDiagram
    - La sincronización continua de proyectos combina un barrido inmediato, `fs.watch` con debounce y el polling de `DASHBOARD_SESSION_SYNC_MS`, predeterminado en 30 segundos. Una caché de mtime vuelve a analizar solo transcripciones nuevas o ampliadas y emite los mismos mensajes de sesión que los hooks.
 4. **WebSocket** publica el cambio confirmado.
 5. **La interfaz** actualiza las vistas afectadas sin polling.
-6. **Muro** recarga las sesiones y el resumen del ámbito tras los eventos en vivo con 300 ms de espera; cambiar el periodo o agente refresca sus gráficas. Los metadatos de encargos y las fichas de conversación abiertas se refrescan mediante las mismas actualizaciones de sesión.
+6. **Muro** recarga las sesiones y el resumen del ámbito tras los eventos en vivo con 300 ms de espera; cambiar el periodo o agente refresca sus gráficas. Los metadatos de encargos y las fichas de conversación abiertas se refrescan mediante las mismas actualizaciones de sesión. **Charla**: Lee Claude y Codex lado a lado en `/charla` con el estilo fijo Telegram Atardecer.
 
 ### Máquina de Estado del Agente
 
