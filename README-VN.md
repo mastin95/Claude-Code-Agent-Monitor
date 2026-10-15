@@ -301,7 +301,7 @@ Giao diện tối thích ứng bao quát toàn bộ quy trình. Mỗi bản xem 
   <em>⌘ <strong>Bảng lệnh</strong> · một trình khởi chạy bằng bàn phím cho trang, phiên, dự án, bộ lọc và hành động</em>
 </p>
 
-Thanh bên liên kết Dashboard, Bảng Kanban, Muro, Charla, Phiên, Luồng hoạt động, Phân tích, Quy trình, Cấu hình Agent, Chạy Agent và Cài đặt. Các phần dưới đây mô tả đầy đủ hành vi đằng sau những chế độ xem này.
+Thanh bên liên kết Dashboard, Bảng Kanban, Muro, Charla, Điều phối, Phiên, Luồng hoạt động, Phân tích, Quy trình, Cấu hình Agent, Chạy Agent và Cài đặt. Các phần dưới đây mô tả đầy đủ hành vi đằng sau những chế độ xem này.
 
 ---
 
@@ -316,6 +316,7 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 | **Bảng Kanban** | Các cột Agent gồm Đang làm việc, Đang chờ, Hoàn tất và Lỗi; các cột phiên bổ sung Đang hoạt động và Bị bỏ dở. Thẻ phân trang 10 mục mỗi lần, chỉ đăng ký chế độ xem WebSocket đang hoạt động, giữ nguyên tiêu đề đầy đủ và giải thích lý do chờ như yêu cầu quyền, kết thúc lượt, đang ở dấu nhắc hoặc bị gián đoạn. |
 | **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. Ý tưởng chính được đánh dấu xuất hiện trực tiếp qua bong bóng, chấm và dòng thời gian phiên được lưu. Tác vụ Claude giao cho Codex hiển thị yêu cầu, phản hồi và hội thoại liên kết. |
 | **Charla** | Đọc Claude và Codex cạnh nhau tại `/charla` với phong cách hoàng hôn Telegram cố định. |
+| **Điều phối** | Ra một lệnh tại `/direccion`: Claude làm trưởng nhóm, giao việc cho Codex, bạn chỉ cần trả lời thẻ duyệt. |
 | **Phiên** | Lịch sử có thể tìm kiếm, lọc và phân trang phía máy chủ, với chi phí chỉ tính trên trang đang hiển thị và một hàng khởi động Codex tạm thời trong bộ nhớ. Tìm kiếm bao quát `id`, `name` và `cwd` với debounce 300 ms. Tên được lấy lần lượt từ tiêu đề rõ ràng, tiêu đề AI rồi lời nhắc người dùng có ý nghĩa đầu tiên. |
 | **Chi tiết phiên** | Thống kê trực tiếp, công việc hiện tại, mức dùng công cụ, Subagent, token, hệ thống phân cấp, dòng thời gian sự kiện có bộ lọc, nhóm theo `tool_use_id` và trình kết xuất riêng cho từng công cụ. Chế độ Hội thoại kết xuất lượt chờ, thông báo hệ thống, Markdown, mã được tô sáng và công cụ có kiểu riêng; banner chờ hiển thị lý do và thời gian đã trôi qua. |
 | **Luồng hoạt động** | Sự kiện thời gian thực có thể tạm dừng, với bộ lọc dùng chung, phân trang phía máy chủ, nhóm, nguồn dự án/phiên/Subagent, liên kết phiên và badge trạng thái Claude/Codex nhất quán. |
@@ -367,6 +368,10 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 ### Charla
 
 Đọc Claude và Codex cạnh nhau tại `/charla` với phong cách hoàng hôn Telegram cố định. Chọn tác vụ để ghép phiên Claude cha với phiên Codex liên kết; mặc định chọn tác vụ đang chạy mới nhất. Bản ghi thực phân biệt yêu cầu và phản hồi, suy luận có thể mở rộng, lệnh shell kèm đầu ra, khác biệt chỉnh sửa, thao tác đọc và tác vụ gửi/nhận. Tiêu đề hiển thị trạng thái phiên, mô hình, mức suy luận và token. Các nút Suy luận, Lệnh và Thay đổi bật/tắt từng khối; đầu ra dài có thể mở rộng khi cần. Sự kiện WebSocket của phiên tải dòng bản ghi mới bằng con trỏ `after` / `last_line`. Dưới 900 px, hai cột xếp dọc và chế độ giảm chuyển động tắt hoạt ảnh hoạt động.
+
+### Điều phối
+
+Điều phối Claude và Codex từ một màn hình tại `/direccion` (thanh bên **Điều phối**). Chọn hoặc tạo thư mục dự án (có thể chạy `git init`), xem ai là trưởng nhóm và ra lệnh. Dashboard khởi chạy trưởng nhóm — giai đoạn 1 là Claude, ở chế độ hội thoại với `acceptEdits` — để lập kế hoạch và giao việc lập trình cho Codex qua công cụ MCP `dashboard_handoff`; dashboard chạy cộng sự Codex trong cùng thư mục và trả phản hồi cho trưởng nhóm. Mọi việc cần bạn đều thành thẻ duyệt: yêu cầu quyền của Claude (`dashboard_permission`), phê duyệt lệnh và tệp của Codex, và câu hỏi rõ ràng (`dashboard_ask_user`). Bạn duyệt, yêu cầu thay đổi kèm ghi chú, hoặc dừng. Sân khấu cho thấy mỗi tác tử đang làm gì cùng mô hình, mức suy luận, token và việc đang giao; Bản nhạc lưu lệnh → kế hoạch → giao việc → phản hồi → kết quả. Chỉ dẫn gửi giữa lượt sẽ chờ đến khi lượt của trưởng nhóm kết thúc. Việc giao cũng hiện trong Muro và Charla. Trang lắng nghe các thông điệp WebSocket `conductor_order`, `conductor_round`, `conductor_approval` và `conductor_agent`; giao diện REST là `/api/conductor/*` (xem [docs/API.md](docs/API.md)).
 
 ### Muro
 

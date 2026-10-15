@@ -1002,3 +1002,19 @@ The database schema provides:
 - ✅ **Backup strategies** - Online + offline backup options
 
 For API usage, see [docs/API.md](./API.md).
+
+## Conductor persistence
+
+`server/db.js` creates `conductor_projects`, `conductor_orders`,
+`conductor_rounds`, and `conductor_approvals` with `CREATE TABLE IF NOT EXISTS` and
+indexes on cwd, project/date, lead run, and order/status. Projects store each
+provider's model/effort plus Codex sandbox. Orders reference projects; rounds and
+approvals reference orders. `(order_id, n)` is unique for rounds. Orders also keep `plan` (the lead's text before its first handoff) and
+`result` (its final summary); both columns are added with `ALTER TABLE` when missing.
+
+Rounds store SQL-safe `from_agent`/`to_agent` (API `from`/`to`) and a durable
+`pending|done|error` status. Approvals store `pending|answered`, the decision,
+optional note and JSON options. Timestamps are ISO strings. Run IDs refer to
+`dashboard_runs`; its session IDs let handoff metadata catch up after ingestion
+or restart. Unfinished orders fail on conductor initialization after a restart;
+no agents are relaunched automatically. Existing session tables are unchanged.

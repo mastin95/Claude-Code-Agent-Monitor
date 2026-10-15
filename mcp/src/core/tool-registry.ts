@@ -86,7 +86,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import type { Logger } from "./logger.js";
-import { errorResult, jsonResult } from "./tool-result.js";
+import { errorResult, jsonResult, ToolText } from "./tool-result.js";
 
 /** Tool input as passed to handlers: a plain object, validated by each tool's own schema. */
 type GenericInput = Record<string, unknown>;
@@ -145,7 +145,9 @@ export function createToolRegistrar(server: McpServer, logger: Logger): ToolRegi
         logger.debug("Tool invocation started", { tool: name });
         const result = await handler(args as GenericInput);
         logger.debug("Tool invocation completed", { tool: name });
-        return jsonResult(name, result);
+        return result instanceof ToolText
+          ? { content: [{ type: "text" as const, text: result.text }] }
+          : jsonResult(name, result);
       } catch (error) {
         logger.error("Tool invocation failed", {
           tool: name,

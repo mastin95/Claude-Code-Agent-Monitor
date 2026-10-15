@@ -40,6 +40,26 @@ afterEach(() => {
 });
 
 describe("DashboardApiClient", () => {
+  it("honors a shorter deadline and disables GET retries for conductor polls", async () => {
+    let requests = 0;
+    globalThis.fetch = (async (_input, init) => {
+      requests++;
+      return new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener(
+          "abort",
+          () => reject(new DOMException("Aborted", "AbortError")),
+          { once: true }
+        );
+      });
+    }) as typeof fetch;
+    const client = new DashboardApiClient(config({ retryCount: 2 }), new Logger("error"));
+    await assert.rejects(
+      client.get("/api/conductor/handoffs/id", { timeoutMs: 10, idempotent: false }),
+      { code: "TIMEOUT", message: "Request timed out after 10ms: GET /api/conductor/handoffs/id" }
+    );
+    assert.equal(requests, 1);
+  });
+
   it("sends the configured dashboard bearer token", async () => {
     globalThis.fetch = (async (_input, init) => {
       const headers = new Headers(init?.headers);

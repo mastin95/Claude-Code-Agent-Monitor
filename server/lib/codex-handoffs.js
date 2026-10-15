@@ -87,6 +87,8 @@ function reduceHandoff(handoff, record, cursor = {}) {
 
 function saveHandoff(sessionId, handoff, evidence) {
   const metadata = metadataOf(stmts.getSession.get(sessionId));
+  // Conductor owns both the parent and rounds; transcript mirrors must not duplicate them.
+  if (metadata.handoff_parent_evidence === "conductor" && evidence !== "conductor") return false;
   if (
     JSON.stringify(metadata.handoff) === JSON.stringify(handoff) &&
     (!evidence || metadata.handoff_parent_evidence === evidence)
@@ -318,6 +320,7 @@ function reconcileHandoffParents({ jobRoots = defaultJobRoots() } = {}) {
   for (const session of codex) {
     const metadata = metadataOf(session);
     const handoff = metadata.handoff;
+    if (metadata.handoff_parent_evidence === "conductor") continue;
     const sameSource = (candidate) => candidate.source === session.source;
     // A local transcript can precede its parent DB row. Its filename still
     // identifies the parent; remote snapshots have a known source owner.

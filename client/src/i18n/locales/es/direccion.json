@@ -1,0 +1,120 @@
+{
+  "title": "Dirección",
+  "project": {
+    "label": "Proyecto",
+    "pick": "Elige un proyecto",
+    "new": "＋ Nuevo"
+  },
+  "lead": {
+    "label": "Jefe",
+    "badge": "★ JEFE",
+    "soon": "Pronto"
+  },
+  "newProject": {
+    "title": "Nuevo proyecto",
+    "folder": "Carpeta",
+    "folderHint": "C:\\ruta\\absoluta\\del\\proyecto",
+    "name": "Nombre",
+    "create": "Crear la carpeta y hacer git init",
+    "lead": "Jefe",
+    "model": "Modelo",
+    "effort": "Esfuerzo",
+    "default": "Por defecto",
+    "save": "¡CREAR!",
+    "cancel": "Cancelar",
+    "codexSoon": "Codex como jefe llega en la fase 2."
+  },
+  "order": {
+    "title": "Tu orden",
+    "placeholder": "Dime qué quieres y lo reparto…",
+    "cta": "¡A ESCENA!",
+    "onoma": "¡TACHÁN!",
+    "needProject": "Primero elige o crea un proyecto.",
+    "busy": "Ya hay una orden en marcha: usa una indicación."
+  },
+  "stage": {
+    "tokens": "{{value}} tokens",
+    "effort": "esfuerzo {{effort}}",
+    "defaultModel": "modelo por defecto",
+    "session": "Ver sesión",
+    "handoff": "Encargo {{n}} · {{from}} → {{to}}",
+    "stamp": "¡ZAS!",
+    "since": "desde las {{time}}",
+    "noHandoff": "Sin encargo en vuelo",
+    "quiet": "…"
+  },
+  "doing": {
+    "idle": "Esperando tu orden",
+    "done": "¡Listo!",
+    "stopped": "Parado",
+    "waitingHandoff": "Esperando encargo",
+    "handoff": "Esperando a Codex",
+    "waitingOk": "Esperando tu OK",
+    "command": "Ejecutando un comando",
+    "editing": "Editando archivos",
+    "reading": "Leyendo código",
+    "web": "Buscando en la web",
+    "thinking": "Pensando",
+    "subagent": "Con un ayudante"
+  },
+  "ok": {
+    "title": "Tu OK",
+    "empty": "Nada pendiente. ¡Sigue la función!",
+    "approve": "✅ Aprobar",
+    "change": "✏️ Cambiar",
+    "stop": "⛔ Parar",
+    "notePlaceholder": "¿Qué cambio quieres?",
+    "send": "Enviar",
+    "question": "pregunta",
+    "permission": "pide permiso",
+    "options": "Opciones: {{options}}",
+    "count_one": "{{count}} OK pendiente",
+    "count_other": "{{count}} OK pendientes",
+    "detail": "Ver detalle"
+  },
+  "score": {
+    "title": "Partitura",
+    "empty": "Aún no hay música.",
+    "order": "Tu orden",
+    "plan": "Plan",
+    "handoff": "Encargo {{n}} → {{to}}",
+    "reply": "¡Hecho! {{n}}",
+    "failed": "¡Falló! {{n}}",
+    "ok": "Tu OK",
+    "result": "Resultado",
+    "charla": "Ver en Charla",
+    "more": "Ver más",
+    "less": "Ver menos",
+    "answer": {
+      "approve": "aprobado",
+      "change": "cambio pedido",
+      "stop": "parado",
+      "pending": "pendiente"
+    }
+  },
+  "status": {
+    "planning": "Planificando",
+    "delegating": "Encargo en marcha",
+    "waiting_ok": "Esperando tu OK",
+    "done": "¡Hecho!",
+    "error": "Error",
+    "stopped": "Parada"
+  },
+  "foot": {
+    "placeholder": "Nueva indicación para el jefe…",
+    "send": "Enviar",
+    "stop": "Parar orden",
+    "confirmStop": "¿Parar a los dos?",
+    "yes": "Sí, parar",
+    "no": "No",
+    "queued": "En cola: llegará al terminar el turno."
+  },
+  "error": {
+    "load": "No se pudo cargar Dirección.",
+    "retry": "Reintentar"
+  },
+  "empty": {
+    "noProjects": "Crea tu primer proyecto para empezar.",
+    "noOrder": "Da tu primera orden."
+  }
+}

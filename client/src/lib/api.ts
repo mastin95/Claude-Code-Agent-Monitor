@@ -388,6 +388,12 @@ import type {
   AlertEvent,
   AlertRule,
   Analytics,
+  ConductorAnswer,
+  ConductorApproval,
+  ConductorOrder,
+  ConductorOrderRow,
+  ConductorProject,
+  ConductorProjectInput,
   CostResult,
   CursorModelPricing,
   DashboardEvent,
@@ -1876,6 +1882,51 @@ export const api = {
      */
     kill: (id: string) =>
       request<{ ok: true }>(`/run/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  },
+
+  // ──────────────────────────────── Dirección API ─────────────────────────────
+  /** The conductor behind /direccion: projects, Martin's orders, indications and
+   *  approval cards. Maps to `server/routes/conductor.js`. */
+  conductor: {
+    /** GET /api/conductor/projects - every project, newest first. */
+    projects: () => request<{ items: ConductorProject[] }>("/conductor/projects"),
+    /** POST /api/conductor/projects - register (or create + git init) a project folder. */
+    createProject: (input: ConductorProjectInput) =>
+      request<ConductorProject>("/conductor/projects", {
+        method: "POST",
+        body: JSON.stringify(input),
+      }),
+    /** GET /api/conductor/orders?projectId= - the project's latest orders, newest first. */
+    orders: (projectId: string, limit = 20) =>
+      request<{ items: ConductorOrderRow[] }>(
+        `/conductor/orders?${new URLSearchParams({ projectId, limit: String(limit) })}`
+      ),
+    /** POST /api/conductor/orders - give the lead a new order. */
+    order: (projectId: string, text: string) =>
+      request<ConductorOrder>("/conductor/orders", {
+        method: "POST",
+        body: JSON.stringify({ projectId, text }),
+      }),
+    /** GET /api/conductor/orders/:id - order with rounds, approvals and both runs. */
+    getOrder: (id: string) =>
+      request<ConductorOrder>(`/conductor/orders/${encodeURIComponent(id)}`),
+    /** POST /api/conductor/orders/:id/indication - mid-work note for the lead. */
+    indication: (id: string, text: string) =>
+      request<{ queued: boolean }>(`/conductor/orders/${encodeURIComponent(id)}/indication`, {
+        method: "POST",
+        body: JSON.stringify({ text }),
+      }),
+    /** POST /api/conductor/approvals/:id - Martin answers an OK card. */
+    approve: (id: string, answer: ConductorAnswer, note?: string) =>
+      request<ConductorApproval>(`/conductor/approvals/${encodeURIComponent(id)}`, {
+        method: "POST",
+        body: JSON.stringify(note ? { answer, note } : { answer }),
+      }),
+    /** DELETE /api/conductor/orders/:id - stop the order and both agents. */
+    stopOrder: (id: string) =>
+      request<ConductorOrder>(`/conductor/orders/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      }),
   },
 
   // ────────────────────────────────── Alerts API ──────────────────────────────

@@ -1943,7 +1943,11 @@ export interface WSMessage {
     | "alert_updated"
     | "workflow_upserted"
     | "remote_source.status"
-    | "remote_data.updated";
+    | "remote_data.updated"
+    | "conductor_order"
+    | "conductor_round"
+    | "conductor_approval"
+    | "conductor_agent";
   /** The message body, whose concrete shape is selected by `type` above. */
   data:
     | Session
@@ -1958,7 +1962,11 @@ export interface WSMessage {
     | AlertEvent
     | WorkflowRun
     | RemoteSourceStatusPayload
-    | RemoteDataUpdatedPayload;
+    | RemoteDataUpdatedPayload
+    | ConductorOrderRow
+    | ConductorRound
+    | ConductorApproval
+    | ConductorAgentState;
   /** ISO timestamp the server broadcast this message (not necessarily the
    *  same instant the underlying event occurred). */
   timestamp: string;
@@ -2813,3 +2821,119 @@ export const SESSION_STATUS_CONFIG: Record<
     dot: "bg-slate-400",
   },
 };
+
+// ───── Dirección (conductor) ─────
+
+/** Agent that can lead or collaborate in a Dirección project. */
+export type ConductorAgentName = "claude" | "codex";
+
+/** Lifecycle of one order Martin gave in Dirección. */
+export type ConductorOrderStatus =
+  | "planning"
+  | "delegating"
+  | "waiting_ok"
+  | "done"
+  | "error"
+  | "stopped";
+
+/** Row of GET /api/conductor/projects: a folder plus its lead and per-agent defaults. */
+export interface ConductorProject {
+  id: string;
+  cwd: string;
+  name: string;
+  lead: ConductorAgentName;
+  claude_model: string | null;
+  claude_effort: string | null;
+  codex_model: string | null;
+  codex_effort: string | null;
+  codex_sandbox: string;
+  created_at: string;
+}
+
+/** Body of POST /api/conductor/projects. */
+export interface ConductorProjectInput {
+  cwd: string;
+  name?: string;
+  create?: boolean;
+  lead: ConductorAgentName;
+  models?: Partial<Record<ConductorAgentName, { model?: string; effort?: string }>>;
+}
+
+/** One order row (without its rounds/approvals). */
+export interface ConductorOrderRow {
+  id: string;
+  project_id: string;
+  text: string;
+  status: ConductorOrderStatus;
+  lead_run_id: string | null;
+  created_at: string;
+  ended_at: string | null;
+  /** Lead's text right before its first handoff. */
+  plan?: string | null;
+  /** Lead's final summary for the order. */
+  result?: string | null;
+}
+
+/** One hand-off between the lead and the collaborator. */
+export interface ConductorRound {
+  id: string;
+  order_id: string;
+  n: number;
+  from: ConductorAgentName;
+  to: ConductorAgentName;
+  ask: string;
+  ask_at: string;
+  reply: string | null;
+  reply_at: string | null;
+  run_id: string | null;
+  status: "pending" | "done" | "error";
+}
+
+/** A card waiting for (or answered by) Martin. */
+export interface ConductorApproval {
+  id: string;
+  order_id: string;
+  agent: ConductorAgentName;
+  kind: "permission" | "question";
+  summary: string;
+  detail: string | null;
+  options: string[] | null;
+  status: "pending" | "answered";
+  created_at: string;
+  answered_at: string | null;
+  answer: ConductorAnswer | null;
+  note: string | null;
+}
+
+/** Martin's answer to an approval card. */
+export type ConductorAnswer = "approve" | "change" | "stop";
+
+/** Live snapshot of what one agent is doing (WS `conductor_agent`). */
+export interface ConductorAgentState {
+  orderId: string;
+  agent: ConductorAgentName;
+  runId: string;
+  sessionId: string | null;
+  doing: string;
+  model: string | null;
+  effort: string | null;
+  tokens: unknown;
+}
+
+/** Minimal run snapshot GET /api/conductor/orders/:id embeds for each agent. */
+export interface ConductorRunSnapshot {
+  id: string;
+  status: string;
+  sessionId?: string | null;
+  session_id?: string | null;
+  model?: string | null;
+  effort?: string | null;
+}
+
+/** Response of GET /api/conductor/orders/:id. */
+export interface ConductorOrder extends ConductorOrderRow {
+  rounds: ConductorRound[];
+  approvals: ConductorApproval[];
+  runs: Partial<Record<ConductorAgentName, ConductorRunSnapshot | null>>;
+  agents: Partial<Record<ConductorAgentName, ConductorAgentState>>;
+}

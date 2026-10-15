@@ -303,7 +303,7 @@ flowchart LR
   <em>⌘ <strong>命令面板</strong> · 用一个键盘启动器访问页面、会话、项目、筛选器和操作</em>
 </p>
 
-侧边栏链接 Dashboard、Kanban 看板、Muro、Charla、会话、活动流、分析、工作流、Agent 配置、Run Agent 和设置。以下章节说明这些视图背后的完整行为。
+侧边栏链接 Dashboard、Kanban 看板、Muro、Charla、指挥、会话、活动流、分析、工作流、Agent 配置、Run Agent 和设置。以下章节说明这些视图背后的完整行为。
 ---
 
 ## 功能特性
@@ -317,6 +317,7 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 | **Kanban 看板** | Agent 列覆盖 Working、Waiting、Completed 和 Error，会话列另含 Active 和 Abandoned。卡片每次显示 10 张，仅订阅当前 WebSocket 视图，保留完整标题，并说明权限输入、回合完成、提示符空闲或中断等等待原因。 |
 | **Muro** | `/muro` 提供 Claude/Codex 可视化工作墙：会话便签、实时吉祥物、已完成任务、token、工作时长、连续完成天数、完成占比环形图、节奏柱状图和五周热力图。今天 / 7 天 / 30 天及共享 Agent 筛选器让看板与图表保持一致；不包含 Cursor。 明确标记的关键想法通过实时气泡、圆点和保留的会话时间线呈现。 Claude 交给 Codex 的委托显示请求、回复和关联对话。 |
 | **Charla** | 在 `/charla` 中以固定的 Telegram 日落风格并排阅读 Claude 和 Codex。 |
+| **指挥** | 在 `/direccion` 下达一条指令：Claude 担任负责人，把工作委派给 Codex，你只需处理确认卡片。 |
 | **会话** | 可搜索、可筛选、服务端分页的历史记录，费用仅按可见页计算，并包含临时的内存 Codex 启动行。搜索以 300 ms 防抖匹配 `id`、`name` 和 `cwd`。名称依次取显式标题、AI 标题和首条有意义的用户提示。 |
 | **会话详情** | 实时统计、当前工作、工具用量、Subagent、Token、层级、筛选后的事件时间线、`tool_use_id` 分组和工具专用渲染器。对话视图渲染排队回合、系统通知、Markdown、高亮代码和样式化工具；等待横幅显示原因和已等待时长。 |
 | **活动流** | 可暂停的实时事件流，带共享筛选器、服务端分页、分组、项目/会话/Subagent 来源、会话链接，以及一致的 Claude/Codex 状态徽标。 |
@@ -367,6 +368,10 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 ### Charla
 
 在 `/charla` 中以固定的 Telegram 日落风格并排阅读 Claude 和 Codex。 选择委托，将 Claude 父会话与关联的 Codex 会话配对；默认选择最新的进行中委托。真实对话记录区分请求和回复、可展开的推理、带输出的 shell 命令、编辑差异、读取操作以及发送和接收的委托。标题栏显示会话状态、模型、推理强度和 token。推理、命令和更改开关控制对应内容；长输出可按需展开。会话 WebSocket 事件通过 `after` / `last_line` 游标获取新的对话记录行。宽度低于 900 px 时两列纵向排列，减少动态效果设置会禁用活动动画。
+
+### 指挥
+
+在 `/direccion`（侧边栏 **指挥**）从一个界面指挥 Claude 和 Codex。选择或创建项目文件夹（可选执行 `git init`），查看负责人并下达指令。仪表板启动负责人——第 1 阶段为 Claude，以 `acceptEdits` 的对话模式运行——它制定计划，并通过 `dashboard_handoff` MCP 工具把编程工作委派给 Codex；仪表板在同一文件夹中运行 Codex 协作者，并把回复返回给负责人。所有需要你处理的事项都会变成确认卡片：Claude 权限请求（`dashboard_permission`）、Codex 命令和文件审批，以及明确的问题（`dashboard_ask_user`）。你可以批准、附注说明要求修改，或停止。舞台显示每个代理当前正在做什么、模型、推理强度和 token，以及进行中的委派；乐谱记录 指令 → 计划 → 委派 → 回复 → 结果。回合进行中发送的补充说明会等到负责人的回合结束后送达。委派也会出现在 Muro 和 Charla 中。页面监听 `conductor_order`、`conductor_round`、`conductor_approval` 和 `conductor_agent` WebSocket 消息；REST 接口为 `/api/conductor/*`（见 [docs/API.md](docs/API.md)）。
 
 ### Muro
 

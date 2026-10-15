@@ -2437,7 +2437,53 @@ const stmts = {
   ),
 };
 
+// Additive, repeatable migration; existing session/run tables remain unchanged.
+function migrateConductor(connection) {
+  connection.exec(`
+    CREATE TABLE IF NOT EXISTS conductor_projects (
+      id TEXT PRIMARY KEY, cwd TEXT NOT NULL, name TEXT NOT NULL, lead TEXT NOT NULL,
+      claude_model TEXT, claude_effort TEXT, codex_model TEXT, codex_effort TEXT,
+      codex_sandbox TEXT NOT NULL DEFAULT 'workspace-write', created_at TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS conductor_orders (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES conductor_projects(id),
+      text TEXT NOT NULL, status TEXT NOT NULL, lead_run_id TEXT,
+      created_at TEXT NOT NULL, ended_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS conductor_rounds (
+      id TEXT PRIMARY KEY, order_id TEXT NOT NULL REFERENCES conductor_orders(id),
+      n INTEGER NOT NULL, from_agent TEXT NOT NULL, to_agent TEXT NOT NULL,
+      ask TEXT NOT NULL, ask_at TEXT NOT NULL, reply TEXT, reply_at TEXT, run_id TEXT,
+      status TEXT NOT NULL DEFAULT 'pending', UNIQUE(order_id, n)
+    );
+    CREATE TABLE IF NOT EXISTS conductor_approvals (
+      id TEXT PRIMARY KEY, order_id TEXT NOT NULL REFERENCES conductor_orders(id),
+      agent TEXT NOT NULL, kind TEXT NOT NULL, summary TEXT NOT NULL, detail TEXT,
+      status TEXT NOT NULL DEFAULT 'pending', created_at TEXT NOT NULL,
+      answered_at TEXT, answer TEXT, note TEXT, options TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_conductor_projects_cwd ON conductor_projects(cwd);
+    CREATE INDEX IF NOT EXISTS idx_conductor_orders_project ON conductor_orders(project_id, created_at);
+    CREATE INDEX IF NOT EXISTS idx_conductor_orders_lead ON conductor_orders(lead_run_id);
+    CREATE INDEX IF NOT EXISTS idx_conductor_rounds_order ON conductor_rounds(order_id, status);
+    CREATE INDEX IF NOT EXISTS idx_conductor_approvals_order ON conductor_approvals(order_id, status);
+  `);
+  // The lead's plan and final summary feed Dirección's score; added after the first schema.
+  const orderColumns = new Set(
+    connection
+      .prepare("PRAGMA table_info(conductor_orders)")
+      .all()
+      .map((column) => column.name)
+  );
+  for (const column of ["plan", "result"]) {
+    if (!orderColumns.has(column))
+      connection.prepare(`ALTER TABLE conductor_orders ADD COLUMN ${column} TEXT`).run();
+  }
+}
+migrateConductor(db);
+
 module.exports = {
+  migrateConductor,
   db,
   stmts,
   DB_PATH,

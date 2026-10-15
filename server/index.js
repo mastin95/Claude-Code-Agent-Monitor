@@ -114,6 +114,7 @@ function createApp() {
   app.use("/api/cc-config", ccConfigRouter);
   app.use("/api/codex-config", codexConfigRouter);
   app.use("/api/run", runRouter);
+  app.use("/api/conductor", require("./routes/conductor"));
   app.use("/api/alerts", alertsRouter);
   app.use("/api/webhooks", webhooksRouter);
   app.use("/api/remote-sources", remoteSourcesRouter);

@@ -300,7 +300,7 @@ flowchart LR
   <em>⌘ <strong>Command Palette</strong> · 페이지, 세션, 프로젝트, 필터, 작업을 위한 단일 키보드 실행기</em>
 </p>
 
-사이드바는 Dashboard, Kanban Board, Muro, Charla, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, Settings로 이동합니다. 아래 섹션에서 이 보기의 전체 동작을 설명합니다.
+사이드바는 Dashboard, Kanban Board, Muro, Charla, 지휘, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, Settings로 이동합니다. 아래 섹션에서 이 보기의 전체 동작을 설명합니다.
 
 ---
 
@@ -315,6 +315,7 @@ flowchart LR
 | **Kanban Board** | Agent 열은 Working, Waiting, Completed, Error를, 세션 열은 Active와 Abandoned를 추가로 다룹니다. 카드는 10개씩 표시하고 활성 WebSocket 보기만 구독하며, 전체 제목을 보존하고 권한 입력, 턴 완료, 프롬프트 대기, 중단 같은 대기 사유를 설명합니다. |
 | **Muro** | `/muro`의 Claude/Codex 시각적 작업 벽: 그림이 있는 세션 메모, 실시간 마스코트, 완료 작업, 토큰, 작업 시간, 연속 완료 일수, 완료 도넛, 작업 리듬 막대와 5주 히트맵을 제공합니다. 오늘 / 7일 / 30일과 공유 Agent 필터가 보드와 차트를 동기화하며 Cursor는 제외합니다. 명시적으로 표시한 핵심 아이디어는 실시간 말풍선, 점, 보존된 세션 타임라인으로 나타납니다. Claude가 Codex에 맡긴 의뢰의 요청, 응답과 연결된 대화를 보여 줍니다. |
 | **Charla** | `/charla`에서 고정된 Telegram 석양 스타일로 Claude와 Codex를 나란히 읽습니다. |
+| **지휘** | `/direccion`에서 지시 하나를 내리면 Claude가 리더로서 Codex에 일을 위임하고, 사용자는 승인 카드에만 답합니다. |
 | **Sessions** | 보이는 페이지만 비용을 계산하는 검색, 필터, 서버 페이지네이션 히스토리와 메모리 내 임시 Codex 시작 행을 제공합니다. 검색은 300 ms 디바운스로 `id`, `name`, `cwd`를 대상으로 합니다. 이름은 명시적 제목, AI 제목, 첫 의미 있는 사용자 프롬프트 순으로 결정됩니다. |
 | **Session Detail** | 실시간 통계, 활성 작업, 도구 사용량, Subagent, 토큰, 계층, 필터링된 이벤트 타임라인, `tool_use_id` 그룹화, 도구별 렌더러를 제공합니다. Conversation 보기는 대기 중인 턴, 시스템 알림, Markdown, 구문 강조 코드, 스타일이 적용된 도구를 렌더링하고, 대기 배너에는 사유와 경과 시간을 표시합니다. |
 | **Activity Feed** | 공유 필터, 서버 페이지네이션, 그룹화, 프로젝트/세션/Subagent 출처, 세션 링크, 일관된 Claude/Codex 상태 배지를 갖춘 일시 정지 가능한 실시간 이벤트를 제공합니다. |
@@ -366,6 +367,10 @@ flowchart LR
 ### Charla
 
 `/charla`에서 고정된 Telegram 석양 스타일로 Claude와 Codex를 나란히 읽습니다. 의뢰를 선택하면 상위 Claude 세션과 연결된 Codex 세션이 함께 표시되며, 기본값은 가장 최근 진행 중인 의뢰입니다. 실제 대화 기록은 요청과 응답, 펼칠 수 있는 추론, 출력이 포함된 shell 명령, 편집 차이, 읽기, 의뢰 송수신을 구분합니다. 머리글에는 세션 상태, 모델, 추론 수준과 토큰이 표시됩니다. 추론, 명령, 변경 버튼으로 각 블록을 표시하거나 숨기며 긴 출력은 필요할 때 펼칩니다. 세션 WebSocket 이벤트는 `after` / `last_line` 커서로 새 대화 기록 줄을 가져옵니다. 900 px 미만에서는 열이 세로로 쌓이고 동작 줄이기 설정은 활동 애니메이션을 끕니다.
+
+### 지휘
+
+`/direccion`(사이드바 **지휘**)에서 한 화면으로 Claude와 Codex를 지휘합니다. 프로젝트 폴더를 선택하거나 만들고(선택적으로 `git init`), 리더를 확인한 뒤 지시를 내립니다. 대시보드는 리더를 실행합니다. 1단계에서는 Claude가 `acceptEdits` 대화 모드로 실행되어 계획을 세우고 `dashboard_handoff` MCP 도구로 프로그래밍 작업을 Codex에 위임합니다. 대시보드는 같은 폴더에서 Codex 협업자를 실행하고 그 응답을 리더에게 돌려줍니다. 사용자가 필요한 모든 일은 승인 카드로 도착합니다: Claude 권한 요청(`dashboard_permission`), Codex 명령·파일 승인, 명시적 질문(`dashboard_ask_user`). 승인하거나, 메모와 함께 변경을 요청하거나, 중지할 수 있습니다. 무대에는 각 에이전트가 지금 하는 일과 모델, 강도, 토큰, 진행 중인 위임이 표시되고, 악보에는 지시 → 계획 → 위임 → 응답 → 결과가 남습니다. 턴 도중 보낸 추가 지시는 리더의 턴이 끝날 때까지 대기합니다. 위임은 Muro와 Charla에도 표시됩니다. 페이지는 `conductor_order`, `conductor_round`, `conductor_approval`, `conductor_agent` WebSocket 메시지를 수신하며, REST 표면은 `/api/conductor/*`입니다([docs/API.md](docs/API.md) 참고).
 
 ### Muro
 

@@ -71,6 +71,7 @@ import { registerAlertTools } from "./domains/alert-tools.js";
 import { registerWebhookTools } from "./domains/webhook-tools.js";
 import { registerImportTools } from "./domains/import-tools.js";
 import { registerConfigTools } from "./domains/config-tools.js";
+import { registerConductorTools } from "./domains/conductor-tools.js";
 import { registerRunTools } from "./domains/run-tools.js";
 import { registerSettingsTools } from "./domains/settings-tools.js";
 import { registerSessionDetailTools } from "./domains/session-detail-tools.js";
@@ -99,6 +100,7 @@ export function registerAllTools(context: ToolContext): void {
   registerImportTools(context);
   registerConfigTools(context);
   registerRunTools(context);
+  registerConductorTools(context);
   registerSettingsTools(context);
   registerSessionDetailTools(context);
   registerPushTools(context);

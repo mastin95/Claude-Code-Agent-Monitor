@@ -44,6 +44,7 @@ function combine(...fragments) {
 }
 
 module.exports = combine(
+  require("./openapi-extra/conductor"),
   ccConfig,
   codexConfig,
   run,

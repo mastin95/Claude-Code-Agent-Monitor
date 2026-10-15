@@ -1,0 +1,120 @@
+{
+  "title": "Điều phối",
+  "project": {
+    "label": "Dự án",
+    "pick": "Chọn dự án",
+    "new": "＋ Mới"
+  },
+  "lead": {
+    "label": "Trưởng nhóm",
+    "badge": "★ TRƯỞNG",
+    "soon": "Sắp có"
+  },
+  "newProject": {
+    "title": "Dự án mới",
+    "folder": "Thư mục",
+    "folderHint": "Đường dẫn tuyệt đối của dự án",
+    "name": "Tên",
+    "create": "Tạo thư mục và chạy git init",
+    "lead": "Trưởng nhóm",
+    "model": "Mô hình",
+    "effort": "Mức suy luận",
+    "default": "Mặc định",
+    "save": "TẠO!",
+    "cancel": "Hủy",
+    "codexSoon": "Codex làm trưởng nhóm sẽ có ở giai đoạn 2."
+  },
+  "order": {
+    "title": "Lệnh của bạn",
+    "placeholder": "Nói điều bạn muốn, tôi sẽ chia việc…",
+    "cta": "LÊN SÂN KHẤU!",
+    "onoma": "TA-ĐA!",
+    "needProject": "Hãy chọn hoặc tạo một dự án trước.",
+    "busy": "Đang có một lệnh chạy: hãy gửi chỉ dẫn thêm."
+  },
+  "stage": {
+    "tokens": "{{value}} token",
+    "effort": "mức {{effort}}",
+    "defaultModel": "mô hình mặc định",
+    "session": "Xem phiên",
+    "handoff": "Giao việc {{n}} · {{from}} → {{to}}",
+    "stamp": "VÙ!",
+    "since": "từ {{time}}",
+    "noHandoff": "Không có việc đang giao",
+    "quiet": "…"
+  },
+  "doing": {
+    "idle": "Đang chờ lệnh của bạn",
+    "done": "Xong!",
+    "stopped": "Đã dừng",
+    "waitingHandoff": "Đang chờ việc được giao",
+    "handoff": "Đang chờ Codex",
+    "waitingOk": "Đang chờ bạn duyệt",
+    "command": "Đang chạy lệnh",
+    "editing": "Đang sửa tệp",
+    "reading": "Đang đọc mã",
+    "web": "Đang tìm trên web",
+    "thinking": "Đang suy nghĩ",
+    "subagent": "Đang làm cùng trợ lý"
+  },
+  "ok": {
+    "title": "Bạn duyệt",
+    "empty": "Không có gì chờ duyệt. Buổi diễn tiếp tục!",
+    "approve": "✅ Duyệt",
+    "change": "✏️ Đổi",
+    "stop": "⛔ Dừng",
+    "notePlaceholder": "Cần thay đổi gì?",
+    "send": "Gửi",
+    "question": "hỏi",
+    "permission": "xin quyền",
+    "options": "Lựa chọn: {{options}}",
+    "count_one": "{{count}} mục chờ duyệt",
+    "count_other": "{{count}} mục chờ duyệt",
+    "detail": "Xem chi tiết"
+  },
+  "score": {
+    "title": "Bản nhạc",
+    "empty": "Chưa có bản nhạc nào.",
+    "order": "Lệnh của bạn",
+    "plan": "Kế hoạch",
+    "handoff": "Giao việc {{n}} → {{to}}",
+    "reply": "Xong! {{n}}",
+    "failed": "Thất bại! {{n}}",
+    "ok": "Bạn duyệt",
+    "result": "Kết quả",
+    "charla": "Xem trong Charla",
+    "more": "Xem thêm",
+    "less": "Thu gọn",
+    "answer": {
+      "approve": "đã duyệt",
+      "change": "đã yêu cầu đổi",
+      "stop": "đã dừng",
+      "pending": "đang chờ"
+    }
+  },
+  "status": {
+    "planning": "Đang lập kế hoạch",
+    "delegating": "Đang giao việc",
+    "waiting_ok": "Đang chờ bạn duyệt",
+    "done": "Xong!",
+    "error": "Lỗi",
+    "stopped": "Đã dừng"
+  },
+  "foot": {
+    "placeholder": "Chỉ dẫn mới cho trưởng nhóm…",
+    "send": "Gửi",
+    "stop": "Dừng lệnh",
+    "confirmStop": "Dừng cả hai tác tử?",
+    "yes": "Có, dừng",
+    "no": "Không",
+    "queued": "Đã xếp hàng: sẽ đến khi lượt kết thúc."
+  },
+  "error": {
+    "load": "Không tải được trang Điều phối.",
+    "retry": "Thử lại"
+  },
+  "empty": {
+    "noProjects": "Tạo dự án đầu tiên để bắt đầu.",
+    "noOrder": "Ra lệnh đầu tiên."
+  }
+}
