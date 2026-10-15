@@ -108,6 +108,7 @@ const NAV_KEYS = [
   { to: "/kanban", icon: Columns3, key: "nav:agentBoard" },
   { to: "/muro", icon: StickyNote, key: "nav:muro" },
   { to: "/charla", icon: MessagesSquare, key: "nav:charla" },
+  { to: "/direccion", icon: Play, key: "nav:direccion" },
   { to: "/sessions", icon: FolderOpen, key: "nav:sessions" },
   { to: "/activity", icon: Activity, key: "nav:activityFeed" },
   { to: "/analytics", icon: BarChart3, key: "nav:analytics" },

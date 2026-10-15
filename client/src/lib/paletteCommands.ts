@@ -407,6 +407,7 @@ export const PAGE_COMMANDS: {
   { to: "/kanban", icon: Columns3, navKey: "nav:agentBoard" },
   { to: "/muro", icon: StickyNote, navKey: "nav:muro" },
   { to: "/charla", icon: StickyNote, navKey: "nav:charla" },
+  { to: "/direccion", icon: StickyNote, navKey: "nav:direccion" },
   { to: "/sessions", icon: FolderOpen, navKey: "nav:sessions" },
   { to: "/activity", icon: Activity, navKey: "nav:activityFeed" },
   { to: "/analytics", icon: BarChart3, navKey: "nav:analytics" },

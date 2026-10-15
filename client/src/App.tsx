@@ -78,6 +78,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { KanbanBoard } from "./pages/KanbanBoard";
 import { Muro } from "./pages/Muro";
 import { Charla } from "./pages/Charla";
+import { Direccion } from "./pages/Direccion";
 import { Sessions } from "./pages/Sessions";
 import { SessionDetail } from "./pages/SessionDetail";
 import { ActivityFeed } from "./pages/ActivityFeed";
@@ -135,6 +136,7 @@ export default function App() {
           <Route path="kanban" element={<KanbanBoard />} />
           <Route path="muro" element={<Muro />} />
           <Route path="charla" element={<Charla />} />
+          <Route path="direccion" element={<Direccion />} />
           <Route path="sessions" element={<Sessions />} />
           <Route path="sessions/:id" element={<SessionDetail />} />
           <Route path="activity" element={<ActivityFeed />} />
