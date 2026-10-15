@@ -12,6 +12,7 @@ import "@fontsource/nunito/900.css";
 import "../components/muro/charla.css";
 import "../components/muro/charla-fx.css";
 import "../components/muro/charla-pro.css";
+import "../components/muro/charla-astra.css";
 import { Mascot } from "../components/muro/Mascot";
 
 type Side = "claude" | "codex";
