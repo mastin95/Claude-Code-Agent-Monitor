@@ -169,5 +169,55 @@
       "toque": "TOQUE ESPECIAL",
       "otra": "IDEA"
     }
+  },
+  "pizarra": {
+    "useFolder": "Usar esta carpeta",
+    "folder": "Proyecto",
+    "noFolder": "Elige dónde se guardará el proyecto",
+    "load": "Cargar otro…",
+    "choose": "Elegir carpeta…",
+    "otherFolder": "Otra carpeta o una nueva…",
+    "describe": "Describe el proyecto",
+    "busy": "Se está dibujando una pizarra. Puedes comentarla tocando cualquier elemento.",
+    "placeholder": "Describe el proyecto y pide todo lo que necesites para prepararlo…",
+    "enterHint": "Enter para empezar · Mayús+Enter para saltar de línea",
+    "start": "Empezar",
+    "drawing": "Dibujando: {{what}}",
+    "reading": "Leyendo tu descripción…",
+    "boardStatus": {
+      "waiting": "En espera",
+      "drafting": "Dibujando",
+      "ready": "Terminada",
+      "error": "Con error",
+      "stopped": "Parada"
+    },
+    "count_one": "{{count}} elemento",
+    "count_other": "{{count}} elementos",
+    "stop": "Parar",
+    "idle": "Escribe qué quieres y pulsa Enter.",
+    "pickFirst": "Primero elige la carpeta del proyecto.",
+    "boardOf": "Pizarra de {{name}}",
+    "emptyTitle": "Aquí aparecerá la pizarra",
+    "emptyText": "Describe el proyecto arriba y pulsa Enter. Claude dibujará su pizarra en directo y después Codex hará la suya.",
+    "timeline": "Línea de tiempo",
+    "timelineEmpty": "Cada pizarra terminada se guarda aquí.",
+    "mockup": "Maqueta",
+    "waiting": "{{name}} empezará cuando acabe la pizarra anterior.",
+    "commentBoard": "Comentar la pizarra",
+    "askAboutBoard": "Pedir algo sobre esta pizarra",
+    "wholeBoard": "Toda la pizarra",
+    "zoom": "Ampliar",
+    "correction": "Escribe una corrección…",
+    "request": "¿Qué quieres que hagan con esto?",
+    "sendTo": "Enviar a {{name}}",
+    "askAgent": "Pedir a {{name}}",
+    "correctionHint": "Le llega a {{name}} en cuanto termine lo que está dibujando.",
+    "requestHint": "Abre una pizarra nueva en la línea de tiempo.",
+    "busyHint": "Espera a que termine la pizarra que se está dibujando.",
+    "commentStatus": {
+      "pending": "en cola",
+      "sent": "enviado",
+      "dropped": "no llegó"
+    }
   }
 }

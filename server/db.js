@@ -2470,6 +2470,24 @@ function migrateConductor(connection) {
       order_id TEXT, created_at TEXT NOT NULL, ended_at TEXT
     );
     CREATE INDEX IF NOT EXISTS idx_conductor_pitches_project ON conductor_pitches(project_id, created_at);
+    CREATE TABLE IF NOT EXISTS conductor_sheets (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES conductor_projects(id),
+      n INTEGER NOT NULL, prompt TEXT NOT NULL, agents TEXT NOT NULL, status TEXT NOT NULL,
+      source_board_id TEXT, source_element_id TEXT, created_at TEXT NOT NULL, ended_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS conductor_boards (
+      id TEXT PRIMARY KEY, sheet_id TEXT NOT NULL REFERENCES conductor_sheets(id),
+      agent TEXT NOT NULL, position INTEGER NOT NULL, status TEXT NOT NULL, run_id TEXT,
+      elements TEXT NOT NULL DEFAULT '[]', error TEXT, created_at TEXT NOT NULL, ended_at TEXT
+    );
+    CREATE TABLE IF NOT EXISTS conductor_board_comments (
+      id TEXT PRIMARY KEY, board_id TEXT NOT NULL REFERENCES conductor_boards(id),
+      element_id TEXT, text TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending',
+      created_at TEXT NOT NULL, sent_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_conductor_sheets_project ON conductor_sheets(project_id, n);
+    CREATE INDEX IF NOT EXISTS idx_conductor_boards_sheet ON conductor_boards(sheet_id, position);
+    CREATE INDEX IF NOT EXISTS idx_conductor_board_comments_board ON conductor_board_comments(board_id, status);
     CREATE INDEX IF NOT EXISTS idx_conductor_projects_cwd ON conductor_projects(cwd);
     CREATE INDEX IF NOT EXISTS idx_conductor_orders_project ON conductor_orders(project_id, created_at);
     CREATE INDEX IF NOT EXISTS idx_conductor_orders_lead ON conductor_orders(lead_run_id);

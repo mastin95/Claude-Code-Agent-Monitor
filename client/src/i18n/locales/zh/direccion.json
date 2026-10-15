@@ -169,5 +169,55 @@
       "toque": "特别点子",
       "otra": "想法"
     }
+  },
+  "pizarra": {
+    "useFolder": "使用此文件夹",
+    "folder": "项目",
+    "noFolder": "选择项目的保存位置",
+    "load": "加载其他…",
+    "choose": "选择文件夹…",
+    "otherFolder": "其他或新文件夹…",
+    "describe": "描述项目",
+    "busy": "正在绘制白板。点击任意元素即可评论。",
+    "placeholder": "描述项目，并提出准备它所需的一切…",
+    "enterHint": "按 Enter 开始 · Shift+Enter 换行",
+    "start": "开始",
+    "drawing": "正在绘制：{{what}}",
+    "reading": "正在阅读你的描述…",
+    "boardStatus": {
+      "waiting": "等待中",
+      "drafting": "绘制中",
+      "ready": "已完成",
+      "error": "出错",
+      "stopped": "已停止"
+    },
+    "count_one": "{{count}} 个元素",
+    "count_other": "{{count}} 个元素",
+    "stop": "停止",
+    "idle": "写下你想要的内容并按 Enter。",
+    "pickFirst": "请先选择项目文件夹。",
+    "boardOf": "{{name}} 的白板",
+    "emptyTitle": "白板会显示在这里",
+    "emptyText": "在上方描述项目并按 Enter。Claude 会实时绘制白板，然后 Codex 绘制自己的白板。",
+    "timeline": "时间线",
+    "timelineEmpty": "每个完成的白板都会保存在这里。",
+    "mockup": "原型图",
+    "waiting": "上一个白板完成后 {{name}} 才会开始。",
+    "commentBoard": "评论白板",
+    "askAboutBoard": "就此白板提出请求",
+    "wholeBoard": "整个白板",
+    "zoom": "放大",
+    "correction": "写下修改意见…",
+    "request": "你希望他们怎么处理这个？",
+    "sendTo": "发送给 {{name}}",
+    "askAgent": "请 {{name}} 处理",
+    "correctionHint": "{{name}} 完成当前绘制步骤后就会收到。",
+    "requestHint": "在时间线中新建一个白板。",
+    "busyHint": "请等待正在绘制的白板完成。",
+    "commentStatus": {
+      "pending": "排队中",
+      "sent": "已发送",
+      "dropped": "未送达"
+    }
   }
 }

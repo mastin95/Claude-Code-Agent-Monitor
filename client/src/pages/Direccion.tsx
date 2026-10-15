@@ -1,23 +1,21 @@
 /**
  * @file Direccion.tsx
- * @description Dirección: Martin gives orders (directly, or by mixing ideas from a Claude-vs-Codex pitch duel), the conductor runs a Claude lead and a Codex collaborator, and the page shows the stage, OK cards and score live.
+ * @description Dirección as a whiteboard: a folder bar and a description box on top; on Enter
+ *   Claude draws its board live (text, lists, charts, mockups, arrows), then Codex draws its
+ *   own; finished boards stack in a timeline below. Any element can be zoomed, corrected while
+ *   it is being drawn, or used to call Claude or Codex for a new sheet.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { Link, useLocation } from "react-router";
-import { useTranslation } from "react-i18next";
-import { Duelo, pickKey } from "../components/muro/Duelo";
-import { Mascot } from "../components/muro/Mascot";
-import { useReducedMotion } from "../components/muro/motion";
 import {
-  compactTokens,
-  currentRound,
-  isOrderLive,
-  pendingApprovals,
-  scoreRows,
-  stageAgent,
-  type ScoreRow,
-} from "../components/muro/direccion-model";
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
+import { useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 import { api } from "../lib/api";
 import {
   getActiveProjectId,
@@ -26,63 +24,20 @@ import {
   useActiveProjectId,
 } from "../lib/activeProject";
 import { eventBus } from "../lib/eventBus";
-import { formatTime } from "../lib/format";
 import type {
   ConductorAgentName,
-  ConductorAgentState,
-  ConductorAnswer,
-  ConductorApproval,
+  ConductorBoard,
   ConductorBrowse,
-  ConductorOrder,
-  ConductorPitch,
-  ConductorPitchDepth,
-  ConductorPitchPick,
   ConductorProject,
+  ConductorSheet,
 } from "../lib/types";
-import "@fontsource/bangers/400.css";
-import "@fontsource/nunito/700.css";
-import "@fontsource/nunito/800.css";
-import "@fontsource/nunito/900.css";
-import "../components/muro/direccion.css";
+import { Board, BoardThumb, elementName } from "../components/pizarra/Board";
+import "../components/pizarra/pizarra.css";
 
-const AGENTS: ConductorAgentName[] = ["claude", "codex"];
 const NAMES: Record<ConductorAgentName, string> = { claude: "Claude", codex: "Codex" };
-const EFFORTS = ["low", "medium", "high", "xhigh", "max"];
-const DEPTHS: ConductorPitchDepth[] = ["quick", "normal", "deep"];
-/** A duel stays on screen while it drafts or waits for Martin's mix (or shows why it failed). */
-const showPitch = (pitch: ConductorPitch | null) =>
-  !!pitch && ["drafting", "ready", "error"].includes(pitch.status);
-
-function Chip({ children, tone }: { children: React.ReactNode; tone?: string }) {
-  return (
-    <span className="dir-chip" data-tone={tone}>
-      {children}
-    </span>
-  );
-}
-
-function LeadPicker({ lead }: { lead: ConductorAgentName | null }) {
-  const { t } = useTranslation("direccion");
-  return (
-    <div className="dir-lead" role="radiogroup" aria-label={t("lead.label")}>
-      <span className="dir-label">{t("lead.label")}</span>
-      {AGENTS.map((agent) => (
-        <span
-          key={agent}
-          className="dir-lead-tile"
-          data-agent={agent}
-          role="radio"
-          aria-checked={agent === lead}
-          aria-disabled="true"
-        >
-          <Mascot agent={agent} mode="done" size={44} reducedMotion />
-          <span>{NAMES[agent]}</span>
-          {agent === lead && <b className="dir-baton">{t("lead.badge")}</b>}
-        </span>
-      ))}
-    </div>
-  );
-}
+const AGENTS: ConductorAgentName[] = ["claude", "codex"];
+const samePath = (a: string, b: string) =>
+  a.replace(/[\\/]+$/, "").toLowerCase() === b.replace(/[\\/]+$/, "").toLowerCase();
 
 function FolderPicker({
   start,
@@ -111,7 +66,7 @@ function FolderPicker({
     }
   }, []);
   useEffect(() => {
-    // Start where the typed path points; fall back to the home folder if it does not exist yet.
+    // Start where the current project lives; fall back to the home folder.
     api.conductor
       .browse(start.trim() || undefined)
       .then(setView)
@@ -119,7 +74,7 @@ function FolderPicker({
     dialog.current?.focus();
   }, [start, open]);
   useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
+    const onKey = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
@@ -130,98 +85,95 @@ function FolderPicker({
   const join = (base: string, name: string) =>
     base.endsWith(view?.sep || "/") ? base + name : base + (view?.sep || "/") + name;
   return (
-    <div className="dir-picker-backdrop" onClick={onClose}>
+    <div className="pz-backdrop" onClick={onClose}>
       <div
         ref={dialog}
-        className="dir-picker"
+        className="pz-dialog pz-picker"
         role="dialog"
         aria-modal="true"
         aria-label={t("picker.title")}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="dir-picker-head">
-          <h2 className="dir-title">{t("picker.title")}</h2>
+        <div className="pz-dialog-head">
+          <h2>{t("picker.title")}</h2>
           <button
             type="button"
-            className="dir-picker-x"
+            className="pz-btn ghost"
             onClick={onClose}
             aria-label={t("picker.close")}
           >
             ✕
           </button>
         </div>
-        <div className="dir-picker-body">
-          <nav className="dir-picker-side" aria-label={t("picker.places")}>
-            <span className="dir-label">{t("picker.drives")}</span>
+        <div className="pz-picker-body">
+          <nav className="pz-picker-side" aria-label={t("picker.places")}>
+            <span className="pz-label">{t("picker.drives")}</span>
             {view?.roots.map((root) => (
               <button
                 key={root.path}
                 type="button"
-                className="dir-picker-place"
-                data-kind="drive"
+                className="pz-place"
                 aria-current={view.path === root.path}
                 onClick={() => open(root.path)}
               >
-                <span aria-hidden>💾</span> {root.name}
+                {root.name}
               </button>
             ))}
-            <span className="dir-label">{t("picker.places")}</span>
+            <span className="pz-label">{t("picker.places")}</span>
             {view?.places.map((place, i) => (
               <button
                 key={place.path}
                 type="button"
-                className="dir-picker-place"
+                className="pz-place"
                 aria-current={view.path === place.path}
                 onClick={() => open(place.path)}
               >
-                <span aria-hidden>{i === 0 ? "🏠" : "⭐"}</span>{" "}
                 {i === 0 ? t("picker.home") : place.name}
               </button>
             ))}
           </nav>
-          <div className="dir-picker-main">
-            <div className="dir-picker-path">
+          <div className="pz-picker-main">
+            <div className="pz-picker-path">
               <button
                 type="button"
-                className="dir-change"
+                className="pz-btn"
                 disabled={!view?.parent || loading}
                 onClick={() => view?.parent && open(view.parent)}
               >
-                <span aria-hidden>⬆</span> {t("picker.up")}
+                ↑ {t("picker.up")}
               </button>
               <code title={view?.path}>{view?.path || "…"}</code>
             </div>
-            {error && <p className="dir-error">{error}</p>}
-            <ul className="dir-picker-list" aria-busy={loading}>
+            {error && <p className="pz-error">{error}</p>}
+            <ul className="pz-picker-list" aria-busy={loading}>
               {view && view.dirs.length === 0 && !loading && (
-                <li className="dir-picker-empty">{t("picker.empty")}</li>
+                <li className="pz-muted">{t("picker.empty")}</li>
               )}
               {view?.dirs.map((dir) => (
                 <li key={dir.path}>
                   <button
                     type="button"
-                    className="dir-picker-folder"
+                    className="pz-folder"
                     title={dir.path}
                     onClick={() => open(dir.path)}
                   >
-                    <span aria-hidden>📁</span>
+                    <span aria-hidden>▸</span>
                     <span>{dir.name}</span>
                   </button>
                 </li>
               ))}
             </ul>
-            {view?.truncated && <small>{t("picker.truncated")}</small>}
+            {view?.truncated && <small className="pz-muted">{t("picker.truncated")}</small>}
           </div>
         </div>
-        <div className="dir-picker-foot">
-          <label className="dir-picker-new">
+        <div className="pz-picker-foot">
+          <label className="pz-picker-new">
             <span>{t("picker.newFolder")}</span>
             <input
               value={fresh}
               onChange={(e) => setFresh(e.target.value)}
               onKeyDown={(e) => {
-                // The picker lives inside the New project form; Enter must not submit it.
                 if (e.key === "Enter") e.preventDefault();
               }}
               placeholder={t("picker.newHint")}
@@ -229,19 +181,19 @@ function FolderPicker({
           </label>
           <button
             type="button"
-            className="dir-change"
+            className="pz-btn"
             disabled={!view || !freshOk}
             onClick={() => view && onPick(join(view.path, freshName), true)}
           >
-            <span aria-hidden>✨</span> {t("picker.createHere")}
+            {t("picker.createHere")}
           </button>
           <button
             type="button"
-            className="dir-cta small"
+            className="pz-btn primary"
             disabled={!view || loading}
             onClick={() => view && onPick(view.path, false)}
           >
-            {t("picker.use")}
+            {t("pizarra.useFolder")}
           </button>
         </div>
       </div>
@@ -249,432 +201,44 @@ function FolderPicker({
   );
 }
 
-function NewProject({
-  onCreated,
-  onCancel,
-}: {
-  onCreated: (project: ConductorProject) => void;
-  onCancel: () => void;
-}) {
-  const { t } = useTranslation("direccion");
-  const [cwd, setCwd] = useState("");
-  const [name, setName] = useState("");
-  const [create, setCreate] = useState(true);
-  const [picking, setPicking] = useState(false);
-  const [models, setModels] = useState<Record<ConductorAgentName, string[]>>({
-    claude: [],
-    codex: [],
-  });
-  const [choice, setChoice] = useState<Record<string, string>>({});
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  useEffect(() => {
-    let disposed = false;
-    for (const agent of AGENTS) {
-      api.run
-        .models(agent)
-        .then((result) => {
-          if (!disposed)
-            setModels((previous) => ({ ...previous, [agent]: result.items.map((m) => m.id) }));
-        })
-        .catch(() => {
-          /* Model suggestions are optional; free text still works. */
-        });
-    }
-    return () => {
-      disposed = true;
-    };
-  }, []);
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    setBusy(true);
-    setError(null);
-    try {
-      const pick = (agent: ConductorAgentName) => ({
-        ...(choice[`${agent}_model`] ? { model: choice[`${agent}_model`] } : {}),
-        ...(choice[`${agent}_effort`] ? { effort: choice[`${agent}_effort`] } : {}),
-      });
-      const project = await api.conductor.createProject({
-        cwd: cwd.trim(),
-        ...(name.trim() ? { name: name.trim() } : {}),
-        create,
-        lead: "claude",
-        models: { claude: pick("claude"), codex: pick("codex") },
-      });
-      onCreated(project);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
-    }
-  };
-  return (
-    <form className="dir-newproj" onSubmit={submit}>
-      <h2 className="dir-title">{t("newProject.title")}</h2>
-      <label>
-        <span>{t("newProject.folder")}</span>
-        <span className="dir-folder-row">
-          <input
-            value={cwd}
-            onChange={(e) => setCwd(e.target.value)}
-            placeholder={t("newProject.folderHint")}
-            required
-          />
-          <button type="button" className="dir-change" onClick={() => setPicking(true)}>
-            <span aria-hidden>📂</span> {t("newProject.browse")}
-          </button>
-        </span>
-      </label>
-      {picking && (
-        <FolderPicker
-          start={cwd}
-          onClose={() => setPicking(false)}
-          onPick={(picked, isNew) => {
-            setCwd(picked);
-            if (isNew) setCreate(true);
-            setPicking(false);
-          }}
-        />
-      )}
-      <label>
-        <span>{t("newProject.name")}</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} />
-      </label>
-      <label className="dir-check">
-        <input type="checkbox" checked={create} onChange={(e) => setCreate(e.target.checked)} />
-        <span>{t("newProject.create")}</span>
-      </label>
-      <div className="dir-newproj-lead">
-        <span className="dir-label">{t("newProject.lead")}</span>
-        <span className="dir-lead-tile" data-agent="claude" aria-checked="true">
-          <Mascot agent="claude" mode="done" size={36} reducedMotion />
-          <span>Claude</span>
-          <b className="dir-baton">{t("lead.badge")}</b>
-        </span>
-        <span className="dir-lead-tile" data-agent="codex" aria-disabled="true">
-          <Mascot agent="codex" mode="done" size={36} reducedMotion />
-          <span>Codex</span>
-          <b className="dir-soon">{t("lead.soon")}</b>
-        </span>
-        <small>{t("newProject.codexSoon")}</small>
-      </div>
-      {AGENTS.map((agent) => (
-        <fieldset key={agent} data-agent={agent}>
-          <legend>{NAMES[agent]}</legend>
-          <label>
-            <span>{t("newProject.model")}</span>
-            <input
-              list={`dir-models-${agent}`}
-              value={choice[`${agent}_model`] || ""}
-              placeholder={t("newProject.default")}
-              onChange={(e) => setChoice({ ...choice, [`${agent}_model`]: e.target.value })}
-            />
-            <datalist id={`dir-models-${agent}`}>
-              {models[agent].map((id) => (
-                <option key={id} value={id} />
-              ))}
-            </datalist>
-          </label>
-          <label>
-            <span>{t("newProject.effort")}</span>
-            <select
-              value={choice[`${agent}_effort`] || ""}
-              onChange={(e) => setChoice({ ...choice, [`${agent}_effort`]: e.target.value })}
-            >
-              <option value="">{t("newProject.default")}</option>
-              {EFFORTS.map((effort) => (
-                <option key={effort} value={effort}>
-                  {effort}
-                </option>
-              ))}
-            </select>
-          </label>
-        </fieldset>
-      ))}
-      {error && <p className="dir-error">{error}</p>}
-      <div className="dir-newproj-actions">
-        <button type="button" className="dir-change" onClick={onCancel}>
-          {t("newProject.cancel")}
-        </button>
-        <button type="submit" className="dir-cta small" disabled={busy || !cwd.trim()}>
-          {t("newProject.save")}
-        </button>
-      </div>
-    </form>
-  );
-}
-
-function AgentCard({
-  agent,
-  project,
-  order,
-  reducedMotion,
-}: {
-  agent: ConductorAgentName;
-  project: ConductorProject | null;
-  order: ConductorOrder | null;
-  reducedMotion: boolean;
-}) {
-  const { t } = useTranslation("direccion");
-  const state = stageAgent(agent, project, order);
-  const working = !!order && isOrderLive(order) && state.doingKey !== "waitingHandoff";
-  const tokens = compactTokens(state.tokens);
-  return (
-    <div className="dir-agent" data-agent={agent}>
-      <Mascot
-        agent={agent}
-        mode={working ? "work" : order?.status === "done" ? "done" : "wait"}
-        size={96}
-        reducedMotion={reducedMotion}
-      />
-      <div className="dir-agent-body">
-        <h3>
-          {NAMES[agent]} {state.lead && <b className="dir-baton">{t("lead.badge")}</b>}
-        </h3>
-        <p className="dir-bubble" aria-live="polite">
-          {state.doingKey ? t(`doing.${state.doingKey}`) : state.raw}
-        </p>
-        <div className="dir-chips">
-          <Chip>{state.model || t("stage.defaultModel")}</Chip>
-          {state.effort && <Chip tone="effort">{t("stage.effort", { effort: state.effort })}</Chip>}
-          {tokens && <Chip tone="tok">{t("stage.tokens", { value: tokens })}</Chip>}
-          {state.sessionId && (
-            <Link className="dir-chip" data-tone="link" to={`/sessions/${state.sessionId}`}>
-              {t("stage.session")}
-            </Link>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HandoffCard({ order }: { order: ConductorOrder | null }) {
-  const { t } = useTranslation("direccion");
-  const round = currentRound(order);
-  if (!round) {
-    return (
-      <div className="dir-encargo" data-idle="1">
-        <div className="dir-plane">✈️</div>
-        <h4>{t("stage.noHandoff")}</h4>
-        <p>{t("stage.quiet")}</p>
-      </div>
-    );
+/** The board that should be on stage: the one being drawn, else the newest finished one. */
+function liveBoard(
+  sheets: ConductorSheet[]
+): { sheet: ConductorSheet; board: ConductorBoard } | null {
+  const ordered = [...sheets].sort((a, b) => b.n - a.n);
+  for (const sheet of ordered) {
+    const drawing = sheet.boards.find((b) => b.status === "drafting");
+    if (drawing) return { sheet, board: drawing };
   }
-  return (
-    <div className="dir-encargo">
-      <div className="dir-plane">✈️</div>
-      <h4>{t("stage.handoff", { n: round.n, from: NAMES[round.from], to: NAMES[round.to] })}</h4>
-      <p className="dir-clamp">{round.ask}</p>
-      <span className="dir-stamp">{t("stage.stamp")}</span>
-      <small>{t("stage.since", { time: formatTime(round.ask_at) })}</small>
-    </div>
-  );
-}
-
-/** Approval details are usually JSON tool input; indent it so commands and diffs read well. */
-function prettyDetail(detail: string): string {
-  try {
-    return JSON.stringify(JSON.parse(detail), null, 2);
-  } catch {
-    return detail;
-  }
-}
-
-/** Score text clamps to three lines; long plans and results expand on demand. */
-function ScoreText({ text }: { text: string }) {
-  const { t } = useTranslation("direccion");
-  const [open, setOpen] = useState(false);
-  const long = text.length > 180 || text.split("\n").length > 3;
-  return (
-    <>
-      <span className="dir-clamp" data-open={open ? "1" : "0"}>
-        {text}
-      </span>
-      {long && (
-        <button
-          type="button"
-          className="dir-more"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          {open ? t("score.less") : t("score.more")}
-        </button>
-      )}
-    </>
-  );
-}
-
-function ApprovalCard({
-  approval,
-  onAnswer,
-}: {
-  approval: ConductorApproval;
-  onAnswer: (answer: ConductorAnswer, note?: string) => Promise<void>;
-}) {
-  const { t } = useTranslation("direccion");
-  const [noting, setNoting] = useState(false);
-  const [note, setNote] = useState("");
-  const [busy, setBusy] = useState(false);
-  const answer = async (value: ConductorAnswer, text?: string) => {
-    setBusy(true);
-    try {
-      await onAnswer(value, text);
-    } finally {
-      setBusy(false);
-    }
-  };
-  return (
-    <article className="dir-ok-card" data-agent={approval.agent}>
-      <Mascot agent={approval.agent} mode="wait" size={48} reducedMotion />
-      <div>
-        <h4>
-          {NAMES[approval.agent]}{" "}
-          <span className="dir-kind">
-            {approval.kind === "question" ? t("ok.question") : t("ok.permission")}
-          </span>
-        </h4>
-        <p className="dir-ok-summary">{approval.summary}</p>
-        {approval.detail && (
-          <details className="dir-ok-detail">
-            <summary>{t("ok.detail")}</summary>
-            <pre>{prettyDetail(approval.detail)}</pre>
-          </details>
-        )}
-        {approval.options?.length ? (
-          <p>{t("ok.options", { options: approval.options.join(" · ") })}</p>
-        ) : null}
-        {noting && (
-          <form
-            className="dir-ok-note"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void answer("change", note.trim() || undefined);
-            }}
-          >
-            <input
-              autoFocus
-              value={note}
-              aria-label={t("ok.notePlaceholder")}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder={t("ok.notePlaceholder")}
-            />
-            <button type="submit" className="dir-change" disabled={busy}>
-              {t("ok.send")}
-            </button>
-          </form>
-        )}
-      </div>
-      <div className="dir-ok-actions">
-        <button className="dir-yes" disabled={busy} onClick={() => void answer("approve")}>
-          {t("ok.approve")}
-        </button>
-        <button className="dir-change" disabled={busy} onClick={() => setNoting(!noting)}>
-          {t("ok.change")}
-        </button>
-        <button className="dir-no" disabled={busy} onClick={() => void answer("stop")}>
-          {t("ok.stop")}
-        </button>
-      </div>
-    </article>
-  );
-}
-
-function scoreLabel(row: ScoreRow, t: (key: string, options?: Record<string, unknown>) => string) {
-  if (row.kind === "handoff") return t("score.handoff", { n: row.n, to: "Codex" });
-  if (row.kind === "reply" || row.kind === "failed") return t(`score.${row.kind}`, { n: row.n });
-  return t(`score.${row.kind}`);
-}
-
-function Partitura({ order }: { order: ConductorOrder | null }) {
-  const { t } = useTranslation("direccion");
-  const rows = scoreRows(order);
-  return (
-    <section className="dir-score">
-      <h2 className="dir-title">{t("score.title")}</h2>
-      {rows.length === 0 ? (
-        <p className="dir-empty">{t("score.empty")}</p>
-      ) : (
-        <ol>
-          {rows.map((row) => (
-            <li key={row.key} data-kind={row.kind} data-who={row.who}>
-              <time>{formatTime(row.at)}</time>
-              <span className="dir-dot" />
-              <div className="dir-score-text">
-                <b>{scoreLabel(row, t)}</b>
-                <ScoreText text={row.text} />
-                {row.kind === "ok" && <em>{t(`score.answer.${row.answer || "pending"}`)}</em>}
-              </div>
-            </li>
-          ))}
-        </ol>
-      )}
-      {order?.rounds.length ? (
-        <Link className="dir-score-link" to="/charla">
-          {t("score.charla")}
-        </Link>
-      ) : null}
-    </section>
-  );
+  const latest = ordered[0];
+  if (!latest) return null;
+  const shown = [...latest.boards].reverse().find((b) => b.elements.length) || latest.boards[0];
+  return shown ? { sheet: latest, board: shown } : null;
 }
 
 export function Direccion() {
   const { t } = useTranslation("direccion");
-  const reducedMotion = useReducedMotion();
-  const [projects, setProjects] = useState<ConductorProject[] | null>(null);
-  // The open project is app-wide (sidebar switcher, reopened on launch), not just this page's.
-  const projectId = useActiveProjectId();
-  const setProjectId = setActiveProjectId;
   const location = useLocation();
-  const [order, setOrder] = useState<ConductorOrder | null>(null);
-  const [creating, setCreating] = useState(false);
+  const projectId = useActiveProjectId();
+  const [projects, setProjects] = useState<ConductorProject[] | null>(null);
+  const [sheets, setSheets] = useState<ConductorSheet[]>([]);
+  const [selected, setSelected] = useState<{ sheetId: string; boardId: string } | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState("");
+  const [picking, setPicking] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [retry, setRetry] = useState(0);
-  const [text, setText] = useState("");
-  const [indication, setIndication] = useState("");
-  const [notice, setNotice] = useState<string | null>(null);
-  const [confirmStop, setConfirmStop] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [loadingOrder, setLoadingOrder] = useState(false);
-  const [pitch, setPitch] = useState<ConductorPitch | null>(null);
-  const [picks, setPicks] = useState<ConductorPitchPick[]>([]);
-  const [depth, setDepth] = useState<ConductorPitchDepth>("normal");
-  // The order and project the page is following; async results and WS handlers check
-  // them so a late response never lands on a project Martin already left.
-  const followed = useRef<string | null>(null);
-  const selected = useRef<string | null>(projectId);
-  selected.current = projectId;
-
+  const current = useRef<string | null>(projectId);
+  current.current = projectId;
   const project = projects?.find((p) => p.id === projectId) || null;
 
-  const follow = useCallback((next: ConductorOrder | null) => {
-    followed.current = next?.id || null;
-    setOrder(next);
-  }, []);
-  const loadOrder = useCallback(async (id: string) => {
-    const fresh = await api.conductor.getOrder(id);
-    if (followed.current === id) setOrder(fresh);
-  }, []);
-  // Follow the project's newest order as the server sees it (initial load, other tabs, reconnects).
-  const syncLatest = useCallback(
-    async (pid: string) => {
-      const { items } = await api.conductor.orders(pid, 1);
-      if (selected.current !== pid) return;
-      const latest = items[0];
-      if (!latest) {
-        if (!followed.current) follow(null);
-        return;
-      }
-      if (latest.id !== followed.current) followed.current = latest.id;
-      await loadOrder(latest.id);
-    },
-    [follow, loadOrder]
-  );
-
-  // "New project" from the welcome screen or the sidebar switcher opens the form here.
+  // "New project" from the welcome screen or the sidebar switcher opens the folder picker.
   const wantsNew = !!(location.state as { newProject?: boolean } | null)?.newProject;
   useEffect(() => {
-    if (wantsNew) setCreating(true);
+    if (wantsNew) setPicking(true);
   }, [wantsNew, location.key]);
 
   useEffect(() => {
@@ -685,11 +249,10 @@ export function Direccion() {
       .then(({ items }) => {
         if (disposed) return;
         setProjects(items);
-        const current = getActiveProjectId();
-        setProjectId(
-          current && items.some((p) => p.id === current) ? current : items[0]?.id || null
+        const active = getActiveProjectId();
+        setActiveProjectId(
+          active && items.some((p) => p.id === active) ? active : items[0]?.id || null
         );
-        if (!items.length) setCreating(true);
       })
       .catch(() => {
         if (!disposed) setLoadError(true);
@@ -699,207 +262,133 @@ export function Direccion() {
     };
   }, [retry]);
 
-  // Follow the selected project's latest order.
+  const loadSheets = useCallback(async (pid: string) => {
+    const { items } = await api.conductor.sheets(pid, 30);
+    if (current.current === pid) setSheets(items);
+  }, []);
   useEffect(() => {
-    follow(null);
+    setSheets([]);
+    setSelected(null);
+    setExpanded(null);
     if (!projectId) return;
-    let disposed = false;
-    // Until the latest order is known, giving a new one could start a second lead.
-    setLoadingOrder(true);
-    syncLatest(projectId)
-      .catch(() => {
-        if (!disposed) setLoadError(true);
-      })
-      .finally(() => {
-        if (!disposed) setLoadingOrder(false);
-      });
-    return () => {
-      disposed = true;
-    };
-  }, [projectId, retry, follow, syncLatest]);
+    loadSheets(projectId).catch(() => setLoadError(true));
+  }, [projectId, retry, loadSheets]);
 
-  // The project's latest pitch duel, so a duel survives reloads and other tabs.
   useEffect(() => {
-    setPitch(null);
-    setPicks([]);
-    if (!projectId) return;
-    let disposed = false;
-    api.conductor
-      .pitches(projectId, 1)
-      .then(({ items }) => {
-        if (!disposed && selected.current === projectId) setPitch(items[0] || null);
-      })
-      .catch(() => {
-        /* The duel is optional; orders still work without it. */
+    const off = eventBus.subscribe((message) => {
+      if (message.type !== "conductor_sheet") return;
+      const sheet = message.data as ConductorSheet;
+      if (sheet.project_id !== current.current) return;
+      setSheets((list) => {
+        const rest = list.filter((s) => s.id !== sheet.id);
+        return [sheet, ...rest].sort((a, b) => b.n - a.n);
       });
-    return () => {
-      disposed = true;
-    };
-  }, [projectId, retry]);
-
-  // Live updates: agent snapshots merge in place; everything else refetches (grouped).
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const schedule = (job: () => Promise<void>) => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer = null;
-        void job().catch(() => {});
-      }, 300);
-    };
-    const refresh = (id: string) => schedule(() => loadOrder(id));
-    const resync = () => {
-      if (projectId) schedule(() => syncLatest(projectId));
-    };
-    const unsubscribe = eventBus.subscribe((message) => {
-      if (!message.type.startsWith("conductor_")) return;
-      if (message.type === "conductor_pitch") {
-        const next = message.data as ConductorPitch;
-        if (next.project_id !== projectId) return;
-        setPitch((current) =>
-          !current || current.id === next.id || next.created_at >= current.created_at
-            ? next
-            : current
-        );
-        return;
-      }
-      if (message.type === "conductor_agent") {
-        const agentState = message.data as ConductorAgentState;
-        setOrder((current) =>
-          current && current.id === agentState.orderId
-            ? { ...current, agents: { ...current.agents, [agentState.agent]: agentState } }
-            : current
-        );
-        return;
-      }
-      if (message.type === "conductor_order") {
-        const row = message.data as { id: string; project_id?: string };
-        if (row.id === followed.current) refresh(row.id);
-        // Another order of this project (e.g. from another tab): ask the server which is newest
-        // instead of letting any update of an older order take over the stage.
-        else if (row.project_id && row.project_id === projectId) resync();
-        return;
-      }
-      const id = (message.data as { order_id?: string }).order_id;
-      if (id && id === followed.current) refresh(id);
     });
     const reconnect = eventBus.onConnection((connected) => {
-      if (connected) resync();
+      if (connected && current.current) void loadSheets(current.current).catch(() => {});
     });
     return () => {
-      if (timer) clearTimeout(timer);
-      unsubscribe();
+      off();
       reconnect();
     };
-  }, [loadOrder, syncLatest, projectId]);
+  }, [loadSheets]);
 
-  const live = isOrderLive(order);
-  // A finished lead keeps listening until it exits or a new order retires it.
-  const talkable =
-    live ||
-    (order?.status === "done" &&
-      ["running", "spawning"].includes(String(order.runs?.claude?.status)));
-  const approvals = pendingApprovals(order);
-  const orderLocked = !project || live || loadingOrder;
+  const active = sheets.find((s) => s.status === "drafting") || null;
+  const drawing = active?.boards.find((b) => b.status === "drafting") || null;
+  // While a board is being drawn the stage follows it; otherwise it shows what Martin picked.
+  const pickedSheet = selected && sheets.find((s) => s.id === selected.sheetId);
+  const picked = pickedSheet && pickedSheet.boards.find((b) => b.id === selected?.boardId);
+  const stage =
+    drawing && active
+      ? { sheet: active, board: drawing }
+      : pickedSheet && picked
+        ? { sheet: pickedSheet, board: picked }
+        : liveBoard(sheets);
 
-  const giveOrder = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!project || !text.trim() || orderLocked) return;
-    const pid = project.id;
+  const usePath = async (path: string, isNew: boolean) => {
+    setPicking(false);
+    setMenu(false);
+    setNotice(null);
+    const known = projects?.find((p) => samePath(p.cwd, path));
+    if (known) {
+      setActiveProjectId(known.id);
+      return;
+    }
+    try {
+      const created = await api.conductor.createProject({
+        cwd: path,
+        create: isNew,
+        lead: "claude",
+      });
+      setProjects((list) => [created, ...(list || [])]);
+      setActiveProjectId(created.id);
+      notifyProjectsChanged();
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const start = async (event?: FormEvent) => {
+    event?.preventDefault();
+    if (!prompt.trim() || busy) return;
+    if (!project) {
+      setPicking(true);
+      return;
+    }
+    if (active) return;
     setBusy(true);
     setNotice(null);
     try {
-      const created = await api.conductor.order(pid, text.trim());
-      if (selected.current === pid) follow(created);
-      setText("");
+      const sheet = await api.conductor.sheet({ projectId: project.id, prompt: prompt.trim() });
+      setSheets((list) => [sheet, ...list.filter((s) => s.id !== sheet.id)]);
+      setSelected(null);
+      setPrompt("");
     } catch (err) {
       setNotice(err instanceof Error ? err.message : String(err));
     } finally {
       setBusy(false);
     }
   };
-  const propose = async () => {
-    if (!project || !text.trim() || orderLocked) return;
-    const pid = project.id;
-    setBusy(true);
+  const onPromptKey = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+      event.preventDefault();
+      void start();
+    }
+  };
+  const comment = async (board: ConductorBoard, elementId: string | null, text: string) => {
     setNotice(null);
     try {
-      const created = await api.conductor.pitch(pid, text.trim(), depth);
-      if (selected.current === pid) {
-        setPitch(created);
-        setPicks([]);
-      }
-      setText("");
+      await api.conductor.commentBoard(board.id, text, elementId);
     } catch (err) {
       setNotice(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
     }
   };
-  const togglePick = (pick: ConductorPitchPick) =>
-    setPicks((current) =>
-      current.some((p) => pickKey(p) === pickKey(pick))
-        ? current.filter((p) => pickKey(p) !== pickKey(pick))
-        : [...current, pick]
-    );
-  const orderMix = async (note: string) => {
-    if (!pitch || !project) return;
-    const pid = project.id;
-    setBusy(true);
+  const call = async (
+    board: ConductorBoard,
+    elementId: string | null,
+    agent: ConductorAgentName,
+    text: string
+  ) => {
+    if (!project) return;
     setNotice(null);
     try {
-      const created = await api.conductor.orderPitch(pitch.id, picks, note || undefined);
-      if (selected.current === pid) {
-        follow(created);
-        setPitch((current) => (current ? { ...current, status: "used" } : current));
-        setPicks([]);
-      }
-    } catch (err) {
-      setNotice(err instanceof Error ? err.message : String(err));
-    } finally {
-      setBusy(false);
-    }
-  };
-  const discardPitch = async () => {
-    if (!pitch) return;
-    const current = pitch;
-    setPicks([]);
-    try {
-      if (current.status === "drafting") setPitch(await api.conductor.stopPitch(current.id));
-      setPitch((p) => (p && p.id === current.id ? { ...p, status: "stopped" } : p));
-    } catch (err) {
-      setNotice(err instanceof Error ? err.message : String(err));
-    }
-  };
-  const pitchDrafting = pitch?.status === "drafting";
-
-  const sendIndication = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!order || !indication.trim()) return;
-    setNotice(null);
-    try {
-      const { queued } = await api.conductor.indication(order.id, indication.trim());
-      setIndication("");
-      setNotice(queued ? t("foot.queued") : null);
-    } catch (err) {
-      setNotice(err instanceof Error ? err.message : String(err));
-    }
-  };
-  const answer = async (approval: ConductorApproval, value: ConductorAnswer, note?: string) => {
-    try {
-      await api.conductor.approve(approval.id, value, note);
-      await loadOrder(approval.order_id);
+      const sheet = await api.conductor.sheet({
+        projectId: project.id,
+        prompt: text,
+        agent,
+        sourceBoardId: board.id,
+        ...(elementId ? { sourceElementId: elementId } : {}),
+      });
+      setSheets((list) => [sheet, ...list.filter((s) => s.id !== sheet.id)]);
+      setSelected(null);
     } catch (err) {
       setNotice(err instanceof Error ? err.message : String(err));
     }
   };
   const stop = async () => {
-    if (!order) return;
-    const id = order.id;
-    setConfirmStop(false);
+    if (!active) return;
     try {
-      const stopped = await api.conductor.stopOrder(id);
-      if (followed.current === id) setOrder(stopped);
+      await api.conductor.stopSheet(active.id);
     } catch (err) {
       setNotice(err instanceof Error ? err.message : String(err));
     }
@@ -907,10 +396,10 @@ export function Direccion() {
 
   if (loadError) {
     return (
-      <main className="dir-page">
-        <section className="dir-alert" role="alert">
-          <h2 className="dir-title">{t("error.load")}</h2>
-          <button className="dir-cta small" onClick={() => setRetry((n) => n + 1)}>
+      <main className="pz-page">
+        <section className="pz-panel" role="alert">
+          <p>{t("error.load")}</p>
+          <button className="pz-btn primary" onClick={() => setRetry((n) => n + 1)}>
             {t("error.retry")}
           </button>
         </section>
@@ -918,178 +407,222 @@ export function Direccion() {
     );
   }
 
+  const timeline = [...sheets].sort((a, b) => a.n - b.n);
+  const stageBoard = stage?.board || null;
+  const visible = stageBoard?.elements.filter((e) => e.kind !== "arrow") || [];
+  const drawn = visible.length;
+  const last = visible[visible.length - 1];
+
   return (
-    <main className="dir-page">
-      <header className="dir-head">
-        <h1 className="dir-h1">{t("title")}</h1>
-        <div className="dir-project">
-          <span className="dir-label">{t("project.label")}</span>
-          <select
-            className="dir-folder"
-            aria-label={t("project.label")}
-            value={projectId || ""}
-            onChange={(e) => setProjectId(e.target.value || null)}
-          >
-            {!projects?.length && <option value="">{t("project.pick")}</option>}
-            {projects?.map((p) => (
-              <option key={p.id} value={p.id} title={p.cwd}>
-                📁 {p.name}
-              </option>
-            ))}
-          </select>
-          <button className="dir-new" onClick={() => setCreating(!creating)}>
-            {t("project.new")}
-          </button>
-        </div>
-        <LeadPicker lead={project?.lead || null} />
-        {order && (
-          <span className="dir-status" data-status={order.status}>
-            {t(`status.${order.status}`)}
+    <main className="pz-page">
+      <div className="pz-app">
+        <div className="pz-bar">
+          <span className="pz-label">{t("pizarra.folder")}</span>
+          <span className="pz-path" title={project?.cwd}>
+            {project ? project.cwd : t("pizarra.noFolder")}
           </span>
-        )}
-        {approvals.length > 0 && (
-          <a className="dir-ok-count" href="#dir-ok">
-            {t("ok.count", { count: approvals.length })}
-          </a>
-        )}
-      </header>
-
-      {creating && (
-        <NewProject
-          onCancel={() => setCreating(false)}
-          onCreated={(created) => {
-            setProjects((list) => [created, ...(list || [])]);
-            setProjectId(created.id);
-            notifyProjectsChanged();
-            setCreating(false);
-          }}
-        />
-      )}
-
-      <section className="dir-atril">
-        <h2 className="dir-title">{t("order.title")}</h2>
-        <form className="dir-order" onSubmit={giveOrder}>
-          <div className="dir-order-bubble">
-            <textarea
-              rows={3}
-              value={text}
-              aria-label={t("order.title")}
-              placeholder={
-                !project ? t("order.needProject") : live ? t("order.busy") : t("order.placeholder")
-              }
-              disabled={orderLocked}
-              onChange={(e) => setText(e.target.value)}
-            />
-          </div>
-          <div className="dir-order-actions">
+          <div className="pz-menu-wrap">
             <button
               type="button"
-              className="dir-cta duel-cta"
-              disabled={orderLocked || busy || pitchDrafting || !text.trim()}
-              onClick={() => void propose()}
+              className="pz-btn"
+              aria-haspopup="menu"
+              aria-expanded={menu}
+              onClick={() => (projects?.length ? setMenu(!menu) : setPicking(true))}
             >
-              {t("duel.cta")}
+              {project ? t("pizarra.load") : t("pizarra.choose")}
             </button>
-            <div className="duel-depth" role="radiogroup" aria-label={t("duel.depth")}>
-              {DEPTHS.map((value) => (
+            {menu && (
+              <div className="pz-menu" role="menu">
+                {projects?.map((p) => (
+                  <button
+                    key={p.id}
+                    role="menuitemradio"
+                    aria-checked={p.id === projectId}
+                    className="pz-menu-item"
+                    onClick={() => {
+                      setMenu(false);
+                      setActiveProjectId(p.id);
+                    }}
+                  >
+                    <b>{p.name}</b>
+                    <small>{p.cwd}</small>
+                  </button>
+                ))}
                 <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={depth === value}
-                  onClick={() => setDepth(value)}
+                  role="menuitem"
+                  className="pz-menu-item more"
+                  onClick={() => {
+                    setMenu(false);
+                    setPicking(true);
+                  }}
                 >
-                  {t(`duel.depths.${value}`)}
+                  {t("pizarra.otherFolder")}
                 </button>
-              ))}
-            </div>
-            <button className="dir-cta" disabled={orderLocked || busy || !text.trim()}>
-              {t("order.cta")}
-            </button>
+              </div>
+            )}
           </div>
-        </form>
-        <p className="duel-hint">{t("duel.hint")}</p>
-        <span className="dir-onoma" aria-hidden="true">
-          {t("order.onoma")}
-        </span>
-        {projects !== null && !projects.length && (
-          <p className="dir-empty">{t("empty.noProjects")}</p>
-        )}
-        {project && !order && !loadingOrder && <p className="dir-empty">{t("empty.noOrder")}</p>}
-      </section>
+        </div>
 
-      {showPitch(pitch) && pitch && (
-        <Duelo
-          pitch={pitch}
-          picks={picks}
-          onToggle={togglePick}
-          onOrder={(note) => void orderMix(note)}
-          onDiscard={() => void discardPitch()}
-          busy={busy}
-          locked={orderLocked}
-        />
-      )}
-
-      <section className="dir-stage">
-        <AgentCard agent="claude" project={project} order={order} reducedMotion={reducedMotion} />
-        <HandoffCard order={order} />
-        <AgentCard agent="codex" project={project} order={order} reducedMotion={reducedMotion} />
-      </section>
-
-      <section className="dir-ok" id="dir-ok">
-        <h2 className="dir-title">{t("ok.title")}</h2>
-        {approvals.length === 0 ? (
-          <p className="dir-empty">{t("ok.empty")}</p>
-        ) : (
-          <div className="dir-ok-cards">
-            {approvals.map((approval) => (
-              <ApprovalCard
-                key={approval.id}
-                approval={approval}
-                onAnswer={(value, note) => answer(approval, value, note)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      <Partitura order={order} />
-
-      {notice && (
-        <p className="dir-notice" role="status">
-          {notice}
-        </p>
-      )}
-
-      {talkable && (
-        <footer className="dir-foot">
-          <form className="dir-foot-form" onSubmit={sendIndication}>
-            <input
-              value={indication}
-              aria-label={t("foot.placeholder")}
-              placeholder={t("foot.placeholder")}
-              onChange={(e) => setIndication(e.target.value)}
+        <form className="pz-prompt" onSubmit={start}>
+          <div className="pz-prompt-field">
+            <textarea
+              value={prompt}
+              rows={3}
+              aria-label={t("pizarra.describe")}
+              placeholder={active ? t("pizarra.busy") : t("pizarra.placeholder")}
+              disabled={!!active}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={onPromptKey}
             />
-            <button className="dir-cta small" disabled={!indication.trim()}>
-              {t("foot.send")}
-            </button>
-          </form>
-          {confirmStop ? (
-            <span className="dir-confirm">
-              <b>{t("foot.confirmStop")}</b>
-              <button className="dir-no" onClick={() => void stop()}>
-                {t("foot.yes")}
-              </button>
-              <button className="dir-change" onClick={() => setConfirmStop(false)}>
-                {t("foot.no")}
-              </button>
-            </span>
+            <small>{t("pizarra.enterHint")}</small>
+          </div>
+          <button className="pz-btn primary big" disabled={!!active || busy || !prompt.trim()}>
+            {t("pizarra.start")}
+          </button>
+        </form>
+
+        <div className="pz-status" aria-live="polite">
+          {stage ? (
+            <>
+              <span className="pz-who" data-agent={stage.board.agent}>
+                <span
+                  className="pz-dot"
+                  data-live={stage.board.status === "drafting" ? "1" : "0"}
+                />
+                {NAMES[stage.board.agent]}
+              </span>
+              <span className="pz-doing">
+                {stage.board.status === "drafting"
+                  ? last
+                    ? t("pizarra.drawing", { what: elementName(last) })
+                    : t("pizarra.reading")
+                  : t(`pizarra.boardStatus.${stage.board.status}`)}
+              </span>
+              <span className="pz-count">{t("pizarra.count", { count: drawn })}</span>
+              {active && (
+                <button type="button" className="pz-btn ghost" onClick={() => void stop()}>
+                  {t("pizarra.stop")}
+                </button>
+              )}
+            </>
           ) : (
-            <button className="dir-no" onClick={() => setConfirmStop(true)}>
-              {t("foot.stop")}
-            </button>
+            <span className="pz-doing">{project ? t("pizarra.idle") : t("pizarra.pickFirst")}</span>
           )}
-        </footer>
+        </div>
+
+        <section className="pz-stage">
+          {stage ? (
+            <>
+              {stage.sheet.boards.length > 1 && (
+                <div className="pz-tabs" role="tablist">
+                  {stage.sheet.boards.map((b) => (
+                    <button
+                      key={b.id}
+                      role="tab"
+                      data-agent={b.agent}
+                      aria-selected={b.id === stage.board.id}
+                      onClick={() => setSelected({ sheetId: stage.sheet.id, boardId: b.id })}
+                    >
+                      {t("pizarra.boardOf", { name: NAMES[b.agent] })}
+                      <small>{t(`pizarra.boardStatus.${b.status}`)}</small>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <Board
+                key={stage.board.id}
+                board={stage.board}
+                prompt={stage.sheet.prompt}
+                onComment={(elementId, text) => comment(stage.board, elementId, text)}
+                onCall={(elementId, agent, text) => call(stage.board, elementId, agent, text)}
+                canCall={!active}
+              />
+            </>
+          ) : (
+            <div className="pz-empty">
+              <h2>{t("pizarra.emptyTitle")}</h2>
+              <p>{t("pizarra.emptyText")}</p>
+            </div>
+          )}
+        </section>
+
+        {notice && (
+          <p className="pz-notice" role="status">
+            {notice}
+          </p>
+        )}
+
+        <section className="pz-timeline" aria-label={t("pizarra.timeline")}>
+          <div className="pz-timeline-head">
+            <span className="pz-label">{t("pizarra.timeline")}</span>
+            <span className="pz-legend">
+              {AGENTS.map((agent) => (
+                <span key={agent} data-agent={agent}>
+                  <i />
+                  {NAMES[agent]}
+                </span>
+              ))}
+            </span>
+          </div>
+          {timeline.length === 0 ? (
+            <p className="pz-muted">{t("pizarra.timelineEmpty")}</p>
+          ) : (
+            <ol className="pz-tl">
+              {timeline.map((sheet) => {
+                const open = expanded === sheet.id;
+                return (
+                  <li key={sheet.id} className="pz-tl-item" data-open={open ? "1" : "0"}>
+                    <button
+                      type="button"
+                      className="pz-pair"
+                      aria-expanded={open}
+                      aria-current={stage?.sheet.id === sheet.id}
+                      onClick={() => {
+                        setExpanded(open ? null : sheet.id);
+                        const first =
+                          sheet.boards.find((b) => b.elements.length) || sheet.boards[0];
+                        if (first) setSelected({ sheetId: sheet.id, boardId: first.id });
+                      }}
+                    >
+                      {sheet.boards.map((b) => (
+                        <BoardThumb key={b.id} board={b} />
+                      ))}
+                    </button>
+                    <span className="pz-cap">
+                      <b>{sheet.n}</b> · {sheet.prompt}
+                    </span>
+                    {open && (
+                      <div className="pz-open-boards">
+                        {sheet.boards.map((b) => (
+                          <button
+                            key={b.id}
+                            type="button"
+                            data-agent={b.agent}
+                            aria-current={stage?.board.id === b.id}
+                            onClick={() => setSelected({ sheetId: sheet.id, boardId: b.id })}
+                          >
+                            <BoardThumb board={b} large />
+                            <span>
+                              {t("pizarra.boardOf", { name: NAMES[b.agent] })} ·{" "}
+                              {t(`pizarra.boardStatus.${b.status}`)}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+        </section>
+      </div>
+      {picking && (
+        <FolderPicker
+          start={project?.cwd || ""}
+          onClose={() => setPicking(false)}
+          onPick={usePath}
+        />
       )}
     </main>
   );

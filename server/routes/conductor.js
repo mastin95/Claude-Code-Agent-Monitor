@@ -1,6 +1,8 @@
 /**
  * @file Loopback-guarded conductor API with validated projects, a folder browser for the
- *   New project picker, the pitch duel (both agents propose, Martin mixes) and bounded long polls.
+ *   New project picker, the pitch duel (both agents propose, Martin mixes), the whiteboard
+ *   timeline (each agent draws its board live, Martin comments or calls an agent) and bounded
+ *   long polls.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 const { Router } = require("express");
@@ -11,6 +13,7 @@ const spawn = require("cross-spawn");
 const { __sameOriginGuard: sameOriginGuard } = require("./run");
 const { getConductor, required, problem } = require("../lib/conductor");
 const { getPitches } = require("../lib/conductor-pitches");
+const { getBoards } = require("../lib/conductor-boards");
 const { projectOnlyEnabled } = require("../lib/project-scope");
 
 // Folder picker for the New project form: a browser page cannot read real paths from its own
@@ -80,7 +83,12 @@ function browseDir(raw) {
   };
 }
 
-function createRouter({ service = getConductor, pitches = getPitches, spawnGit = spawn } = {}) {
+function createRouter({
+  service = getConductor,
+  pitches = getPitches,
+  boards = getBoards,
+  spawnGit = spawn,
+} = {}) {
   const router = Router();
   router.use(sameOriginGuard);
   const handle =
@@ -243,6 +251,34 @@ function createRouter({ service = getConductor, pitches = getPitches, spawnGit =
       const port = req.socket.localPort;
       res.status(201).json(duel.choose(req.params.id, req.body || {}, `http://127.0.0.1:${port}`));
     }, pitches)
+  );
+  // Whiteboards: Claude then Codex draw the project live; each sheet is one timeline item.
+  router.post(
+    "/sheets",
+    handle((req, res, pizarra) => res.status(201).json(pizarra.create(req.body || {})), boards)
+  );
+  router.get(
+    "/sheets",
+    handle(
+      (req, res, pizarra) =>
+        res.json({ items: pizarra.list(req.query.projectId, Number(req.query.limit ?? 30)) }),
+      boards
+    )
+  );
+  router.get(
+    "/sheets/:id",
+    handle((req, res, pizarra) => res.json(pizarra.get(req.params.id)), boards)
+  );
+  router.delete(
+    "/sheets/:id",
+    handle((req, res, pizarra) => res.json(pizarra.stop(req.params.id)), boards)
+  );
+  router.post(
+    "/boards/:id/comments",
+    handle(
+      (req, res, pizarra) => res.status(201).json(pizarra.comment(req.params.id, req.body || {})),
+      boards
+    )
   );
   router.post(
     "/handoffs",
