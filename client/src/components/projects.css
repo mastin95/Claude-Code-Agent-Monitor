@@ -1,0 +1,223 @@
+/**
+ * @file projects.css
+ * @description Manga styling for the project-only Monitor: the empty first-run welcome and the
+ * sidebar's project switcher (orange "Proyecto" badge, list of projects, locked menu items).
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+
+.proj-welcome {
+  min-height: calc(100vh - 3rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-image: radial-gradient(#ffffff14 1.4px, transparent 1.6px);
+  background-size: 18px 18px;
+  font-family: "Nunito", system-ui, sans-serif;
+}
+.proj-welcome-card {
+  position: relative;
+  width: min(760px, 100%);
+  box-sizing: border-box;
+  background: #fff8e7;
+  color: #171321;
+  border: 4px solid #171321;
+  border-radius: 26px;
+  box-shadow: 10px 10px 0 #171321;
+  padding: 2.5rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  text-align: center;
+}
+.proj-welcome-hello {
+  position: absolute;
+  top: -26px;
+  left: 40px;
+  background: #dfff00;
+  border: 3px solid #171321;
+  padding: 2px 18px;
+  font-family: "Bangers", system-ui, sans-serif;
+  font-size: 30px;
+  letter-spacing: 1.5px;
+  transform: rotate(-3deg);
+}
+.proj-welcome-cast {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+.proj-welcome-bubble {
+  margin: 0 0 1.5rem;
+  background: #fff;
+  border: 3px solid #171321;
+  border-radius: 22px 22px 22px 4px;
+  padding: 12px 16px;
+  font-weight: 900;
+  font-size: 18px;
+  max-width: 300px;
+}
+.proj-welcome-title {
+  margin: 0;
+  font-family: "Bangers", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(36px, 6vw, 58px);
+  letter-spacing: 2px;
+  line-height: 1;
+  color: #ff3d8b;
+  -webkit-text-stroke: 2.5px #171321;
+}
+.proj-welcome-body {
+  margin: 0;
+  font-weight: 800;
+  font-size: 18px;
+  max-width: 520px;
+}
+.proj-welcome-cta {
+  background: #ff8a2b;
+  color: #171321;
+  font-family: "Bangers", system-ui, sans-serif;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: 2px;
+  padding: 10px 34px;
+  border: 4px solid #171321;
+  border-radius: 18px;
+  box-shadow: 7px 7px 0 #171321;
+  transform: rotate(-1.5deg);
+  cursor: pointer;
+}
+.proj-welcome-cta:hover,
+.proj-welcome-cta:focus-visible {
+  transform: rotate(-1.5deg) translate(-2px, -2px);
+  box-shadow: 9px 9px 0 #171321;
+}
+
+/* Sidebar switcher */
+.proj-switch {
+  position: relative;
+  padding: 0.6rem 0.5rem 0;
+  font-family: "Nunito", system-ui, sans-serif;
+}
+.proj-switch-btn {
+  width: 100%;
+  text-align: left;
+  background: #ff8a2b;
+  color: #171321;
+  border: 3px solid #fff;
+  border-radius: 12px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  cursor: pointer;
+}
+.proj-switch-btn small {
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.proj-switch-btn strong {
+  font-family: "Bangers", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: 1px;
+  line-height: 1.1;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+.proj-switch-btn strong span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.proj-switch-btn.is-rail {
+  align-items: center;
+  padding: 6px 0;
+  font-size: 18px;
+}
+.proj-switch-none {
+  background: #2a2236;
+  border: 2px dashed #6b5a85;
+  border-radius: 12px;
+  padding: 10px;
+  font-weight: 900;
+  font-size: 13px;
+  color: #c9bde0;
+}
+.proj-menu {
+  position: fixed;
+  z-index: 60;
+  width: min(380px, calc(100vw - 24px));
+  max-height: min(70vh, 560px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: #fff8e7;
+  color: #171321;
+  border: 4px solid #171321;
+  border-radius: 20px;
+  box-shadow: 8px 8px 0 #171321;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: "Nunito", system-ui, sans-serif;
+}
+.proj-menu h2 {
+  margin: 0;
+  font-family: "Bangers", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 26px;
+  letter-spacing: 1px;
+}
+.proj-menu-item {
+  text-align: left;
+  min-height: 56px;
+  background: #fff;
+  border: 3px solid #171321;
+  border-radius: 14px;
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  cursor: pointer;
+  color: inherit;
+}
+.proj-menu-item[aria-current="true"] {
+  border-color: #ff8a2b;
+  border-width: 4px;
+}
+.proj-menu-item strong {
+  font-family: "Bangers", system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: 1px;
+  overflow-wrap: anywhere;
+}
+.proj-menu-item small {
+  font-weight: 800;
+  font-size: 12px;
+  color: #4a3f5c;
+  overflow-wrap: anywhere;
+}
+.proj-menu-new {
+  text-align: center;
+  background: #ff3d8b;
+  color: #fff;
+  font-family: "Bangers", system-ui, sans-serif;
+  font-size: 24px;
+  letter-spacing: 1.5px;
+  padding: 6px;
+  border: 3px solid #171321;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 #171321;
+  cursor: pointer;
+}
+.proj-locked {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

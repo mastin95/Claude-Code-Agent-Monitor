@@ -375,6 +375,8 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 
 **提案对决.** 还没想好要做什么？写下想法，点 **来提案！** 而不是 **开演！**。Claude 和 Codex 会同时以只读方式各自准备提案（Claude 以 headless 模式运行，只能用 `Read`/`Glob`/`Grep`；Codex 在 `read-only` 沙箱中）：名称、一句话简介，以及风格（色板）、界面（在隔离框架中显示的 HTML 草图）、功能、计划、技术和特别点子等想法卡片。两份提案并排显示；在任意一方喜欢的卡片上点 **我要这个**，补充说明后点 **开演！**：组合结果就成为负责人（第一阶段为 Claude）的指令。**快速 / 普通 / 全力** 设定两个智能体的投入程度。页面监听 `conductor_pitch`；REST 接口为 `/api/conductor/pitches`。
 
+**按项目的 Monitor.** Monitor 启动时是空的，就像从未运行过一样：在你创建项目之前，除“设置”外的所有页面都会锁定，并显示一张带有 **＋ 新建项目** 的欢迎卡片（它会打开 Dirección 的新建项目表单）。它只保存在自己项目中产生的工作：无论会话通过 hook、转录导入还是 Codex/Cursor 采集到达，只有当其文件夹是项目文件夹（或子文件夹）且在项目创建之后开始时才会被保存。本机上较早的 Claude 和 Codex 历史留在磁盘上，不会被导入。侧边栏顶部橙色的 **项目** 徽章显示当前打开的项目；点击即可切换，所有页面（面板、看板、Muro、Charla、会话、分析……）都会通过 `?project=<id>` 查询参数重新加载，只显示该项目的数据。重新打开 Monitor 时会打开关闭时所在的项目。设置 `DASHBOARD_PROJECT_ONLY=0` 可恢复导入并显示全部内容。
+
 ### Muro
 
 漫画风格使用本地打包的 Bangers 和 Nunito 字体、墨线对话气泡及按列着色的便签：工作中为黄色，等待我确认为粉色，已完成为绿色。委托行显示迷你 Claude 和 Codex 吉祥物、单行请求与回复，以及两行状态印章。悬停可查看完整的首次请求、发送时间和最新回复时间；打开后仍可查看完整保留的对话。
@@ -791,6 +793,7 @@ ccam help [command…] | commands [--json] | completion bash|zsh|fish | version
 | `npm run reconcile-tokens` | 刷新已导入会话的 Token 总计（不会降低已有的总计） |
 | `npm run repair-tokens` | 为每个 Transcript 仍在磁盘上的 **Claude** 会话（在 `~/.claude/projects/` 中查找，或按会话已保存的 `transcript_path`）重新推导**非 workflow** 的 Token 总计，并将上下文压缩基线清零；workflow 与 Codex 行保持不变。这是针对 v2.0.9 之前按记录累加用量而虚高，或遗漏同模型扁平子 Agent 用量的数据库的一次性修复。请先停止 Dashboard |
 | `DASHBOARD_TOKEN_REPAIR` | 默认启用（`1`）。一次性自动修复受按记录虚高或遗漏同模型扁平子 Agent 影响的历史 Token 总计。实时修复无法重新处理所有已完成会话，而 `replaceTokenUsage` 也无法降低旧的高水位标记。每个数据库只运行一次（有标记文件、延后于启动路径、当另一个 Dashboard 共用数据目录时跳过），并会先将旧行快照到 `token_usage_pre_repair_v2`。设为 `0` 可跳过，改用 `npm run repair-tokens` 手动修复 |
+| `DASHBOARD_PROJECT_ONLY` | 默认启用（`1`）。只保存并显示在 Dirección 项目创建之后、于该项目文件夹内产生的会话；界面启动时为空，并把每个页面限定在当前打开的项目。设为 `0` 可恢复导入并显示本机所有 Claude/Codex 会话 |
 | `npm run clear-data` | 删除所有会话、Agent、事件和 Token 用量 |
 | `npm run mcp:install` | 安装本地 MCP 包（`mcp/`）的依赖 |
 | `npm run mcp:build` | 构建 MCP 服务器 TypeScript 到 `mcp/build/` |

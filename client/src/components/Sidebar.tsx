@@ -57,6 +57,8 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { NavLink } from "react-router";
+import { ProjectSwitcher } from "./ProjectSwitcher";
+import { useProjects } from "./ProjectProvider";
 import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
@@ -85,6 +87,7 @@ import {
   Check,
   ChevronUp,
   ChevronDown,
+  Lock,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { api } from "../lib/api";
@@ -422,6 +425,8 @@ function CollapsedLanguagePicker({
  */
 export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
   const { t, i18n } = useTranslation();
+  const { projects, projectOnly } = useProjects();
+  const locked = projectOnly && !!projects && projects.length === 0;
   const websiteLabel = "sonnguyenhoang.com";
   // Track whether nav items are clipped by overflow so we can render
   // chevron affordances pointing toward the hidden items. Recomputed on
@@ -679,6 +684,8 @@ export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
         </div>
       </div>
 
+      <ProjectSwitcher collapsed={collapsed} />
+
       {/* Nav - only this section scrolls when its items overflow; the rest of
           the sidebar (brand, language, collapse toggle, footer) stays pinned.
           Chevron buttons appear at the edges when content is clipped, so the
@@ -687,6 +694,24 @@ export function Sidebar({ wsConnected, collapsed, onToggle }: SidebarProps) {
         <nav ref={navRef} className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 space-y-1">
           {NAV_KEYS.map(({ to, icon: Icon, key }) => {
             const label = t(key);
+            // Project-only Monitor before its first project: everything but Settings waits.
+            if (locked && to !== "/settings") {
+              return (
+                <span
+                  key={to}
+                  role="link"
+                  aria-disabled="true"
+                  title={t("nav:project.locked")}
+                  className={`proj-locked relative flex items-center gap-3 rounded-lg text-sm font-medium text-gray-500 border border-transparent ${
+                    collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0" />
+                  {!collapsed && <span className="flex-1">{label}</span>}
+                  {!collapsed && <Lock className="w-3.5 h-3.5" aria-hidden />}
+                </span>
+              );
+            }
             return (
               <NavLink
                 key={to}

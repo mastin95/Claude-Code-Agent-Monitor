@@ -128,5 +128,20 @@
     "actionMuteTabby": "Tắt tiếng Tabby",
     "actionReportIssue": "Báo lỗi trên GitHub",
     "actionReleases": "Xem ghi chú phát hành"
+  },
+  "project": {
+    "label": "Dự án",
+    "none": "Chưa mở dự án nào",
+    "pick": "Chọn một dự án",
+    "open": "đang mở",
+    "list": "Dự án của bạn",
+    "new": "＋ Dự án mới",
+    "locked": "Hãy bắt đầu một dự án trước"
+  },
+  "welcome": {
+    "hello": "XIN CHÀO!",
+    "bubble": "Ở đây chưa có gì. Mình làm gì nào?",
+    "title": "BẮT ĐẦU DỰ ÁN ĐẦU TIÊN",
+    "body": "Chọn thư mục, kể ý tưởng của bạn và Claude cùng Codex sẽ bắt tay vào làm. Mọi thứ bạn thấy trong Monitor sẽ thuộc về dự án đó."
   }
 }

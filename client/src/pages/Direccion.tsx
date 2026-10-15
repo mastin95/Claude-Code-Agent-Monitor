@@ -4,7 +4,7 @@
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Duelo, pickKey } from "../components/muro/Duelo";
 import { Mascot } from "../components/muro/Mascot";
@@ -19,6 +19,12 @@ import {
   type ScoreRow,
 } from "../components/muro/direccion-model";
 import { api } from "../lib/api";
+import {
+  getActiveProjectId,
+  notifyProjectsChanged,
+  setActiveProjectId,
+  useActiveProjectId,
+} from "../lib/activeProject";
 import { eventBus } from "../lib/eventBus";
 import { formatTime } from "../lib/format";
 import type {
@@ -42,26 +48,10 @@ import "../components/muro/direccion.css";
 const AGENTS: ConductorAgentName[] = ["claude", "codex"];
 const NAMES: Record<ConductorAgentName, string> = { claude: "Claude", codex: "Codex" };
 const EFFORTS = ["low", "medium", "high", "xhigh", "max"];
-const PROJECT_KEY = "direccion.project";
 const DEPTHS: ConductorPitchDepth[] = ["quick", "normal", "deep"];
 /** A duel stays on screen while it drafts or waits for Martin's mix (or shows why it failed). */
 const showPitch = (pitch: ConductorPitch | null) =>
   !!pitch && ["drafting", "ready", "error"].includes(pitch.status);
-
-function readStored(): string | null {
-  try {
-    return localStorage.getItem(PROJECT_KEY);
-  } catch {
-    return null;
-  }
-}
-function store(id: string) {
-  try {
-    localStorage.setItem(PROJECT_KEY, id);
-  } catch {
-    /* Private windows may refuse storage; the picker still works. */
-  }
-}
 
 function Chip({ children, tone }: { children: React.ReactNode; tone?: string }) {
   return (
@@ -632,7 +622,10 @@ export function Direccion() {
   const { t } = useTranslation("direccion");
   const reducedMotion = useReducedMotion();
   const [projects, setProjects] = useState<ConductorProject[] | null>(null);
-  const [projectId, setProjectId] = useState<string | null>(readStored);
+  // The open project is app-wide (sidebar switcher, reopened on launch), not just this page's.
+  const projectId = useActiveProjectId();
+  const setProjectId = setActiveProjectId;
+  const location = useLocation();
   const [order, setOrder] = useState<ConductorOrder | null>(null);
   const [creating, setCreating] = useState(false);
   const [loadError, setLoadError] = useState(false);
@@ -678,6 +671,12 @@ export function Direccion() {
     [follow, loadOrder]
   );
 
+  // "New project" from the welcome screen or the sidebar switcher opens the form here.
+  const wantsNew = !!(location.state as { newProject?: boolean } | null)?.newProject;
+  useEffect(() => {
+    if (wantsNew) setCreating(true);
+  }, [wantsNew, location.key]);
+
   useEffect(() => {
     let disposed = false;
     setLoadError(false);
@@ -686,7 +685,8 @@ export function Direccion() {
       .then(({ items }) => {
         if (disposed) return;
         setProjects(items);
-        setProjectId((current) =>
+        const current = getActiveProjectId();
+        setProjectId(
           current && items.some((p) => p.id === current) ? current : items[0]?.id || null
         );
         if (!items.length) setCreating(true);
@@ -703,7 +703,6 @@ export function Direccion() {
   useEffect(() => {
     follow(null);
     if (!projectId) return;
-    store(projectId);
     let disposed = false;
     // Until the latest order is known, giving a new one could start a second lead.
     setLoadingOrder(true);
@@ -961,6 +960,7 @@ export function Direccion() {
           onCreated={(created) => {
             setProjects((list) => [created, ...(list || [])]);
             setProjectId(created.id);
+            notifyProjectsChanged();
             setCreating(false);
           }}
         />

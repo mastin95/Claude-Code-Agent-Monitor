@@ -16,6 +16,7 @@ const { broadcast } = require("../websocket");
 const { calculateProviderCost, attachAgentCosts } = require("./pricing");
 const { parseSources, sourceColumnClause } = require("../lib/source-filter");
 const { parseProviders, providerColumnClause } = require("../lib/provider-filter");
+const { sessionInScope } = require("../lib/project-scope");
 const { getCodexProcessSessions } = require("../lib/codex-process-overlay");
 const { extractSessionTaskProgress } = require("../lib/task-progress");
 const {
@@ -108,7 +109,8 @@ function sessionIsInScope(session, req) {
   const providers = parseProviders(req);
   return (
     (!sources || sources.includes(session.source || "local")) &&
-    (!providers || providers.includes(session.provider || "claude"))
+    (!providers || providers.includes(session.provider || "claude")) &&
+    sessionInScope(session, providers?.project)
   );
 }
 
@@ -423,7 +425,8 @@ router.get("/", (req, res) => {
   }
 
   const includesLocal = !sources || sources.includes("local");
-  const includesCodex = !providers || providers.includes("codex");
+  // Live Codex processes are not yet tied to a Dirección project; a project view skips them.
+  const includesCodex = !providers || (providers.includes("codex") && !providers.project);
   const normalizedQuery = q.toLowerCase();
   const transient =
     includeTransient &&

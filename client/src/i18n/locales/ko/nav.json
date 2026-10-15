@@ -128,5 +128,20 @@
     "actionMuteTabby": "Tabby 음소거",
     "actionReportIssue": "GitHub에 문제 보고",
     "actionReleases": "릴리스 노트 보기"
+  },
+  "project": {
+    "label": "프로젝트",
+    "none": "열린 프로젝트 없음",
+    "pick": "프로젝트 선택",
+    "open": "열림",
+    "list": "내 프로젝트",
+    "new": "＋ 새 프로젝트",
+    "locked": "먼저 프로젝트를 시작하세요"
+  },
+  "welcome": {
+    "hello": "안녕하세요!",
+    "bubble": "아직 아무것도 없어요. 무엇을 만들까요?",
+    "title": "첫 프로젝트를 시작하세요",
+    "body": "폴더를 고르고 아이디어를 말하면 Claude와 Codex가 작업을 시작합니다. Monitor에서 보는 모든 것은 그 프로젝트의 것입니다."
   }
 }

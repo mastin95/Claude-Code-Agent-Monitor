@@ -72,7 +72,8 @@ router.get("/", (req, res) => {
   }
 
   const includesLocal = !sources || sources.includes("local");
-  const includesCodex = !providers || providers.includes("codex");
+  // Live Codex processes are not yet tied to a Dirección project; a project view skips them.
+  const includesCodex = !providers || (providers.includes("codex") && !providers.project);
   const transient =
     includeTransient &&
     status === "waiting" &&

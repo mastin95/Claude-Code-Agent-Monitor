@@ -128,5 +128,20 @@
     "actionMuteTabby": "Silenciar a Tabby",
     "actionReportIssue": "Informar de un problema en GitHub",
     "actionReleases": "Ver las notas de la versión"
+  },
+  "project": {
+    "label": "Proyecto",
+    "none": "Sin proyecto abierto",
+    "pick": "Elige un proyecto",
+    "open": "abierto",
+    "list": "Tus proyectos",
+    "new": "＋ Nuevo proyecto",
+    "locked": "Primero empieza un proyecto"
+  },
+  "welcome": {
+    "hello": "¡HOLA!",
+    "bubble": "Aún no hay nada aquí. ¿Qué montamos?",
+    "title": "EMPIEZA TU PRIMER PROYECTO",
+    "body": "Elige la carpeta, cuenta tu idea y Claude y Codex se ponen a trabajar. Todo lo que verás en el Monitor será de ese proyecto."
   }
 }
