@@ -568,6 +568,12 @@ assistant markers are captured: no user-message, tool-output or subagent
 inference. Ordinary `session_updated` refreshes keep ideas live after capture;
 completed sessions retain their ideas.
 
+### Charla
+
+Read Claude and Codex side by side at `/charla` in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show each agent mascot, session status, known model/effort and tokens. Codex summaries appear as reasoning; shell wrappers are removed from command arrays, and JSON tool outputs show only their output with nonzero exit codes highlighted as errors. Handoff labels reflect the column, and assignments suppress the empty-transcript notice. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the `after` / `last_line` cursor. Session-list reloads debounce event bursts for one second. Below 900 px the columns stack, and reduced motion disables activity animations.
+
+The page reuses `sessionHandoff`, `childHandoffs` and `handoffsInPeriod` from the shared handoff model and `api.sessions.transcript(id)`. Empty Claude thinking retains its duration and explanatory placeholder; available Codex reasoning summaries remain expandable. Loading, empty-assignment and request-error states are explicit. It introduces no API, database or WebSocket contract changes.
+
 ### Route Structure
 
 ```mermaid
@@ -576,6 +582,7 @@ graph TB
     Dashboard["/ (Dashboard)"]
     Kanban["/kanban"]
     Muro["/muro"]
+    Charla["/charla"]
     Sessions["/sessions"]
     Detail["/sessions/:id"]
     Feed["/activity"]
@@ -586,7 +593,7 @@ graph TB
     Settings["/settings"]
     NF["/* (NotFound)"]
 
-    Root --> Dashboard & Kanban & Muro & Sessions & Detail & Feed & Analytics & Workflows & CcConfig & Run & Settings & NF
+    Root --> Dashboard & Kanban & Muro & Charla & Sessions & Detail & Feed & Analytics & Workflows & CcConfig & Run & Settings & NF
 
     style Dashboard fill:#3B82F6
     style Detail fill:#3B82F6
@@ -607,6 +614,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="kanban" element={<KanbanBoard />} />
           <Route path="muro" element={<Muro />} />
+          <Route path="charla" element={<Charla />} />
           <Route path="sessions" element={<Sessions />} />
           <Route path="sessions/:id" element={<SessionDetail />} />
           <Route path="activity" element={<ActivityFeed />} />

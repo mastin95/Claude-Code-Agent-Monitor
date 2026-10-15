@@ -394,6 +394,8 @@ curl http://localhost:4820/api/sessions/sess_abc123
 GET /api/sessions/:id/transcript
 ```
 
+Codex `response_item` reasoning summaries are returned as assistant messages with a `thinking` block: `summary_text` entries are joined by blank lines. Reasoning records without summary text remain omitted.
+
 Returns a cursor-paginated transcript page. Pass `limit` (up to 200), `after` to
 read newer JSONL lines, or `before` to load the preceding page; responses include
 `first_line`, `last_line`, and `has_more` for the next request. Claude Code

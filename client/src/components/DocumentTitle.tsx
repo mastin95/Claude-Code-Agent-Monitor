@@ -76,6 +76,8 @@ export function DocumentTitle() {
     title = t("agentBoard");
   } else if (path.startsWith("/muro")) {
     title = t("muro");
+  } else if (path.startsWith("/charla")) {
+    title = t("charla");
   } else if (path.startsWith("/activity")) {
     title = t("activityFeed");
   } else if (path.startsWith("/analytics")) {
