@@ -40,7 +40,14 @@ const paths = {
   "/api/conductor/projects": {
     get: operation("listConductorProjects", "List conductor projects", 200, {
       type: "object",
-      properties: { items: { type: "array", items: object } },
+      properties: {
+        items: { type: "array", items: object },
+        project_only: {
+          type: "boolean",
+          description:
+            "True when the Monitor keeps only work born in its projects and scopes pages to one",
+        },
+      },
     }),
     post: operation(
       "createConductorProject",

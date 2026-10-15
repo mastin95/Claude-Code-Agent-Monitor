@@ -11,6 +11,7 @@ const spawn = require("cross-spawn");
 const { __sameOriginGuard: sameOriginGuard } = require("./run");
 const { getConductor, required, problem } = require("../lib/conductor");
 const { getPitches } = require("../lib/conductor-pitches");
+const { projectOnlyEnabled } = require("../lib/project-scope");
 
 // Folder picker for the New project form: a browser page cannot read real paths from its own
 // file dialog, so the local server lists drives and sub-folders (names only, never contents).
@@ -105,7 +106,10 @@ function createRouter({ service = getConductor, pitches = getPitches, spawnGit =
   );
   router.get(
     "/projects",
-    handle((_req, res, conductor) => res.json({ items: conductor.listProjects() }))
+    // project_only tells the UI to start empty and scope every page to one project.
+    handle((_req, res, conductor) =>
+      res.json({ items: conductor.listProjects(), project_only: projectOnlyEnabled() })
+    )
   );
   router.post(
     "/projects",

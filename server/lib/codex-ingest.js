@@ -12,6 +12,7 @@ const fs = require("fs");
 const path = require("path");
 const { constants: bufferConstants } = require("buffer");
 const { db, stmts } = require("../db");
+const { admitsNewSession } = require("./project-scope");
 const {
   getCodexSessionsDir,
   getCodexStateDbPath,
@@ -630,6 +631,7 @@ function createCodexSession(meta, transcriptPath, options = {}) {
 
   const startedAt = meta?.timestamp || new Date().toISOString();
   const cwd = meta?.cwd || null;
+  if (!admitsNewSession(cwd, startedAt)) return null;
   const metadata = JSON.stringify({
     provider: "codex",
     transcript_path: transcriptPath,

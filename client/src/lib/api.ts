@@ -424,6 +424,7 @@ import type {
 } from "./types";
 
 import { activeProvidersParam, activeSourcesParam } from "./dataScope";
+import { activeProjectParam } from "./activeProject";
 
 /**
  * Root path every endpoint path is appended to. Kept relative (no host) so the same client bundle
@@ -451,6 +452,11 @@ function applyScope(qs: URLSearchParams): URLSearchParams {
   if (!qs.has("providers")) {
     const providers = activeProvidersParam();
     if (providers) qs.set("providers", providers);
+  }
+  // Project-only Monitor: every scoped page shows just the open Dirección project.
+  if (!qs.has("project")) {
+    const project = activeProjectParam();
+    if (project) qs.set("project", project);
   }
   return qs;
 }
@@ -1897,8 +1903,12 @@ export const api = {
       request<ConductorBrowse>(
         `/conductor/browse${path ? `?${new URLSearchParams({ path })}` : ""}`
       ),
-    /** GET /api/conductor/projects - every project, newest first. */
-    projects: () => request<{ items: ConductorProject[] }>("/conductor/projects"),
+    /**
+     * GET /api/conductor/projects - every project, newest first. `project_only` says the
+     * Monitor keeps only project work, so the UI starts empty and scopes pages to one project.
+     */
+    projects: () =>
+      request<{ items: ConductorProject[]; project_only?: boolean }>("/conductor/projects"),
     /** POST /api/conductor/projects - register (or create + git init) a project folder. */
     createProject: (input: ConductorProjectInput) =>
       request<ConductorProject>("/conductor/projects", {

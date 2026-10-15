@@ -128,5 +128,20 @@
     "actionMuteTabby": "Mute Tabby",
     "actionReportIssue": "Report an issue on GitHub",
     "actionReleases": "View release notes"
+  },
+  "project": {
+    "label": "Project",
+    "none": "No project open",
+    "pick": "Pick a project",
+    "open": "open",
+    "list": "Your projects",
+    "new": "＋ New project",
+    "locked": "Start a project first"
+  },
+  "welcome": {
+    "hello": "HELLO!",
+    "bubble": "Nothing here yet. What shall we build?",
+    "title": "START YOUR FIRST PROJECT",
+    "body": "Pick the folder, tell us your idea and Claude and Codex get to work. Everything you see in the Monitor will belong to that project."
   }
 }

@@ -33,6 +33,7 @@ const {
   getTranscriptSnapshotDir,
 } = require("../server/lib/claude-home");
 const { extractFirstUserText, appendRecentUserMessage } = require("../server/lib/transcript-cache");
+const { admitsNewSession } = require("../server/lib/project-scope");
 const { writeSnapshot } = require("../server/lib/snapshot-store");
 const { getSnapshotPolicy } = require("../server/lib/snapshot-retention");
 const CLAUDE_DIR = getClaudeHome();
@@ -1515,6 +1516,9 @@ function importSession(dbModule, session) {
 
     return backfilled ? { skipped: false, backfilled: true } : { skipped: true };
   }
+
+  // Project-only Monitor: history from folders outside a Dirección project stays on disk.
+  if (!admitsNewSession(session.cwd, session.startedAt, db)) return { skipped: true };
 
   // If the JSONL file was modified recently (within 10 minutes), the session is likely
   // still active — import it as active/waiting so it appears on the dashboard immediately.

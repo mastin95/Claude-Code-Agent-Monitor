@@ -9,6 +9,7 @@
 const { Router } = require("express");
 const { v4: uuidv4 } = require("uuid");
 const dbModule = require("../db");
+const { admitsNewSession } = require("../lib/project-scope");
 const { stmts, db } = dbModule;
 const { broadcast } = require("../websocket");
 const TranscriptCache = require("../lib/transcript-cache");
@@ -1413,6 +1414,11 @@ router.post("/event", (req, res) => {
   const expectedRemoteToken = getRemotePushToken();
   const remotePush =
     !!expectedRemoteToken && tokensMatch(extractHeaderOnlyToken(req), expectedRemoteToken);
+  // Project-only Monitor: a hook may create a session only inside a Dirección project's
+  // folder. Everything else is acknowledged and dropped so the hook never retries or blocks.
+  if (data.session_id && !stmts.getSession.get(data.session_id) && !admitsNewSession(data.cwd)) {
+    return res.json({ ok: true, skipped: "outside_project" });
+  }
   const result = processEvent(hook_type, data, remotePush ? { remotePush: true } : null);
   if (!result) {
     return res.status(400).json({

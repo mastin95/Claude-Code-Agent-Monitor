@@ -200,6 +200,14 @@ function createOpenApiSpec() {
           description:
             "Comma-separated stored providers to include: `claude`, `cursor`, and/or `codex`. Requesting `claude` also includes Cursor because the product scope groups their local workflows. Omit to include every provider.",
         },
+        ProjectQuery: {
+          name: "project",
+          in: "query",
+          required: false,
+          schema: { type: "string" },
+          description:
+            "Dirección project id. Narrows to sessions whose folder is the project's folder (or a sub-folder) and that started after the project was created; an unknown id matches nothing. Composes with `providers` and `sources`.",
+        },
       },
       schemas: {
         ErrorObject: {
@@ -1829,6 +1837,7 @@ function createOpenApiSpec() {
             { $ref: "#/components/parameters/SessionIdPath" },
             { $ref: "#/components/parameters/SourcesQuery" },
             { $ref: "#/components/parameters/ProvidersQuery" },
+            { $ref: "#/components/parameters/ProjectQuery" },
           ],
           responses: {
             200: {
@@ -1893,6 +1902,7 @@ function createOpenApiSpec() {
             { $ref: "#/components/parameters/SessionIdPath" },
             { $ref: "#/components/parameters/SourcesQuery" },
             { $ref: "#/components/parameters/ProvidersQuery" },
+            { $ref: "#/components/parameters/ProjectQuery" },
           ],
           responses: {
             200: {
@@ -2202,6 +2212,7 @@ function createOpenApiSpec() {
           parameters: [
             { $ref: "#/components/parameters/SourcesQuery" },
             { $ref: "#/components/parameters/ProvidersQuery" },
+            { $ref: "#/components/parameters/ProjectQuery" },
           ],
           responses: {
             200: {
@@ -2796,6 +2807,7 @@ function createOpenApiSpec() {
           parameters: [
             { $ref: "#/components/parameters/WorkflowStatusQuery" },
             { $ref: "#/components/parameters/ProvidersQuery" },
+            { $ref: "#/components/parameters/ProjectQuery" },
           ],
           responses: {
             200: {
@@ -2825,6 +2837,7 @@ function createOpenApiSpec() {
           parameters: [
             { $ref: "#/components/parameters/SessionIdPath" },
             { $ref: "#/components/parameters/ProvidersQuery" },
+            { $ref: "#/components/parameters/ProjectQuery" },
           ],
           responses: {
             200: {

@@ -21,6 +21,7 @@ const {
 const { writeSnapshot } = require("./snapshot-store");
 const { getSnapshotPolicy } = require("./snapshot-retention");
 const { createCursorTitleLookup } = require("./cursor-state-db");
+const { admitsNewSession } = require("./project-scope");
 
 const RECENT_SESSION_MS = 10 * 60 * 1000;
 // How often the orphan-agent heal below may rescan (it always runs on the
@@ -459,6 +460,9 @@ function enrichCursorSession(dbModule, transcriptPath, options = {}) {
   let changed = false;
   let created = false;
 
+  if (!existing && !admitsNewSession(cwd, createdAt, db)) {
+    return { changed: false, created: false, session: null };
+  }
   if (!existing) {
     const metadata = JSON.stringify({
       imported: true,

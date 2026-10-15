@@ -6,6 +6,8 @@
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 
+const { projectClause } = require("./project-scope");
+
 function placeholders(values) {
   return values.map(() => "?").join(",");
 }
@@ -21,6 +23,11 @@ function sessionScope(sources, providers, alias = "") {
   if (providers?.length) {
     clauses.push(`${prefix}provider IN (${placeholders(providers)})`);
     params.push(...providers);
+    const project = projectClause(providers.project, prefix);
+    if (project.clause) {
+      clauses.push(project.clause);
+      params.push(...project.params);
+    }
   }
   return { where: clauses.length ? `WHERE ${clauses.join(" AND ")}` : "", params };
 }

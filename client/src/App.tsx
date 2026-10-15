@@ -74,6 +74,7 @@ import { useCallback } from "react";
 import { Layout } from "./components/Layout";
 import { DocumentTitle } from "./components/DocumentTitle";
 import { SplashScreen } from "./components/SplashScreen";
+import { ProjectGate, ProjectProvider } from "./components/ProjectProvider";
 import { Dashboard } from "./pages/Dashboard";
 import { KanbanBoard } from "./pages/KanbanBoard";
 import { Muro } from "./pages/Muro";
@@ -130,24 +131,29 @@ export default function App() {
     <BrowserRouter>
       <DashboardOnboarding />
       <DocumentTitle />
-      <Routes>
-        <Route element={<Layout wsConnected={connected} />}>
-          <Route index element={<Dashboard />} />
-          <Route path="kanban" element={<KanbanBoard />} />
-          <Route path="muro" element={<Muro />} />
-          <Route path="charla" element={<Charla />} />
-          <Route path="direccion" element={<Direccion />} />
-          <Route path="sessions" element={<Sessions />} />
-          <Route path="sessions/:id" element={<SessionDetail />} />
-          <Route path="activity" element={<ActivityFeed />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="workflows" element={<Workflows />} />
-          <Route path="cc-config" element={<CcConfig />} />
-          <Route path="run" element={<Run />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+      <ProjectProvider>
+        <Routes>
+          <Route element={<Layout wsConnected={connected} />}>
+            {/* Project-only Monitor: session pages wait for a project and follow the open one. */}
+            <Route element={<ProjectGate />}>
+              <Route index element={<Dashboard />} />
+              <Route path="kanban" element={<KanbanBoard />} />
+              <Route path="muro" element={<Muro />} />
+              <Route path="charla" element={<Charla />} />
+              <Route path="sessions" element={<Sessions />} />
+              <Route path="sessions/:id" element={<SessionDetail />} />
+              <Route path="activity" element={<ActivityFeed />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="workflows" element={<Workflows />} />
+              <Route path="cc-config" element={<CcConfig />} />
+              <Route path="run" element={<Run />} />
+            </Route>
+            <Route path="direccion" element={<Direccion />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </ProjectProvider>
     </BrowserRouter>
   );
 }
