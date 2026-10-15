@@ -2462,6 +2462,14 @@ function migrateConductor(connection) {
       status TEXT NOT NULL DEFAULT 'pending', created_at TEXT NOT NULL,
       answered_at TEXT, answer TEXT, note TEXT, options TEXT
     );
+    CREATE TABLE IF NOT EXISTS conductor_pitches (
+      id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES conductor_projects(id),
+      idea TEXT NOT NULL, depth TEXT NOT NULL DEFAULT 'normal', status TEXT NOT NULL,
+      claude_status TEXT NOT NULL, claude_run_id TEXT, claude_pitch TEXT, claude_error TEXT,
+      codex_status TEXT NOT NULL, codex_run_id TEXT, codex_pitch TEXT, codex_error TEXT,
+      order_id TEXT, created_at TEXT NOT NULL, ended_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_conductor_pitches_project ON conductor_pitches(project_id, created_at);
     CREATE INDEX IF NOT EXISTS idx_conductor_projects_cwd ON conductor_projects(cwd);
     CREATE INDEX IF NOT EXISTS idx_conductor_orders_project ON conductor_orders(project_id, created_at);
     CREATE INDEX IF NOT EXISTS idx_conductor_orders_lead ON conductor_orders(lead_run_id);

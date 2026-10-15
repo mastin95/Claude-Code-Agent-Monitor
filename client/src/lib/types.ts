@@ -1947,7 +1947,8 @@ export interface WSMessage {
     | "conductor_order"
     | "conductor_round"
     | "conductor_approval"
-    | "conductor_agent";
+    | "conductor_agent"
+    | "conductor_pitch";
   /** The message body, whose concrete shape is selected by `type` above. */
   data:
     | Session
@@ -1966,7 +1967,8 @@ export interface WSMessage {
     | ConductorOrderRow
     | ConductorRound
     | ConductorApproval
-    | ConductorAgentState;
+    | ConductorAgentState
+    | ConductorPitch;
   /** ISO timestamp the server broadcast this message (not necessarily the
    *  same instant the underlying event occurred). */
   timestamp: string;
@@ -2945,6 +2947,59 @@ export interface ConductorRunSnapshot {
   session_id?: string | null;
   model?: string | null;
   effort?: string | null;
+}
+
+/** Kind of idea card in a pitch; unknown kinds arrive as "otra". */
+export type ConductorPitchKind =
+  | "estilo"
+  | "pantallas"
+  | "funciones"
+  | "plan"
+  | "tecnica"
+  | "toque"
+  | "otra";
+
+/** One idea card Martin can keep ("Me lo quedo") from an agent's pitch. */
+export interface ConductorPitchCard {
+  kind: ConductorPitchKind;
+  title: string;
+  body?: string | null;
+  swatches?: string[];
+  items?: string[];
+  steps?: string[];
+  /** Agent-written mockup HTML; render only in a sandboxed, script-less iframe. */
+  screens?: { label: string; html: string }[];
+}
+
+/** One agent's side of a pitch duel. */
+export interface ConductorPitchSide {
+  status: "drafting" | "ready" | "error";
+  runId: string | null;
+  error: string | null;
+  pitch: { name: string; tagline: string | null; cards: ConductorPitchCard[] } | null;
+}
+
+/** GET /api/conductor/pitches/:id (and WS `conductor_pitch`). */
+export interface ConductorPitch {
+  id: string;
+  project_id: string;
+  idea: string;
+  depth: ConductorPitchDepth;
+  status: "drafting" | "ready" | "used" | "error" | "stopped";
+  order_id: string | null;
+  created_at: string;
+  ended_at: string | null;
+  claude: ConductorPitchSide;
+  codex: ConductorPitchSide;
+}
+
+/** How hard both agents work on their pitch (quick = low effort, deep = high). */
+export type ConductorPitchDepth = "quick" | "normal" | "deep";
+
+/** A kept card: whose pitch it comes from and its position there. */
+export interface ConductorPitchPick {
+  agent: ConductorAgentName;
+  index: number;
 }
 
 /** Response of GET /api/conductor/orders/:id. */

@@ -131,5 +131,43 @@
     "newHint": "du-an-cua-toi",
     "createHere": "Tạo tại đây",
     "use": "DÙNG THƯ MỤC NÀY!"
+  },
+  "duel": {
+    "title": "Đấu đề xuất!",
+    "sub": "Chọn điều bạn thích từ mỗi bên",
+    "drafting": "Claude và Codex đang chuẩn bị đề xuất…",
+    "stop": "Dừng",
+    "discard": "Bỏ",
+    "of": "Đề xuất của {{name}}",
+    "thinking": "Đang nghĩ…",
+    "failed": "Không có đề xuất",
+    "wait": "Đang vẽ bản phác và ghi ý tưởng… chỉ đề xuất, không động vào dự án của bạn.",
+    "keep": "＋ Lấy cái này",
+    "kept": "★ Lấy luôn!",
+    "zoom": "Phóng to bản phác {{label}}",
+    "close": "Đóng",
+    "mix": "BẢN PHỐI CỦA BẠN",
+    "count_one": "{{count}} của {{name}}",
+    "count_other": "{{count}} của {{name}}",
+    "note": "Muốn thêm gì nữa không?",
+    "lead": "★ Claude dẫn dắt",
+    "pickSome": "Bấm «Lấy cái này» trên các thẻ bạn thích, từ một hoặc cả hai bên.",
+    "cta": "ĐỀ XUẤT ĐI!",
+    "depth": "Mức đầu tư",
+    "depths": {
+      "quick": "Nhanh",
+      "normal": "Thường",
+      "deep": "Hết cỡ"
+    },
+    "hint": "Chưa rõ? «Đề xuất đi!» để Claude và Codex mỗi bên trình bày dự án với bản phác và ý tưởng, rồi bạn phối lại.",
+    "kind": {
+      "estilo": "PHONG CÁCH",
+      "pantallas": "MÀN HÌNH",
+      "funciones": "TÍNH NĂNG",
+      "plan": "KẾ HOẠCH",
+      "tecnica": "KỸ THUẬT",
+      "toque": "ĐIỂM NHẤN",
+      "otra": "Ý TƯỞNG"
+    }
   }
 }

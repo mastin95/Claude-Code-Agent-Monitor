@@ -1,11 +1,12 @@
 /**
  * @file Direccion.tsx
- * @description Dirección: Martin gives orders, the conductor runs a Claude lead and a Codex collaborator, and the page shows the stage, OK cards and score live.
+ * @description Dirección: Martin gives orders (directly, or by mixing ideas from a Claude-vs-Codex pitch duel), the conductor runs a Claude lead and a Codex collaborator, and the page shows the stage, OK cards and score live.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
+import { Duelo, pickKey } from "../components/muro/Duelo";
 import { Mascot } from "../components/muro/Mascot";
 import { useReducedMotion } from "../components/muro/motion";
 import {
@@ -27,6 +28,9 @@ import type {
   ConductorApproval,
   ConductorBrowse,
   ConductorOrder,
+  ConductorPitch,
+  ConductorPitchDepth,
+  ConductorPitchPick,
   ConductorProject,
 } from "../lib/types";
 import "@fontsource/bangers/400.css";
@@ -39,6 +43,10 @@ const AGENTS: ConductorAgentName[] = ["claude", "codex"];
 const NAMES: Record<ConductorAgentName, string> = { claude: "Claude", codex: "Codex" };
 const EFFORTS = ["low", "medium", "high", "xhigh", "max"];
 const PROJECT_KEY = "direccion.project";
+const DEPTHS: ConductorPitchDepth[] = ["quick", "normal", "deep"];
+/** A duel stays on screen while it drafts or waits for Martin's mix (or shows why it failed). */
+const showPitch = (pitch: ConductorPitch | null) =>
+  !!pitch && ["drafting", "ready", "error"].includes(pitch.status);
 
 function readStored(): string | null {
   try {
@@ -635,6 +643,9 @@ export function Direccion() {
   const [confirmStop, setConfirmStop] = useState(false);
   const [busy, setBusy] = useState(false);
   const [loadingOrder, setLoadingOrder] = useState(false);
+  const [pitch, setPitch] = useState<ConductorPitch | null>(null);
+  const [picks, setPicks] = useState<ConductorPitchPick[]>([]);
+  const [depth, setDepth] = useState<ConductorPitchDepth>("normal");
   // The order and project the page is following; async results and WS handlers check
   // them so a late response never lands on a project Martin already left.
   const followed = useRef<string | null>(null);
@@ -708,6 +719,25 @@ export function Direccion() {
     };
   }, [projectId, retry, follow, syncLatest]);
 
+  // The project's latest pitch duel, so a duel survives reloads and other tabs.
+  useEffect(() => {
+    setPitch(null);
+    setPicks([]);
+    if (!projectId) return;
+    let disposed = false;
+    api.conductor
+      .pitches(projectId, 1)
+      .then(({ items }) => {
+        if (!disposed && selected.current === projectId) setPitch(items[0] || null);
+      })
+      .catch(() => {
+        /* The duel is optional; orders still work without it. */
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [projectId, retry]);
+
   // Live updates: agent snapshots merge in place; everything else refetches (grouped).
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -724,6 +754,16 @@ export function Direccion() {
     };
     const unsubscribe = eventBus.subscribe((message) => {
       if (!message.type.startsWith("conductor_")) return;
+      if (message.type === "conductor_pitch") {
+        const next = message.data as ConductorPitch;
+        if (next.project_id !== projectId) return;
+        setPitch((current) =>
+          !current || current.id === next.id || next.created_at >= current.created_at
+            ? next
+            : current
+        );
+        return;
+      }
       if (message.type === "conductor_agent") {
         const agentState = message.data as ConductorAgentState;
         setOrder((current) =>
@@ -779,6 +819,61 @@ export function Direccion() {
       setBusy(false);
     }
   };
+  const propose = async () => {
+    if (!project || !text.trim() || orderLocked) return;
+    const pid = project.id;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const created = await api.conductor.pitch(pid, text.trim(), depth);
+      if (selected.current === pid) {
+        setPitch(created);
+        setPicks([]);
+      }
+      setText("");
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const togglePick = (pick: ConductorPitchPick) =>
+    setPicks((current) =>
+      current.some((p) => pickKey(p) === pickKey(pick))
+        ? current.filter((p) => pickKey(p) !== pickKey(pick))
+        : [...current, pick]
+    );
+  const orderMix = async (note: string) => {
+    if (!pitch || !project) return;
+    const pid = project.id;
+    setBusy(true);
+    setNotice(null);
+    try {
+      const created = await api.conductor.orderPitch(pitch.id, picks, note || undefined);
+      if (selected.current === pid) {
+        follow(created);
+        setPitch((current) => (current ? { ...current, status: "used" } : current));
+        setPicks([]);
+      }
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const discardPitch = async () => {
+    if (!pitch) return;
+    const current = pitch;
+    setPicks([]);
+    try {
+      if (current.status === "drafting") setPitch(await api.conductor.stopPitch(current.id));
+      setPitch((p) => (p && p.id === current.id ? { ...p, status: "stopped" } : p));
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : String(err));
+    }
+  };
+  const pitchDrafting = pitch?.status === "drafting";
+
   const sendIndication = async (event: FormEvent) => {
     event.preventDefault();
     if (!order || !indication.trim()) return;
@@ -886,10 +981,34 @@ export function Direccion() {
               onChange={(e) => setText(e.target.value)}
             />
           </div>
-          <button className="dir-cta" disabled={orderLocked || busy || !text.trim()}>
-            {t("order.cta")}
-          </button>
+          <div className="dir-order-actions">
+            <button
+              type="button"
+              className="dir-cta duel-cta"
+              disabled={orderLocked || busy || pitchDrafting || !text.trim()}
+              onClick={() => void propose()}
+            >
+              {t("duel.cta")}
+            </button>
+            <div className="duel-depth" role="radiogroup" aria-label={t("duel.depth")}>
+              {DEPTHS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={depth === value}
+                  onClick={() => setDepth(value)}
+                >
+                  {t(`duel.depths.${value}`)}
+                </button>
+              ))}
+            </div>
+            <button className="dir-cta" disabled={orderLocked || busy || !text.trim()}>
+              {t("order.cta")}
+            </button>
+          </div>
         </form>
+        <p className="duel-hint">{t("duel.hint")}</p>
         <span className="dir-onoma" aria-hidden="true">
           {t("order.onoma")}
         </span>
@@ -898,6 +1017,18 @@ export function Direccion() {
         )}
         {project && !order && !loadingOrder && <p className="dir-empty">{t("empty.noOrder")}</p>}
       </section>
+
+      {showPitch(pitch) && pitch && (
+        <Duelo
+          pitch={pitch}
+          picks={picks}
+          onToggle={togglePick}
+          onOrder={(note) => void orderMix(note)}
+          onDiscard={() => void discardPitch()}
+          busy={busy}
+          locked={orderLocked}
+        />
+      )}
 
       <section className="dir-stage">
         <AgentCard agent="claude" project={project} order={order} reducedMotion={reducedMotion} />

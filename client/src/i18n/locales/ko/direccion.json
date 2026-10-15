@@ -131,5 +131,43 @@
     "newHint": "my-project",
     "createHere": "여기에 만들기",
     "use": "이걸로!"
+  },
+  "duel": {
+    "title": "제안 대결!",
+    "sub": "양쪽에서 마음에 드는 것만 고르세요",
+    "drafting": "Claude와 Codex가 제안을 준비하는 중…",
+    "stop": "중지",
+    "discard": "버리기",
+    "of": "{{name}}의 제안",
+    "thinking": "생각 중…",
+    "failed": "제안 없음",
+    "wait": "목업을 그리고 아이디어를 적는 중… 제안만 하고 프로젝트는 건드리지 않아요.",
+    "keep": "＋ 이거 할래",
+    "kept": "★ 이걸로!",
+    "zoom": "목업 {{label}} 크게 보기",
+    "close": "닫기",
+    "mix": "나의 조합",
+    "count_one": "{{name}} {{count}}개",
+    "count_other": "{{name}} {{count}}개",
+    "note": "더 추가할 것이 있나요?",
+    "lead": "★ Claude가 지휘",
+    "pickSome": "마음에 드는 카드에서 «이거 할래»를 누르세요. 한쪽이든 양쪽이든 좋아요.",
+    "cta": "제안해 줘!",
+    "depth": "얼마나 공들일지",
+    "depths": {
+      "quick": "빠르게",
+      "normal": "보통",
+      "deep": "최대로"
+    },
+    "hint": "아직 확실하지 않나요? «제안해 줘!»를 누르면 Claude와 Codex가 각자 목업과 아이디어로 프로젝트를 보여 주고, 당신이 섞으면 돼요.",
+    "kind": {
+      "estilo": "스타일",
+      "pantallas": "화면",
+      "funciones": "기능",
+      "plan": "계획",
+      "tecnica": "기술",
+      "toque": "특별한 한 수",
+      "otra": "아이디어"
+    }
   }
 }

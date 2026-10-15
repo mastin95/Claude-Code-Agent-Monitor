@@ -373,6 +373,8 @@ Dashboard 覆盖完整的本地 Agent 生命周期。详细运行契约仍见相
 
 在 `/direccion`（侧边栏 **指挥**）从一个界面指挥 Claude 和 Codex。选择或创建项目文件夹（可选执行 `git init`），查看负责人并下达指令。仪表板启动负责人——第 1 阶段为 Claude，以 `acceptEdits` 的对话模式运行——它制定计划，并通过 `dashboard_handoff` MCP 工具把编程工作委派给 Codex；仪表板在同一文件夹中运行 Codex 协作者，并把回复返回给负责人。所有需要你处理的事项都会变成确认卡片：Claude 权限请求（`dashboard_permission`）、Codex 命令和文件审批，以及明确的问题（`dashboard_ask_user`）。你可以批准、附注说明要求修改，或停止。舞台显示每个代理当前正在做什么、模型、推理强度和 token，以及进行中的委派；乐谱记录 指令 → 计划 → 委派 → 回复 → 结果。回合进行中发送的补充说明会等到负责人的回合结束后送达。委派也会出现在 Muro 和 Charla 中。页面监听 `conductor_order`、`conductor_round`、`conductor_approval` 和 `conductor_agent` WebSocket 消息；REST 接口为 `/api/conductor/*`（见 [docs/API.md](docs/API.md)）。
 
+**提案对决.** 还没想好要做什么？写下想法，点 **来提案！** 而不是 **开演！**。Claude 和 Codex 会同时以只读方式各自准备提案（Claude 以 headless 模式运行，只能用 `Read`/`Glob`/`Grep`；Codex 在 `read-only` 沙箱中）：名称、一句话简介，以及风格（色板）、界面（在隔离框架中显示的 HTML 草图）、功能、计划、技术和特别点子等想法卡片。两份提案并排显示；在任意一方喜欢的卡片上点 **我要这个**，补充说明后点 **开演！**：组合结果就成为负责人（第一阶段为 Claude）的指令。**快速 / 普通 / 全力** 设定两个智能体的投入程度。页面监听 `conductor_pitch`；REST 接口为 `/api/conductor/pitches`。
+
 ### Muro
 
 漫画风格使用本地打包的 Bangers 和 Nunito 字体、墨线对话气泡及按列着色的便签：工作中为黄色，等待我确认为粉色，已完成为绿色。委托行显示迷你 Claude 和 Codex 吉祥物、单行请求与回复，以及两行状态印章。悬停可查看完整的首次请求、发送时间和最新回复时间；打开后仍可查看完整保留的对话。

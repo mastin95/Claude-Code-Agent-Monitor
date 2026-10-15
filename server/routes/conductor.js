@@ -1,6 +1,6 @@
 /**
  * @file Loopback-guarded conductor API with validated projects, a folder browser for the
- *   New project picker, and bounded long polls.
+ *   New project picker, the pitch duel (both agents propose, Martin mixes) and bounded long polls.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 const { Router } = require("express");
@@ -10,6 +10,7 @@ const path = require("node:path");
 const spawn = require("cross-spawn");
 const { __sameOriginGuard: sameOriginGuard } = require("./run");
 const { getConductor, required, problem } = require("../lib/conductor");
+const { getPitches } = require("../lib/conductor-pitches");
 
 // Folder picker for the New project form: a browser page cannot read real paths from its own
 // file dialog, so the local server lists drives and sub-folders (names only, never contents).
@@ -78,19 +79,21 @@ function browseDir(raw) {
   };
 }
 
-function createRouter({ service = getConductor, spawnGit = spawn } = {}) {
+function createRouter({ service = getConductor, pitches = getPitches, spawnGit = spawn } = {}) {
   const router = Router();
   router.use(sameOriginGuard);
-  const handle = (fn) => async (req, res) => {
-    try {
-      await fn(req, res, typeof service === "function" ? service() : service);
-    } catch (err) {
-      if (!res.destroyed)
-        res
-          .status(err.status || (err.code === "ECONCURRENCY" ? 429 : 500))
-          .json({ error: { code: err.code || "ECONDUCTOR", message: err.message } });
-    }
-  };
+  const handle =
+    (fn, source = service) =>
+    async (req, res) => {
+      try {
+        await fn(req, res, typeof source === "function" ? source() : source);
+      } catch (err) {
+        if (!res.destroyed)
+          res
+            .status(err.status || (err.code === "ECONCURRENCY" ? 429 : 500))
+            .json({ error: { code: err.code || "ECONDUCTOR", message: err.message } });
+      }
+    };
   router.get(
     "/browse",
     handle((req, res) => {
@@ -208,6 +211,34 @@ function createRouter({ service = getConductor, spawnGit = spawn } = {}) {
   router.post(
     "/orders/:id/indication",
     handle((req, res, conductor) => res.json(conductor.indication(req.params.id, req.body?.text)))
+  );
+  // Pitch duel: both agents propose the project read-only; Martin's mix becomes the order.
+  router.post(
+    "/pitches",
+    handle((req, res, duel) => res.status(201).json(duel.create(req.body || {})), pitches)
+  );
+  router.get(
+    "/pitches",
+    handle(
+      (req, res, duel) =>
+        res.json({ items: duel.list(req.query.projectId, Number(req.query.limit ?? 1)) }),
+      pitches
+    )
+  );
+  router.get(
+    "/pitches/:id",
+    handle((req, res, duel) => res.json(duel.get(req.params.id)), pitches)
+  );
+  router.delete(
+    "/pitches/:id",
+    handle((req, res, duel) => res.json(duel.stop(req.params.id)), pitches)
+  );
+  router.post(
+    "/pitches/:id/order",
+    handle((req, res, duel) => {
+      const port = req.socket.localPort;
+      res.status(201).json(duel.choose(req.params.id, req.body || {}, `http://127.0.0.1:${port}`));
+    }, pitches)
   );
   router.post(
     "/handoffs",

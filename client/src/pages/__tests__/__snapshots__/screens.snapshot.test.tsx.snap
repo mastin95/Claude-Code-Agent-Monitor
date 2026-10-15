@@ -5759,13 +5759,56 @@ exports[`screen snapshots > Dirección 1`] = `
             rows="3"
           />
         </div>
-        <button
-          class="dir-cta"
-          disabled=""
+        <div
+          class="dir-order-actions"
         >
-          ON STAGE!
-        </button>
+          <button
+            class="dir-cta duel-cta"
+            disabled=""
+            type="button"
+          >
+            PITCH IT!
+          </button>
+          <div
+            aria-label="How hard they work"
+            class="duel-depth"
+            role="radiogroup"
+          >
+            <button
+              aria-checked="false"
+              role="radio"
+              type="button"
+            >
+              Quick
+            </button>
+            <button
+              aria-checked="true"
+              role="radio"
+              type="button"
+            >
+              Normal
+            </button>
+            <button
+              aria-checked="false"
+              role="radio"
+              type="button"
+            >
+              All out
+            </button>
+          </div>
+          <button
+            class="dir-cta"
+            disabled=""
+          >
+            ON STAGE!
+          </button>
+        </div>
       </form>
+      <p
+        class="duel-hint"
+      >
+        Not sure yet? «Pitch it!» has Claude and Codex each present their own project with mockups and ideas, and you mix them.
+      </p>
       <span
         aria-hidden="true"
         class="dir-onoma"

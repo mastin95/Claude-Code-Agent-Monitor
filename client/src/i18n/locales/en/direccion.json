@@ -131,5 +131,43 @@
     "newHint": "my-project",
     "createHere": "Create here",
     "use": "USE THIS ONE!"
+  },
+  "duel": {
+    "title": "Pitch duel!",
+    "sub": "Keep what you like from each one",
+    "drafting": "Claude and Codex are preparing their pitches…",
+    "stop": "Stop",
+    "discard": "Discard",
+    "of": "{{name}}'s pitch",
+    "thinking": "Thinking…",
+    "failed": "No pitch",
+    "wait": "Drawing mockups and jotting ideas… it only proposes, your project is untouched.",
+    "keep": "＋ Keep it",
+    "kept": "★ Keeping it!",
+    "zoom": "Enlarge mockup {{label}}",
+    "close": "Close",
+    "mix": "YOUR MIX",
+    "count_one": "{{count}} from {{name}}",
+    "count_other": "{{count}} from {{name}}",
+    "note": "Anything else to add?",
+    "lead": "★ Claude leads",
+    "pickSome": "Press «Keep it» on the cards you like, from one or both.",
+    "cta": "PITCH IT!",
+    "depth": "How hard they work",
+    "depths": {
+      "quick": "Quick",
+      "normal": "Normal",
+      "deep": "All out"
+    },
+    "hint": "Not sure yet? «Pitch it!» has Claude and Codex each present their own project with mockups and ideas, and you mix them.",
+    "kind": {
+      "estilo": "STYLE",
+      "pantallas": "SCREENS",
+      "funciones": "FEATURES",
+      "plan": "PLAN",
+      "tecnica": "TECH",
+      "toque": "SPECIAL TOUCH",
+      "otra": "IDEA"
+    }
   }
 }
