@@ -1143,3 +1143,215 @@
 .charla-page[data-fx="telegram"]:is([data-tone="night"], [data-tone="midnight"]) .ch-dots i {
   background: var(--tg-accent);
 }
+
+/* ================= 3c. TELEGRAM colour tones: ?fx=telegram&tone=color | color2 =================
+   Mid-dark doodle wallpaper; every kind of block is its own saturated colour so they contrast. */
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) {
+  --wall: linear-gradient(165deg, #3b2f8f, #6a2c91 45%, #a3306f 80%, #c2463f);
+  --wall2: linear-gradient(165deg, #c2463f, #a3306f 20%, #6a2c91 55%, #3b2f8f);
+  --doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.13' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z'/%3E%3Cpath d='M78 20l-6 12h8l-6 12'/%3E%3Ccircle cx='96' cy='82' r='8'/%3E%3Cpath d='M20 80c6-8 14-8 20 0'/%3E%3Cpath d='M58 66l10 4-10 4'/%3E%3Cpath d='M44 104h14M51 97v14'/%3E%3Cpath d='M100 104l8-8M108 104l-8-8'/%3E%3C/g%3E%3C/svg%3E");
+  background: #262140;
+}
+.charla-page[data-fx="telegram"][data-tone="color2"] {
+  --wall: linear-gradient(165deg, #0f6e8c, #1f4fa8 45%, #3a3aa8 75%, #19807a);
+  --wall2: linear-gradient(165deg, #19807a, #3a3aa8 25%, #1f4fa8 55%, #0f6e8c);
+  background: #1b2440;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .charla-top h1 {
+  background: linear-gradient(90deg, #ff4f8b, #ff9f1c);
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 1px 0 #0003;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.charla-pick, .charla-filters button) {
+  background: #ffffff;
+  color: #3b2f8f;
+  font-weight: 700;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .charla-filters button[aria-pressed="true"] {
+  background: #e8ff3a;
+  color: #1a1530;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-col {
+  background: var(--doodle) 0 0 / 120px 120px, var(--wall);
+  box-shadow: 0 6px 24px #0006;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-col.codex {
+  background: var(--doodle) 60px 30px / 120px 120px, var(--wall2);
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-head {
+  background: linear-gradient(90deg, #d46f3a, #f0a04b);
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-col.codex .ch-head {
+  background: linear-gradient(90deg, #1f9e8f, #3fd0b5);
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-head svg {
+  background: #fff;
+  box-shadow: 0 0 0 3px #ffffff66;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-head h2 {
+  color: #fff;
+  font-weight: 800;
+  font-size: 20px;
+  text-shadow: 0 1px 0 #0003;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-state, .ch-chip, .ch-state.busy, .ch-state.idle) {
+  background: #ffffff33;
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-weight: 600;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-state.busy, .ch-state.idle) {
+  background: #fff;
+  color: #1a1530;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-feed {
+  gap: 10px;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-say, .ch-think, .ch-cmd, .ch-diff, .ch-user) {
+  box-shadow: 0 3px 0 #0000004d, 0 6px 14px #00000040;
+}
+/* messages to you: warm cream bubble, dark text */
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-say {
+  background: #fff6dc;
+  color: #1a1530;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-say b {
+  color: #d1145a;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-say .ch-tag,
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-col.codex .ch-say .ch-tag {
+  display: inline-block;
+  background: #ff4f8b;
+  color: #fff;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-col.codex .ch-say .ch-tag {
+  background: #ff8a3d;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-say code {
+  background: #1a15300f;
+  color: #6a2c91;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-say time {
+  color: #8a7f9c;
+}
+/* Martin: hot pink outgoing bubble; Claude asking Codex: orange */
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-user, .ch-user.martin) {
+  background: #ff4f8b;
+  color: #fff;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-col.codex .ch-user {
+  background: #ff8a3d;
+  color: #1a1530;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-user header b, .ch-user.martin header b, .ch-col.codex .ch-user header b) {
+  color: inherit;
+  font-weight: 800;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-user time, .ch-user.martin time) {
+  color: inherit;
+  opacity: 0.75;
+}
+/* reasoning: deep violet thought bubble with lilac text */
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-think {
+  background: #2a1858;
+  color: #e9ddff;
+  border-radius: 20px 20px 20px 6px;
+  outline: 2px dashed #b58cff;
+  outline-offset: -6px;
+  padding: 10px 16px;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-think .ch-tag {
+  color: #d4b8ff;
+  font-weight: 800;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-think p {
+  border-left: 0;
+  padding-left: 0;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-think p b {
+  color: #fff;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-think summary time {
+  color: #b9a6dd;
+}
+/* commands: black terminal with lime edge; diffs: navy with cyan edge */
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-cmd {
+  background: #0b0d12;
+  border-left: 5px solid #b6ff3b;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-cmd.fail {
+  border-left-color: #ff3b5c;
+  background: #1c0a10;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-diff {
+  background: #0c1f3f;
+  border-left: 5px solid #3be0ff;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-cmd, .ch-diff) header {
+  background: #ffffff0f;
+  color: #fff;
+  font-weight: 700;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-cmd.fail header {
+  color: #ff7a8f;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-cmdline {
+  color: #b6ff3b;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-out {
+  color: #d8dde6;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-cmd.fail .ch-out {
+  color: #ffb3c0;
+}
+/* files read: teal pill; hand-offs: acid yellow (sent) / mint (received) pills */
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-read {
+  background: #1fd1b9;
+  color: #08302b;
+  font-weight: 700;
+  box-shadow: 0 3px 0 #0000004d;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-read code {
+  background: #ffffff8c;
+  color: #08302b;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-read time {
+  color: #08302bb3;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-handoff, .ch-handoff.in) {
+  background: #e8ff3a;
+  color: #1a1530;
+  font-weight: 600;
+  box-shadow: 0 3px 0 #0000004d, 0 0 0 3px #e8ff3a55;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-handoff.in {
+  background: #4cf2a0;
+  box-shadow: 0 3px 0 #0000004d, 0 0 0 3px #4cf2a055;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-handoff b {
+  color: #1a1530;
+  font-weight: 800;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-handoff time {
+  color: #1a1530b3;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-live {
+  background: #fff;
+  color: #6a2c91;
+  font-weight: 700;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-dots i {
+  background: #ff4f8b;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) .ch-feed code {
+  border-radius: 5px;
+}
+.charla-page[data-fx="telegram"]:is([data-tone="color"], [data-tone="color2"]) :is(.ch-cmd, .ch-diff) code {
+  color: #7ee0ff;
+}
