@@ -1,6 +1,6 @@
 /**
  * @file Direccion.test.tsx
- * @description Tests Dirección rendering with live data, OK answers, orders, indications, stopping and WS updates.
+ * @description Tests Dirección rendering with live data, OK answers, orders, indications, stopping, WS updates and the pitch duel.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -9,7 +9,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { Direccion } from "../Direccion";
 import { api } from "../../lib/api";
 import { eventBus } from "../../lib/eventBus";
-import type { ConductorOrder, ConductorProject } from "../../lib/types";
+import type { ConductorOrder, ConductorPitch, ConductorProject } from "../../lib/types";
 import i18n from "../../i18n";
 
 vi.mock("../../lib/api", () => ({
@@ -25,6 +25,11 @@ vi.mock("../../lib/api", () => ({
       indication: vi.fn(),
       approve: vi.fn(),
       stopOrder: vi.fn(),
+      pitch: vi.fn(),
+      pitches: vi.fn(),
+      getPitch: vi.fn(),
+      stopPitch: vi.fn(),
+      orderPitch: vi.fn(),
     },
   },
 }));
@@ -117,6 +122,7 @@ beforeEach(async () => {
   conductor.indication.mockResolvedValue({ queued: true });
   conductor.stopOrder.mockResolvedValue({ ...order, status: "stopped" });
   conductor.order.mockResolvedValue({ ...order, id: "o2", approvals: [], rounds: [] });
+  conductor.pitches.mockResolvedValue({ items: [] });
 });
 
 afterEach(() => {
@@ -271,4 +277,95 @@ it("shows OK card details and keeps the indication bar while a finished lead sti
   expect(screen.getByPlaceholderText("Nueva indicación para el jefe…")).toBeTruthy();
   // The finished order no longer locks the order box.
   expect((screen.getByLabelText("Tu orden") as HTMLTextAreaElement).disabled).toBe(false);
+});
+
+const readyPitch: ConductorPitch = {
+  id: "pt1",
+  project_id: "p1",
+  idea: "Un marcador de cartas",
+  depth: "normal",
+  status: "ready",
+  order_id: null,
+  created_at: "2026-10-15T10:00:00.000Z",
+  ended_at: "2026-10-15T10:05:00.000Z",
+  claude: {
+    status: "ready",
+    runId: "c1",
+    error: null,
+    pitch: {
+      name: "La Taberna",
+      tagline: "Con alma de juego de mesa",
+      cards: [
+        { kind: "estilo", title: "Pergamino", body: "Cálido", swatches: ["#F4E3C1"] },
+        { kind: "toque", title: "Títulos", body: "Rey de la mesa" },
+      ],
+    },
+  },
+  codex: {
+    status: "ready",
+    runId: "x1",
+    error: null,
+    pitch: {
+      name: "Arcade Score",
+      tagline: null,
+      cards: [
+        {
+          kind: "pantallas",
+          title: "Recreativa",
+          screens: [{ label: "Partida", html: "<b>07</b>" }],
+        },
+      ],
+    },
+  },
+};
+
+it("asks both agents to pitch the idea with the chosen depth", async () => {
+  conductor.orders.mockResolvedValue({ items: [] });
+  conductor.pitch.mockResolvedValue({
+    ...readyPitch,
+    status: "drafting",
+    claude: { ...readyPitch.claude, status: "drafting", pitch: null },
+    codex: { ...readyPitch.codex, status: "drafting", pitch: null },
+  });
+  renderPage();
+  expect(await screen.findByText("Da tu primera orden.")).toBeTruthy();
+  fireEvent.change(screen.getByLabelText("Tu orden"), { target: { value: "Un marcador" } });
+  fireEvent.click(screen.getByText("A tope"));
+  fireEvent.click(screen.getByText("¡QUE PROPONGAN!"));
+  await waitFor(() => expect(conductor.pitch).toHaveBeenCalledWith("p1", "Un marcador", "deep"));
+  expect(await screen.findByText("Claude y Codex están preparando su propuesta…")).toBeTruthy();
+});
+
+it("shows both pitches, keeps cards from each and orders the mix", async () => {
+  conductor.orders.mockResolvedValue({ items: [] });
+  conductor.pitches.mockResolvedValue({ items: [readyPitch] });
+  conductor.orderPitch.mockResolvedValue({ ...order, id: "o3", approvals: [], rounds: [] });
+  const { container } = renderPage();
+  expect(await screen.findByText("La Taberna")).toBeTruthy();
+  expect(screen.getByText("Arcade Score")).toBeTruthy();
+  const frame = container.querySelector(".duel-shot iframe") as HTMLIFrameElement;
+  expect(frame.getAttribute("sandbox")).toBe("");
+  expect(frame.getAttribute("srcdoc")).toContain("default-src 'none'");
+  const tray = container.querySelector(".duel-tray") as HTMLFormElement;
+  const orderButton = tray.querySelector("button.dir-cta") as HTMLButtonElement;
+  expect(orderButton.disabled).toBe(true);
+  const keeps = screen.getAllByText("＋ Me lo quedo");
+  fireEvent.click(keeps[0]!);
+  fireEvent.click(keeps[2]!);
+  expect(screen.getAllByText("★ ¡Me lo quedo!")).toHaveLength(2);
+  fireEvent.change(screen.getByLabelText("¿Algo más que quieras añadir?"), {
+    target: { value: "En la tele" },
+  });
+  fireEvent.click(orderButton);
+  await waitFor(() =>
+    expect(conductor.orderPitch).toHaveBeenCalledWith(
+      "pt1",
+      [
+        { agent: "claude", index: 0 },
+        { agent: "codex", index: 0 },
+      ],
+      "En la tele"
+    )
+  );
+  await waitFor(() => expect(container.querySelector(".duel")).toBeNull());
 });

@@ -131,5 +131,43 @@
     "newHint": "mi-proyecto",
     "createHere": "Crear aquí",
     "use": "¡USAR ESTA!"
+  },
+  "duel": {
+    "title": "¡Duelo de propuestas!",
+    "sub": "Coge lo que te guste de cada uno",
+    "drafting": "Claude y Codex están preparando su propuesta…",
+    "stop": "Parar",
+    "discard": "Descartar",
+    "of": "Propuesta de {{name}}",
+    "thinking": "Pensando…",
+    "failed": "Sin propuesta",
+    "wait": "Dibujando maquetas y apuntando ideas… solo propone, no toca tu proyecto.",
+    "keep": "＋ Me lo quedo",
+    "kept": "★ ¡Me lo quedo!",
+    "zoom": "Ver grande la maqueta {{label}}",
+    "close": "Cerrar",
+    "mix": "TU MEZCLA",
+    "count_one": "{{count}} de {{name}}",
+    "count_other": "{{count}} de {{name}}",
+    "note": "¿Algo más que quieras añadir?",
+    "lead": "★ Dirige Claude",
+    "pickSome": "Pulsa «Me lo quedo» en las tarjetas que te gusten, de uno o de los dos.",
+    "cta": "¡QUE PROPONGAN!",
+    "depth": "Cuánto se lo curran",
+    "depths": {
+      "quick": "Rápido",
+      "normal": "Normal",
+      "deep": "A tope"
+    },
+    "hint": "¿Aún no lo tienes claro? «¡Que propongan!» hace que Claude y Codex te presenten cada uno su proyecto con maquetas e ideas, y tú mezclas.",
+    "kind": {
+      "estilo": "ESTILO",
+      "pantallas": "PANTALLAS",
+      "funciones": "FUNCIONES",
+      "plan": "PLAN",
+      "tecnica": "TÉCNICA",
+      "toque": "TOQUE ESPECIAL",
+      "otra": "IDEA"
+    }
   }
 }

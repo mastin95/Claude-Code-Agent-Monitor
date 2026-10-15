@@ -1,5 +1,5 @@
 /**
- * @file OpenAPI contract for phase-one conductor projects, orders and long polls.
+ * @file OpenAPI contract for phase-one conductor projects, orders, pitch duels and long polls.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 const string = { type: "string" };
@@ -115,6 +115,65 @@ const paths = {
       200,
       { type: "object", properties: { queued: { type: "boolean" } } },
       { parameters: [id], requestBody: body({ text: string }, ["text"]) }
+    ),
+  },
+  "/api/conductor/pitches": {
+    get: operation("listConductorPitches", "List a project's latest pitch duels", 200, object, {
+      parameters: [
+        { name: "projectId", in: "query", required: true, schema: string },
+        {
+          name: "limit",
+          in: "query",
+          required: false,
+          schema: { type: "integer", minimum: 1, maximum: 50, default: 1 },
+        },
+      ],
+    }),
+    post: operation(
+      "createConductorPitch",
+      "Ask Claude and Codex to propose the project in parallel (read-only runs)",
+      201,
+      object,
+      {
+        requestBody: body(
+          { projectId: string, idea: string, depth: { enum: ["quick", "normal", "deep"] } },
+          ["projectId", "idea"]
+        ),
+      }
+    ),
+  },
+  "/api/conductor/pitches/{id}": {
+    get: operation("getConductorPitch", "Get both pitches and their status", 200, object, {
+      parameters: [id],
+    }),
+    delete: operation("stopConductorPitch", "Stop a pitch duel still drafting", 200, object, {
+      parameters: [id],
+    }),
+  },
+  "/api/conductor/pitches/{id}/order": {
+    post: operation(
+      "orderConductorPitch",
+      "Turn Martin's mix of cards into the lead's order",
+      201,
+      object,
+      {
+        parameters: [id],
+        requestBody: body(
+          {
+            picks: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: { agent: { enum: ["claude", "codex"] }, index: { type: "integer" } },
+                required: ["agent", "index"],
+              },
+            },
+            note: string,
+            lead: { enum: ["claude"] },
+          },
+          ["picks"]
+        ),
+      }
     ),
   },
   "/api/conductor/handoffs": {

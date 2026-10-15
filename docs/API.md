@@ -2067,6 +2067,11 @@ implementations are separate tasks; these endpoints are the backend contract.
 | GET | `/api/conductor/orders/:id` | `OrderDetail` (order fields, `rounds`, `approvals`, `runs: {claude, codex}`, `agents`) |
 | DELETE | `/api/conductor/orders/:id` | Stop both runs, deny pending approvals, fail pending rounds; returns `OrderDetail` |
 | POST | `/api/conductor/orders/:id/indication` | `{text}` → `{queued: boolean}` |
+| POST | `/api/conductor/pitches` | `{projectId, idea, depth?: "quick" \| "normal" \| "deep"}` → `201 Pitch`. Starts the pitch duel: Claude (headless, only `Read`/`Glob`/`Grep`) and Codex (`read-only` sandbox, approval `never`) each propose the project in the project folder at the same time. `depth` maps to effort `low` / project default / `high`. One duel drafting per project (`409`) |
+| GET | `/api/conductor/pitches?projectId=…&limit=1` | `{items: Pitch[]}` newest first (`limit` 1–50) |
+| GET | `/api/conductor/pitches/:id` | `Pitch`: `{id, project_id, idea, depth, status: "drafting" \| "ready" \| "used" \| "error" \| "stopped", order_id, claude, codex, created_at, ended_at}`; each side is `{status: "drafting" \| "ready" \| "error", runId, error, pitch: {name, tagline, cards: [{kind, title, body?, swatches?, items?, steps?, screens?: [{label, html}]}]}}`. `screens[].html` is agent-written mockup HTML; the page renders it only inside a script-less sandboxed iframe with a `default-src 'none'` CSP |
+| DELETE | `/api/conductor/pitches/:id` | Stop a duel that is still drafting (kills both runs) → `Pitch` |
+| POST | `/api/conductor/pitches/:id/order` | `{picks: [{agent: "claude" \| "codex", index}], note?, lead?: "claude"}` → `201 OrderDetail`. Needs status `ready`; builds one order from the idea, every picked card (mockup HTML included) and the note, launches the lead as `POST /orders` does, and marks the duel `used` |
 | POST | `/api/conductor/handoffs` | `{orderId?, leadSessionId?, cwd?, to: "codex", ask}` → `202 {roundId}` |
 | GET | `/api/conductor/handoffs/:roundId?waitMs=100000` | `{status: "pending" \| "done" \| "error", reply: string \| null}` |
 | POST | `/api/conductor/approvals` | `{orderId?, leadSessionId?, agent: "claude" \| "codex", kind: "permission" \| "question", summary, detail?, options?: string[]}` → `202 {approvalId}` |
@@ -2147,6 +2152,7 @@ These are additive message types using the existing broadcast envelope:
 | `conductor_round` | Persisted round with API `from`/`to`, `order_id`, `n`, `ask`, `reply`, `status`, `run_id`, timestamps |
 | `conductor_approval` | Approval row with `order_id`, `agent`, `kind`, `summary`, `detail`, parsed `options`, `status`, `answer`, `note`, timestamps |
 | `conductor_agent` | `{orderId, agent, runId, sessionId, doing, model, effort, tokens}`; `doing` is a short tool/item name or `pensando`; `tokens` is the latest provider usage object or null |
+| `conductor_pitch` | The whole `Pitch` (see `GET /api/conductor/pitches/:id`) every time a side starts, finishes or fails, and when the duel settles |
 
 Existing `run_stream`/`run_status` messages remain unchanged. A handoff metadata
 update also emits the existing `session_updated` message for Muro/Charla consumers.

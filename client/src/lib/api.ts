@@ -394,6 +394,9 @@ import type {
   ConductorOrderRow,
   ConductorProject,
   ConductorProjectInput,
+  ConductorPitch,
+  ConductorPitchDepth,
+  ConductorPitchPick,
   ConductorBrowse,
   CostResult,
   CursorModelPricing,
@@ -1932,6 +1935,31 @@ export const api = {
     stopOrder: (id: string) =>
       request<ConductorOrder>(`/conductor/orders/${encodeURIComponent(id)}`, {
         method: "DELETE",
+      }),
+    /** POST /api/conductor/pitches - both agents propose the project (pitch duel). */
+    pitch: (projectId: string, idea: string, depth: ConductorPitchDepth = "normal") =>
+      request<ConductorPitch>("/conductor/pitches", {
+        method: "POST",
+        body: JSON.stringify({ projectId, idea, depth }),
+      }),
+    /** GET /api/conductor/pitches?projectId= - the project's latest pitch duels. */
+    pitches: (projectId: string, limit = 1) =>
+      request<{ items: ConductorPitch[] }>(
+        `/conductor/pitches?${new URLSearchParams({ projectId, limit: String(limit) })}`
+      ),
+    /** GET /api/conductor/pitches/:id - both pitches and their status. */
+    getPitch: (id: string) =>
+      request<ConductorPitch>(`/conductor/pitches/${encodeURIComponent(id)}`),
+    /** DELETE /api/conductor/pitches/:id - stop a duel still drafting. */
+    stopPitch: (id: string) =>
+      request<ConductorPitch>(`/conductor/pitches/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      }),
+    /** POST /api/conductor/pitches/:id/order - Martin's mix becomes the lead's order. */
+    orderPitch: (id: string, picks: ConductorPitchPick[], note?: string) =>
+      request<ConductorOrder>(`/conductor/pitches/${encodeURIComponent(id)}/order`, {
+        method: "POST",
+        body: JSON.stringify(note ? { picks, note, lead: "claude" } : { picks, lead: "claude" }),
       }),
   },
 

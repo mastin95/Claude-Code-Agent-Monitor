@@ -131,5 +131,43 @@
     "newHint": "my-project",
     "createHere": "在此创建",
     "use": "就用这个！"
+  },
+  "duel": {
+    "title": "提案对决！",
+    "sub": "从两边各挑你喜欢的",
+    "drafting": "Claude 和 Codex 正在准备提案…",
+    "stop": "停止",
+    "discard": "放弃",
+    "of": "{{name}} 的提案",
+    "thinking": "思考中…",
+    "failed": "没有提案",
+    "wait": "正在画草图、记想法……只提案，不改动你的项目。",
+    "keep": "＋ 我要这个",
+    "kept": "★ 就要它！",
+    "zoom": "放大草图 {{label}}",
+    "close": "关闭",
+    "mix": "你的组合",
+    "count_one": "{{name}} {{count}} 张",
+    "count_other": "{{name}} {{count}} 张",
+    "note": "还有什么要补充？",
+    "lead": "★ Claude 主导",
+    "pickSome": "在喜欢的卡片上点「我要这个」，可以来自一方或双方。",
+    "cta": "来提案！",
+    "depth": "投入程度",
+    "depths": {
+      "quick": "快速",
+      "normal": "普通",
+      "deep": "全力"
+    },
+    "hint": "还没想好？点「来提案！」，Claude 和 Codex 会各自用草图和想法展示方案，由你来混搭。",
+    "kind": {
+      "estilo": "风格",
+      "pantallas": "界面",
+      "funciones": "功能",
+      "plan": "计划",
+      "tecnica": "技术",
+      "toque": "特别点子",
+      "otra": "想法"
+    }
   }
 }

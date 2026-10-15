@@ -408,6 +408,7 @@ vi.mock("../../lib/api", async (importOriginal) => {
           ],
         }),
         orders: r({ items: [{ id: "o1" }] }),
+        pitches: r({ items: [] }),
         getOrder: r({
           id: "o1",
           project_id: "p1",
