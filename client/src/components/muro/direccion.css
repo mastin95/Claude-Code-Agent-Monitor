@@ -22,6 +22,7 @@
   border-radius: 18px;
   padding: 16px;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -78,8 +79,12 @@
   background: var(--violet);
   background-image: var(--halftone);
 }
+.dir-page > * {
+  min-width: 0;
+}
 .dir-project,
 .dir-lead {
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   gap: 8px;
