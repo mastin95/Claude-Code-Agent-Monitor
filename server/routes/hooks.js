@@ -13,6 +13,7 @@ const { stmts, db } = dbModule;
 const { broadcast } = require("../websocket");
 const TranscriptCache = require("../lib/transcript-cache");
 const { storeSessionKeyIdeas } = require("../lib/key-ideas");
+const { isPlatformEnvelopeLabel } = require("../lib/platform-envelope");
 const {
   scanAndImportSubagents,
   findSessionSubagents,
@@ -347,11 +348,15 @@ function getMainAgent(sessionId) {
  *   - the hook fallback "Session <id8>"
  *   - the import-history fallbacks derived from cwd ("<folder>", "<folder> -
  *     <id8>", "<folder> (<slug>)")
+ *   - labels copied from a raw platform routing envelope (`<wake …>`)
  * Such names are safe to overwrite with a transcript-derived ai-title; a real
  * user-chosen name is not.
  */
 function isAutoSessionName(name, sessionId, cwd) {
   if (!name || !name.trim()) return true;
+  // A label derived from a raw platform envelope (before unwrapping existed)
+  // is never a title the user chose; let the clean descriptor replace it.
+  if (isPlatformEnvelopeLabel(name)) return true;
   if (name === `Session ${sessionId.slice(0, 8)}`) return true;
   if (cwd) {
     const base = require("path").basename(cwd);
@@ -434,7 +439,10 @@ function applyFirstUserDescriptor(sessionId, result) {
   if (!label) return;
 
   const session = stmts.getSession.get(sessionId);
-  if (session && isAutoSessionName(session.name, session.id, session.cwd)) {
+  // An explicit custom title owns the name (syncSessionName applied it); never
+  // let the descriptor fight it, even if the title happens to look auto.
+  const hasCustomTitle = Boolean(result?.customTitle && result.customTitle.trim());
+  if (session && !hasCustomTitle && isAutoSessionName(session.name, session.id, session.cwd)) {
     const upd = stmts.updateSessionName.run(label, session.id, label);
     if (upd.changes > 0) {
       const refreshed = stmts.getSession.get(session.id);
@@ -447,7 +455,8 @@ function applyFirstUserDescriptor(sessionId, result) {
   const desiredName = `Main Agent - ${label}`;
   const fillName =
     isAutoMainAgentName(mainAgent.name, sessionId, session?.cwd) && mainAgent.name !== desiredName;
-  const fillTask = !mainAgent.task || !String(mainAgent.task).trim();
+  const fillTask =
+    !mainAgent.task || !String(mainAgent.task).trim() || isPlatformEnvelopeLabel(mainAgent.task);
   if (!fillName && !fillTask) return;
   // updateAgent writes current_tool VERBATIM (no COALESCE) — pass the
   // existing value through, or this out-of-band update would wipe an

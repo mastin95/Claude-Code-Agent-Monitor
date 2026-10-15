@@ -11,6 +11,8 @@
  *   - A later ai-title replacing a descriptor-filled session name.
  *   - importSession using the descriptor for imported sessions (new rows and
  *     the re-import backfill path).
+ *   - Platform routing envelopes (`<wake>`, `<relay>`) unwrapped to the
+ *     human's words, and stale envelope-derived names/tasks replaced.
  * Uses Node's built-in test runner with temp CLAUDE_HOME / DASHBOARD_DATA_DIR.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
@@ -35,6 +37,7 @@ const { createApp, startServer } = require("../index");
 const dbModule = require("../db");
 const { db, stmts } = dbModule;
 const TranscriptCache = require("../lib/transcript-cache");
+const { unwrapPlatformEnvelope, PLATFORM_MESSAGE_LABEL } = require("../lib/platform-envelope");
 const { parseSessionFile, importSession } = require("../../scripts/import-history");
 
 const enc = (cwd) => cwd.replace(/[^a-zA-Z0-9]/g, "-");
@@ -390,6 +393,126 @@ describe("hook ingestor — descriptor fills placeholders", () => {
     const main = stmts.getAgent.get(`${sid}-main`);
     assert.equal(main.name, before.agent.name);
     assert.equal(main.task, before.agent.task);
+  });
+});
+
+const WAKE_PROMPT = [
+  "A message from this project's coordinator session.",
+  "<coordinator-relay>",
+  '&lt;session-context nonce="x"&gt;context&lt;/session-context&gt;',
+  '<relay from="coordinator" session="s1">',
+  '  <cited id="c1" author="user" name="Martin">quiero el muro en verde</cited>',
+  "  <note>Martin wants a green wall.</note>",
+  "</relay>",
+  "</coordinator-relay>",
+  '<wake reason="mention" current-time="2026-10-15T12:57:57Z">',
+  '  <project id="p1" name="Demo" type="project"><thread ts="t1">',
+  '    <message trigger="true" from="human" trust="principal" id="m1">si por favor &amp; gracias</message>',
+  "  </thread></project>",
+  "  <system-note>You are the session for this thread.</system-note>",
+  "</wake>",
+].join("\n");
+
+describe("platform envelopes — human words only", () => {
+  it("prefers the triggering human message, then cited user, then the note", () => {
+    assert.equal(unwrapPlatformEnvelope(WAKE_PROMPT), "si por favor & gracias");
+    const spawn = WAKE_PROMPT.replace(
+      /<message [^>]*>[^<]*<\/message>/,
+      '<message trigger="true" from="system" role="initiator">You are a Thread Session.</message>'
+    );
+    assert.equal(unwrapPlatformEnvelope(spawn), "quiero el muro en verde");
+    assert.equal(
+      unwrapPlatformEnvelope(spawn.replace(/<cited [\s\S]*?<\/cited>/, "")),
+      "Martin wants a green wall."
+    );
+    assert.equal(
+      unwrapPlatformEnvelope('<wake reason="timer"><system-note>tick</system-note></wake>'),
+      PLATFORM_MESSAGE_LABEL
+    );
+  });
+
+  it("leaves ordinary prompts (even ones mentioning the tags) untouched", () => {
+    assert.equal(unwrapPlatformEnvelope("fix the <div> padding"), "fix the <div> padding");
+    assert.equal(unwrapPlatformEnvelope("Please fix <wake parsing"), "Please fix <wake parsing");
+  });
+
+  it("reads quoted attributes strictly and decodes numeric entities", () => {
+    const wrap = (inner) => `<wake reason="x">${inner}</wake>`;
+    assert.equal(
+      unwrapPlatformEnvelope(wrap("<message from='human'>caf&#233; &#x2713;</message>")),
+      "café ✓"
+    );
+    assert.equal(
+      unwrapPlatformEnvelope(
+        wrap(
+          '<message data-from="human" from="system">sys</message><cited author="user">real</cited>'
+        )
+      ),
+      "real"
+    );
+    assert.equal(
+      unwrapPlatformEnvelope(wrap('<message title="a > b" from="human">hola</message>')),
+      "hola"
+    );
+  });
+
+  it("names the session from the unwrapped words and replaces stale envelope labels", async () => {
+    const cwd = "/tmp/fud-hook-envelope";
+    const sid = "10000000-0000-0000-0000-000000000020";
+    const tpath = writeTranscript(cwd, sid, [
+      { type: "user", message: { role: "user", content: WAKE_PROMPT } },
+    ]);
+    await req("POST", "/api/hooks/event", {
+      hook_type: "SessionStart",
+      data: { session_id: sid, cwd },
+    });
+    // Simulate rows written before unwrapping existed.
+    const stale = '<wake reason="mention" current-time="2026-10-15T08:57:09Z...';
+    stmts.updateSessionName.run(stale, sid, stale);
+    stmts.updateAgent.run(
+      `Main Agent - ${stale}`,
+      null,
+      WAKE_PROMPT,
+      null,
+      null,
+      null,
+      `${sid}-main`
+    );
+
+    await req("POST", "/api/hooks/event", {
+      hook_type: "UserPromptSubmit",
+      data: { session_id: sid, cwd, transcript_path: tpath },
+    });
+    const sess = stmts.getSession.get(sid);
+    assert.equal(sess.name, "si por favor & gracias");
+    assert.equal(sess.card_prompt_preview, "si por favor & gracias");
+    const main = stmts.getAgent.get(`${sid}-main`);
+    assert.equal(main.name, "Main Agent - si por favor & gracias");
+    assert.equal(main.task, "si por favor & gracias");
+  });
+});
+
+describe("platform envelopes — never clobber real names", () => {
+  it("keeps a /rename title and a real task that merely mention a tag", async () => {
+    const cwd = "/tmp/fud-hook-envelope-keep";
+    const sid = "10000000-0000-0000-0000-000000000021";
+    const tpath = writeTranscript(cwd, sid, [
+      { type: "custom-title", customTitle: "debug <wake handling" },
+      { type: "user", message: { role: "user", content: "look at the wake parser" } },
+    ]);
+    await req("POST", "/api/hooks/event", {
+      hook_type: "SessionStart",
+      data: { session_id: sid, cwd },
+    });
+    stmts.updateAgent.run(null, null, "review the <relay> parser", null, null, null, `${sid}-main`);
+    for (let i = 0; i < 2; i++) {
+      await req("POST", "/api/hooks/event", {
+        hook_type: "Stop",
+        data: { session_id: sid, cwd, transcript_path: tpath },
+      });
+      assert.equal(stmts.getSession.get(sid).name, "debug <wake handling");
+    }
+    assert.equal(stmts.getAgent.get(`${sid}-main`).task, "review the <relay> parser");
   });
 });
 

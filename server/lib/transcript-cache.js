@@ -7,6 +7,7 @@
 
 const fs = require("fs");
 const { extractKeyIdeas, mergeKeyIdeas } = require("./key-ideas");
+const { unwrapPlatformEnvelope } = require("./platform-envelope");
 const {
   bucketKey,
   emptyBucket,
@@ -108,6 +109,10 @@ function extractFirstUserText(entry) {
       .join(" ");
   }
   if (typeof text !== "string") return null;
+  // Sessions driven through a platform (Projects threads, Remote Control
+  // relays) receive the human's words wrapped in routing markup; keep only
+  // the words so titles and cards read like what the person wrote.
+  text = unwrapPlatformEnvelope(text);
   // Collapse newlines/runs of whitespace so the descriptor reads as one line.
   text = text.replace(/\s+/g, " ").trim();
   if (!text || SYNTHETIC_USER_TEXT_RE.test(text)) return null;
