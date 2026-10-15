@@ -168,3 +168,35 @@ describe("Codex transcript reader", () => {
     );
   });
 });
+
+it("renders only persisted reasoning summaries as assistant thinking paragraphs", async () => {
+  const records = [
+    record("response_item", {
+      type: "reasoning",
+      summary: [
+        { type: "summary_text", text: "First paragraph" },
+        { type: "summary_text", text: "Second paragraph" },
+        { type: "other", text: "Ignored" },
+        null,
+      ],
+    }),
+    ...[undefined, [], null, {}, [{ type: "summary_text", text: " " }]].map((summary) =>
+      record("response_item", { type: "reasoning", summary, encrypted_content: "hidden" })
+    ),
+  ];
+  fs.writeFileSync(ROLLOUT, records.map(JSON.stringify).join("\n") + "\n");
+  const result = await readCodexTranscript(ROLLOUT, {
+    limit: 20,
+    afterLine: null,
+    beforeLine: null,
+    offset: 0,
+  });
+  assert.deepEqual(result.messages, [
+    {
+      type: "assistant",
+      sender: "assistant",
+      timestamp: records[0].timestamp,
+      content: [{ type: "thinking", text: "First paragraph\n\nSecond paragraph" }],
+    },
+  ]);
+});

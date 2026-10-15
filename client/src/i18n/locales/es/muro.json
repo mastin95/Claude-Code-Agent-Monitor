@@ -172,6 +172,8 @@
     "active": "Trabajando…",
     "empty": "No hay encargos de Claude con hijos Codex en este ámbito.",
     "bothHint": "Selecciona ambos productos para leer la conversación completa.",
-    "both": "Mostrar Claude y Codex"
+    "both": "Mostrar Claude y Codex",
+    "receivedFromClaude": "Recibido de Claude",
+    "sentToClaude": "Enviado a Claude"
   }
 }

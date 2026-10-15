@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file Charla.tsx
  * @description Live parent/child conversations with cursor paging and filterable transcript blocks.
  * @author Son Nguyen <hoangson091104@gmail.com>
@@ -17,6 +17,7 @@ import {
   type Handoff,
 } from "../components/muro/handoff-model";
 import { transcriptBlocks, type CharlaBlock } from "../components/muro/charla-model";
+import { Mascot } from "../components/muro/Mascot";
 import "../components/muro/charla.css";
 
 function LongText({ text, diff = false }: { text: string; diff?: boolean }) {
@@ -78,7 +79,7 @@ function Entry({ block, codex }: { block: CharlaBlock; codex: boolean }) {
         ? "Claude"
         : t("charla.martin")
       : t(
-          `charla.${block.kind === "say" ? (codex ? "forClaude" : "forYou") : block.kind === "handoff" ? (block.direction === "out" ? "sent" : "received") : block.kind}`
+          `charla.${block.kind === "say" ? (codex ? "forClaude" : "forYou") : block.kind === "handoff" ? (codex ? (block.direction === "out" ? "receivedFromClaude" : "sentToClaude") : block.direction === "out" ? "sent" : "received") : block.kind}`
         );
   return (
     <article
@@ -173,6 +174,10 @@ function Column({
   } catch {
     /* Missing metadata is normal for imported sessions. */
   }
+  const blocks = transcriptBlocks(messages, handoff);
+  const modelEffort = [session.model, effort]
+    .filter((value) => value && value.toLowerCase() !== "unknown")
+    .join(" · ");
   const active = session.status === "active" && !isSessionAwaitingInput(session);
   const status = isSessionAwaitingInput(session) ? "waiting" : session.status;
   return (
@@ -181,12 +186,19 @@ function Column({
       aria-label={session.provider === "codex" ? "Codex" : "Claude"}
     >
       <header className="ch-head">
-        <h2>{session.provider === "codex" ? "Codex" : "Claude"}</h2>
+        <h2>
+          <span className="ch-avatar">
+            <Mascot
+              agent={session.provider === "codex" ? "codex" : "claude"}
+              mode={active ? "work" : status === "completed" ? "done" : "wait"}
+              size={40}
+            />
+          </span>
+          {session.provider === "codex" ? "Codex" : "Claude"}
+        </h2>
         <p>
           <span>{t(`common:status.${status}`)}</span>
-          <span>
-            {session.model || t("charla.unknown")} · {effort || t("charla.unknown")}
-          </span>
+          {modelEffort && <span>{modelEffort}</span>}
           <span>
             {t("charla.tokens", {
               count: session.total_tokens ?? 0,
@@ -206,10 +218,10 @@ function Column({
             <button onClick={() => setRetry((n) => n + 1)}>{t("charla.retry")}</button>
           </div>
         )}
-        {!loading && !error && !messages.length && (
+        {!loading && !error && !blocks.length && (
           <p className="ch-empty">{t("charla.noMessages")}</p>
         )}
-        {transcriptBlocks(messages, handoff)
+        {blocks
           .filter((block) => filters[block.kind] !== false)
           .map((block) => (
             <Entry key={block.id} block={block} codex={session.provider === "codex"} />
@@ -278,20 +290,26 @@ export function Charla() {
         if (!disposed) setLoading(false);
       }
     };
+    let reloadTimer: ReturnType<typeof setTimeout> | undefined;
     void load();
     const unsubscribe = eventBus.subscribe((message) => {
       if (
         ["session_created", "session_updated", "agent_updated", "remote_data.updated"].includes(
           message.type
         )
-      )
-        void load();
+      ) {
+        clearTimeout(reloadTimer);
+        reloadTimer = setTimeout(() => {
+          void load();
+        }, 1000);
+      }
     });
     const reconnect = eventBus.onConnection((connected) => {
       if (connected) void load();
     });
     return () => {
       disposed = true;
+      clearTimeout(reloadTimer);
       unsubscribe();
       reconnect();
     };

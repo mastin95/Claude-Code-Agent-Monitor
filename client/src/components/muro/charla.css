@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file charla.css
  * @description Fixed Telegram sunset conversations, accessible colours and responsive feeds.
  * @author Son Nguyen <hoangson091104@gmail.com>
@@ -292,4 +292,21 @@
 }
 .charla-page {
   --doodle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.13' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 14l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z'/%3E%3Cpath d='M78 20l-6 12h8l-6 12'/%3E%3Ccircle cx='96' cy='82' r='8'/%3E%3Cpath d='M20 80c6-8 14-8 20 0'/%3E%3Cpath d='M58 66l10 4-10 4'/%3E%3Cpath d='M44 104h14M51 97v14'/%3E%3Cpath d='M100 104l8-8M108 104l-8-8'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.charla-page .ch-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.charla-page .ch-head .ch-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff;
 }

@@ -92,7 +92,10 @@ beforeEach(async () => {
   });
   vi.mocked(api.sessions.transcript).mockResolvedValue(page());
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 it("maps tool pairs without showing results as human messages", () => {
   const blocks = transcriptBlocks(messages);
   expect(blocks.map((b) => b.kind)).toEqual(["think", "cmd", "diff", "read", "user", "say"]);
@@ -268,4 +271,99 @@ it("maps raw Codex patches, writes and reads without losing diff signs", () => {
   });
   expect(blocks[1]).toMatchObject({ kind: "diff", output: "+one\n+two" });
   expect(blocks[2]).toMatchObject({ kind: "cmd", text: "ls" });
+});
+
+it.each([
+  [["bash", "-lc", "npm test"], "npm test"],
+  [["powershell", "-Command", "Get-ChildItem"], "Get-ChildItem"],
+  [["C:\\Windows\\powershell.exe", "-Command", "Get-Date"], "Get-Date"],
+  [["git", "status"], "git status"],
+  ["echo hello", "echo hello"],
+])("unwraps command arrays %j", (command, expected) => {
+  const blocks = transcriptBlocks([
+    {
+      type: "assistant",
+      timestamp: null,
+      content: [{ type: "tool_use", name: "shell", input: { command } }],
+    },
+  ]);
+  expect(blocks[0]?.text).toBe(expected);
+});
+it.each([
+  [JSON.stringify({ output: "failed", metadata: { exit_code: 1 } }), "failed", true],
+  [JSON.stringify({ output: "ok", metadata: { exit_code: 0 } }), "ok", false],
+  [JSON.stringify({ output: "", metadata: { exit_code: -1 } }), "", true],
+  ["plain output", "plain output", false],
+  ['{"unrelated":true}', '{"unrelated":true}', false],
+])("normalizes tool output %s", (output, expected, error) => {
+  const blocks = transcriptBlocks([
+    {
+      type: "assistant",
+      timestamp: null,
+      content: [
+        { type: "tool_use", name: "shell", id: "test", input: { command: "test" } },
+        { type: "tool_result", id: "test", output, is_error: false },
+      ],
+    },
+  ]);
+  expect(blocks[0]).toMatchObject({ output: expected, error });
+});
+it("shows handoffs without a false empty state, with agent mascots and column-specific labels", async () => {
+  vi.mocked(api.sessions.transcript).mockResolvedValue(page([]));
+  const { container } = render(<Charla />);
+  await waitFor(() => expect(container.querySelectorAll(".ch-handoff")).toHaveLength(4));
+  expect(container.querySelector(".ch-feed .ch-empty")).toBeNull();
+  expect(container.querySelector(".claude .ch-handoff b")).toHaveTextContent("Sent to Codex");
+  expect(container.querySelectorAll(".codex .ch-handoff b")[0]).toHaveTextContent(
+    "Received from Claude"
+  );
+  expect(container.querySelectorAll(".codex .ch-handoff b")[1]).toHaveTextContent("Sent to Claude");
+  expect(container.querySelector('.claude .ch-avatar [data-agent="claude"]')).not.toBeNull();
+  expect(container.querySelector('.codex .ch-avatar [data-agent="codex"]')).not.toBeNull();
+  expect(container.querySelector(".ch-head")).not.toHaveTextContent("Unknown");
+});
+it.each([
+  [null, {}, ""],
+  [null, { effort: "high" }, "high"],
+  ["opus", { effort: "high" }, "opus · high"],
+])("omits missing model and effort in the header", async (model, metadata, expected) => {
+  vi.mocked(api.sessions.list).mockResolvedValue({
+    sessions: [{ ...parent, model, metadata: JSON.stringify(metadata) }, child],
+    total: 2,
+    limit: 1000,
+    offset: 0,
+  });
+  const { container } = render(<Charla />);
+  await screen.findByText("Parent task · Child task");
+  const pills = container.querySelectorAll(".claude .ch-head p span");
+  expect(pills).toHaveLength(expected ? 3 : 2);
+  if (expected) expect(pills[1]).toHaveTextContent(expected);
+});
+it("debounces session-list refreshes and cancels a pending refresh on unmount", async () => {
+  const { unmount } = render(<Charla />);
+  await screen.findByText("Parent task · Child task");
+  vi.useFakeTimers();
+  const publish = () =>
+    eventBus.publish({ type: "session_updated", timestamp: "2026-10-15T10:00:00Z", data: child });
+  await act(async () => {
+    publish();
+    publish();
+    await vi.advanceTimersByTimeAsync(500);
+    publish();
+  });
+  expect(api.sessions.list).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(999);
+  });
+  expect(api.sessions.list).toHaveBeenCalledTimes(1);
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1);
+  });
+  expect(api.sessions.list).toHaveBeenCalledTimes(2);
+  await act(async () => {
+    publish();
+  });
+  unmount();
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(api.sessions.list).toHaveBeenCalledTimes(2);
 });

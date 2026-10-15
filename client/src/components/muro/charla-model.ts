@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file charla-model.ts
  * @description Maps persisted transcript blocks and handoff rounds into Charla entries without inventing timing data.
  * @author Son Nguyen <hoangson091104@gmail.com>
@@ -17,6 +17,39 @@ export type CharlaBlock = {
 };
 const string = (value: unknown): string =>
   typeof value === "string" ? value : Array.isArray(value) ? value.map(String).join(" ") : "";
+
+function commandText(value: unknown): string {
+  if (Array.isArray(value) && value.length >= 3) {
+    const shell = String(value[0]).split(/[\\/]/).pop()!.toLowerCase();
+    const flag = String(value[1]).toLowerCase();
+    if (
+      (["bash", "bash.exe", "sh", "sh.exe"].includes(shell) && ["-lc", "-c"].includes(flag)) ||
+      (["powershell", "powershell.exe", "pwsh", "pwsh.exe"].includes(shell) && flag === "-command")
+    )
+      return string(value.slice(2));
+  }
+  return string(value);
+}
+
+function toolOutput(result: TranscriptContent | undefined) {
+  const fallback = { output: result?.output, error: result?.is_error };
+  if (!result?.output) return fallback;
+  try {
+    const parsed = JSON.parse(result.output);
+    if (parsed && typeof parsed.output === "string") {
+      return {
+        output: parsed.output,
+        error: Boolean(
+          result.is_error ||
+          (typeof parsed.metadata?.exit_code === "number" && parsed.metadata.exit_code !== 0)
+        ),
+      };
+    }
+  } catch {
+    // Plain text tool results remain unchanged.
+  }
+  return fallback;
+}
 
 export function transcriptBlocks(
   messages: TranscriptMessage[],
@@ -49,12 +82,12 @@ export function transcriptBlocks(
       const input: Record<string, unknown> = block.input || {};
       const name = (block.name || "").split(".").pop()!.toLowerCase();
       const result = block.id ? results.get(block.id) : undefined;
-      const common = { ...base, output: result?.output, error: result?.is_error };
+      const common = { ...base, ...toolOutput(result) };
       if (["bash", "shell", "shell_command", "exec_command", "write_stdin"].includes(name)) {
         blocks.push({
           ...common,
           kind: "cmd",
-          text: string(input.command || input.cmd || input.chars) || block.name || "",
+          text: commandText(input.command || input.cmd || input.chars) || block.name || "",
         });
       } else if (["edit", "write", "apply_patch", "multiedit"].includes(name)) {
         const edits = Array.isArray(input.edits) ? input.edits : [input];

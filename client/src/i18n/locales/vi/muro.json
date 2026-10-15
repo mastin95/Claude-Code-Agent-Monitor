@@ -172,6 +172,8 @@
     "active": "Đang làm việc…",
     "empty": "Không có nhiệm vụ Claude với phiên con Codex trong phạm vi này.",
     "bothHint": "Chọn cả hai sản phẩm để đọc toàn bộ cuộc trò chuyện.",
-    "both": "Hiển thị Claude và Codex"
+    "both": "Hiển thị Claude và Codex",
+    "receivedFromClaude": "Nhận từ Claude",
+    "sentToClaude": "Đã gửi cho Claude"
   }
 }

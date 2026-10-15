@@ -1132,6 +1132,22 @@ function parseCodexMessage(entry, line) {
   if (entry.type !== "response_item") return null;
   const item = entry.payload || {};
   const timestamp = entry.timestamp || null;
+  if (item.type === "reasoning") {
+    const text = (Array.isArray(item.summary) ? item.summary : [])
+      .filter(
+        (part) => part?.type === "summary_text" && typeof part.text === "string" && part.text.trim()
+      )
+      .map((part) => part.text)
+      .join("\n\n");
+    if (!text) return null;
+    return {
+      type: "assistant",
+      sender: "assistant",
+      timestamp,
+      content: [{ type: "thinking", text }],
+      line,
+    };
+  }
   if (item.type === "message") {
     const content = codexMessageContent(item.content);
     const text = content

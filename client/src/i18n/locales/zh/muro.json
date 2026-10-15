@@ -172,6 +172,8 @@
     "active": "工作中…",
     "empty": "当前范围内没有带 Codex 子会话的 Claude 任务。",
     "bothHint": "选择两个产品以阅读完整对话。",
-    "both": "显示 Claude 和 Codex"
+    "both": "显示 Claude 和 Codex",
+    "receivedFromClaude": "收到 Claude 的请求",
+    "sentToClaude": "已发送给 Claude"
   }
 }

@@ -172,6 +172,8 @@
     "active": "Working…",
     "empty": "No Claude assignments with Codex children in this scope.",
     "bothHint": "Select both products to read the full conversation.",
-    "both": "Show Claude and Codex"
+    "both": "Show Claude and Codex",
+    "receivedFromClaude": "Received from Claude",
+    "sentToClaude": "Sent to Claude"
   }
 }
