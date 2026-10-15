@@ -10,6 +10,7 @@ import "@fontsource/nunito/700.css";
 import "@fontsource/nunito/800.css";
 import "@fontsource/nunito/900.css";
 import "../components/muro/charla.css";
+import "../components/muro/charla-fx.css";
 import { Mascot } from "../components/muro/Mascot";
 
 type Side = "claude" | "codex";
@@ -278,8 +279,10 @@ function Column({ side, entries }: { side: Side; entries: Entry[] }) {
 }
 
 export function Charla() {
+  // Mockup only: ?fx=glass|neon|gradient previews the visual effect options.
+  const fx = new URLSearchParams(window.location.search).get("fx") ?? undefined;
   return (
-    <div className="charla-page animate-fade-in">
+    <div className="charla-page animate-fade-in" data-fx={fx}>
       <div className="charla-top">
         <h1>Charla en directo</h1>
         <button type="button" className="charla-pick">
