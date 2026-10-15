@@ -282,9 +282,11 @@ function Column({ side, entries }: { side: Side; entries: Entry[] }) {
 
 export function Charla() {
   // Mockup only: ?fx=glass|neon|gradient previews the visual effect options.
-  const fx = new URLSearchParams(window.location.search).get("fx") ?? undefined;
+  const params = new URLSearchParams(window.location.search);
+  const fx = params.get("fx") ?? undefined;
+  const tone = params.get("tone") ?? undefined;
   return (
-    <div className="charla-page animate-fade-in" data-fx={fx}>
+    <div className="charla-page animate-fade-in" data-fx={fx} data-tone={tone}>
       <div className="charla-top">
         <h1>Charla en directo</h1>
         <button type="button" className="charla-pick">
