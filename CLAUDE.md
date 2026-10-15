@@ -8,7 +8,7 @@
 ## Repo map
 - `server/`: Express API, hook ingestion, SQLite access, websocket broadcast (includes optional git upstream checks and `routes/updates.js`, plus `lib/workflow-ingest.js` which ingests on-disk Workflow-tool run journals — fleets that emit no hooks).
 - `client/`: React + Vite UI.
-- `scripts/`: hook installer/handler, import, seed, cleanup utilities. (Update detection lives server-side in `server/lib/update-check.js`; the dashboard never restarts itself — users run the printed command, surfaced in the UI and by `ccam update-check`.)
+- `scripts/`: hook installer/handler, import, seed, cleanup utilities. (Upstream update detection lives server-side in `server/lib/update-check.js`; the UI never restarts the dashboard for those — users run the printed command, surfaced in the UI and by `ccam update-check`. The fork's own install step is `npm run update-monitor`, which pulls master, builds, and asks the server to restart itself via loopback-only `POST /api/system/restart` — see `server/lib/self-restart.js`.)
 - `mcp/`: local MCP server exposing dashboard operations as tools.
 - `cli/`: the `ccam` CLI (Commander.js command tree; `bin/ccam.js` is the entry). Conventions in `cli/lib/framework.js`, one module per area in `cli/commands/`, REPL in `cli/repl.js`. No subcommand option may reuse a global option name (`--json`, `--format`, `--server`, `--token`, `--no-color`) — the root would swallow it; `server/__tests__/ccam-cli-framework.test.js` enforces this.
 
@@ -26,6 +26,7 @@
 - Setup: `npm run setup`
 - Dev: `npm run dev`
 - Prod build/start: `npm run build` then `npm start`
+- Update a running local install hands-free: `npm run update-monitor` (pull master, build, server restarts itself; never kill the server process from outside)
 - Full local gate (headers + format + client typecheck + server + client tests): `npm run verify`
 - Server tests: `npm run test:server`
 - Client tests: `npm run test:client`
