@@ -1,0 +1,352 @@
+/**
+ * @file charla-astra.css
+ * @description Mockup-only Charla styles proposed by Codex (Tinta, Rack, Savegame, Goma), chosen with ?fx=.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,400&family=DM+Sans:wght@400;600&family=Barlow+Condensed:wght@600;800&family=Pixelify+Sans:wght@500;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fredoka:wght@500;700&family=Nunito+Sans:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+/* ---------- shared: every block reads its colours from per-style variables ---------- */
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) {
+  margin: -24px;
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--page);
+  font-family: var(--body);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) :is(h1, h2, .ch-tag) {
+  transform: none;
+  -webkit-text-stroke: 0;
+  letter-spacing: 0;
+  box-shadow: none;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-say::before,
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-say::after {
+  content: none;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-col {
+  background: var(--col);
+  border: var(--colborder);
+  border-radius: var(--colradius);
+  box-shadow: var(--colshadow, none);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-head {
+  background: var(--col);
+  border-bottom: var(--headborder);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-head svg {
+  background: var(--avatar);
+  border: var(--avatarborder);
+  border-radius: var(--avatarradius);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-head h2,
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .charla-top h1 {
+  font: var(--titlefont);
+  color: var(--titlecolor);
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) :is(.charla-pick, .charla-filters button, .ch-state, .ch-chip) {
+  font: var(--chipfont);
+  color: var(--chipfg);
+  background: var(--chipbg);
+  border: 1px solid var(--chipbd);
+  border-radius: var(--chipradius);
+  box-shadow: none;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .charla-filters button[aria-pressed="true"],
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-state {
+  background: var(--chipon);
+  color: var(--chiponfg);
+  border-color: var(--chipon);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-feed {
+  font: 400 14.5px/1.6 var(--body);
+  color: var(--say-fg);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-feed :is(code, pre) {
+  font-family: var(--mono);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-feed time {
+  font: 500 11px var(--body);
+  color: inherit;
+  opacity: 0.6;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-feed code {
+  background: #ffffff14;
+  color: inherit;
+  border: 0;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) :is(.ch-user, .ch-think, .ch-say, .ch-cmd, .ch-diff, .ch-read, .ch-handoff) {
+  border-radius: var(--radius);
+  border: var(--bw) solid var(--bd);
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: var(--shadow);
+  margin-left: 0;
+  font-weight: 400;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-user {
+  --bg: var(--u-bg); --bd: var(--u-bd); --fg: var(--u-fg);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-think {
+  --bg: var(--th-bg); --bd: var(--th-bd); --fg: var(--th-fg);
+  padding: 10px 14px;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-say {
+  --bg: var(--say-bg); --bd: var(--say-bd); --fg: var(--say-fg);
+  max-width: none;
+  align-self: stretch;
+  padding: 12px 14px;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-cmd {
+  --bg: var(--cmd-bg); --bd: var(--cmd-bd); --fg: var(--cmd-fg);
+  border-radius: var(--codeRadius, var(--radius));
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-cmd.fail {
+  --bg: #3b2026; --bd: #b95361; --fg: #ffd0d5;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-diff {
+  --bg: var(--diff-bg); --bd: var(--diff-bd); --fg: var(--diff-fg);
+  border-radius: var(--codeRadius, var(--radius));
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-read {
+  --bg: var(--read-bg); --bd: var(--read-bd); --fg: var(--read-fg);
+  padding: 7px 12px;
+  font: 500 13px var(--body);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-handoff {
+  --bg: var(--out-bg); --bd: var(--out-bd); --fg: var(--out-fg);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-handoff.in {
+  --bg: var(--in-bg); --bd: var(--in-bd); --fg: var(--in-fg);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) :is(.ch-user header b, .ch-handoff b, .ch-tag, .ch-col.codex .ch-user header b, .ch-user.martin header b) {
+  font: var(--labelfont);
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) :is(.ch-say b, .ch-think p b) {
+  color: inherit;
+  font-weight: 700;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-say .ch-tag {
+  display: block;
+  margin-bottom: 6px;
+  opacity: 0.75;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-think p {
+  font-style: italic;
+  font-family: var(--thinkfont, var(--body));
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) :is(.ch-cmd, .ch-diff) header {
+  background: #0000002e;
+  color: inherit;
+  border-bottom: 1px solid var(--bd);
+  font: var(--labelfont);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-cmdline {
+  color: inherit;
+  font-weight: 600;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-out {
+  color: inherit;
+  opacity: 0.85;
+  border-top: 1px dashed var(--bd);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-diff pre .add {
+  background: #203d2d;
+  color: #d1ebd8;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-diff pre .del {
+  background: #44272d;
+  color: #ffd4da;
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-live {
+  color: var(--titlecolor);
+  font: 500 13px var(--body);
+}
+.charla-page:is([data-fx="tinta"], [data-fx="rack"], [data-fx="savegame"], [data-fx="goma"]) .ch-dots i {
+  background: var(--titlecolor);
+}
+
+/* ================= 1. TINTA: night editorial, facing magazine pages ================= */
+.charla-page[data-fx="tinta"] {
+  --page: #101211; --col: #191c19;
+  --body: "DM Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", monospace;
+  --thinkfont: "Newsreader", Georgia, serif;
+  --titlefont: 700 34px/1 "Newsreader", Georgia, serif; --titlecolor: #f0ecdd;
+  --labelfont: 600 11px/1.2 "DM Sans", sans-serif;
+  --colborder: 0; --colradius: 2px; --headborder: 3px double #495044;
+  --avatar: #20241f; --avatarborder: 1px solid #495044; --avatarradius: 2px;
+  --chipfont: 600 11px/1 "DM Sans", sans-serif; --chipfg: #b9c0ae; --chipbg: transparent; --chipbd: #495044; --chipradius: 0;
+  --chipon: #d9ccae; --chiponfg: #211f19;
+  --radius: 2px; --bw: 0; --shadow: none;
+  --u-bg: #d9ccae; --u-bd: #ab9977; --u-fg: #211f19;
+  --th-bg: #20241f; --th-bd: #495044; --th-fg: #b9c0ae;
+  --say-bg: #282d26; --say-bd: #68765b; --say-fg: #f0ecdd;
+  --cmd-bg: #111611; --cmd-bd: #394935; --cmd-fg: #c6d3b7;
+  --diff-bg: #202923; --diff-bd: #526a59; --diff-fg: #d0dfd3;
+  --read-bg: #302c24; --read-bd: #74664c; --read-fg: #e1d1ae;
+  --out-bg: #302724; --out-bd: #936c55; --out-fg: #ebc1a5;
+  --in-bg: #222c30; --in-bd: #557781; --in-fg: #bdd6de;
+}
+.charla-page[data-fx="tinta"] :is(.ch-user, .ch-think, .ch-say, .ch-cmd, .ch-diff, .ch-read, .ch-handoff) {
+  border-top: 1px solid var(--bd);
+}
+.charla-page[data-fx="tinta"] .ch-think {
+  border-left: 3px solid var(--bd);
+}
+.charla-page[data-fx="tinta"] .ch-think p {
+  font-size: 16.5px;
+}
+.charla-page[data-fx="tinta"] :is(.ch-tag, .ch-handoff b, .ch-user header b) {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.charla-page[data-fx="tinta"] .ch-head h2 {
+  font-size: 40px;
+  font-style: italic;
+}
+.charla-page[data-fx="tinta"] .ch-col.codex {
+  border-left: 3px double #495044;
+}
+.charla-page[data-fx="tinta"] .ch-cols {
+  gap: 0;
+}
+
+/* ================= 2. RACK: sound-studio modules with screws and status squares ================= */
+.charla-page[data-fx="rack"] {
+  --page: #101216; --col: #1b2026;
+  --body: "Inter", system-ui, sans-serif; --mono: "IBM Plex Mono", monospace;
+  --titlefont: 800 30px/1 "Barlow Condensed", sans-serif; --titlecolor: #e9ad41;
+  --labelfont: 800 12px/1.2 "Barlow Condensed", sans-serif;
+  --colborder: 1px solid #2c333c; --colradius: 8px; --headborder: 1px solid #2c333c;
+  --colshadow: inset 0 1px 0 #ffffff12, 0 4px 0 #090c10;
+  --avatar: #272b34; --avatarborder: 1px solid #596173; --avatarradius: 6px;
+  --chipfont: 800 12px/1 "Barlow Condensed", sans-serif; --chipfg: #c4cbdb; --chipbg: #272b34; --chipbd: #596173; --chipradius: 3px;
+  --chipon: #e9ad41; --chiponfg: #241b0d;
+  --radius: 6px; --bw: 1px; --shadow: inset 0 1px 0 #ffffff12, 0 3px 0 #090c10;
+  --u-bg: #e9ad41; --u-bd: #b78125; --u-fg: #241b0d;
+  --th-bg: #272b34; --th-bd: #596173; --th-fg: #c4cbdb;
+  --say-bg: #30373b; --say-bd: #718183; --say-fg: #f0f3ed;
+  --cmd-bg: #131a1c; --cmd-bd: #41585b; --cmd-fg: #bbd1cb;
+  --diff-bg: #20332e; --diff-bd: #4f8270; --diff-fg: #c8e5d7;
+  --read-bg: #30353a; --read-bd: #69737d; --read-fg: #dae1e8;
+  --out-bg: #433020; --out-bd: #c18449; --out-fg: #ffd3a3;
+  --in-bg: #263343; --in-bd: #648bb4; --in-fg: #c9e0fa;
+}
+.charla-page[data-fx="rack"] :is(.ch-tag, .ch-handoff b, .ch-user header b, .ch-head h2, .charla-top h1) {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.charla-page[data-fx="rack"] :is(.ch-user, .ch-think, .ch-say, .ch-handoff) {
+  position: relative;
+  background-image:
+    radial-gradient(circle at 8px 8px, #00000066 0 2px, transparent 2.5px),
+    radial-gradient(circle at calc(100% - 8px) 8px, #00000066 0 2px, transparent 2.5px);
+}
+.charla-page[data-fx="rack"] .ch-tag::before,
+.charla-page[data-fx="rack"] .ch-handoff b::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  background: currentColor;
+}
+.charla-page[data-fx="rack"] .ch-say .ch-tag {
+  margin: -12px -14px 8px;
+  padding: 7px 14px 6px 22px;
+  background: #0000002e;
+  border-bottom: 1px solid var(--bd);
+  opacity: 1;
+}
+
+/* ================= 3. SAVEGAME: 16-bit RPG inventory windows ================= */
+.charla-page[data-fx="savegame"] {
+  --page: #151525; --col: #22223a;
+  --body: "Atkinson Hyperlegible", system-ui, sans-serif; --mono: "Cascadia Code", "IBM Plex Mono", monospace;
+  --titlefont: 700 30px/1 "Pixelify Sans", monospace; --titlecolor: #f8d4ed;
+  --labelfont: 500 14px/1.2 "Pixelify Sans", monospace;
+  --colborder: 3px solid #707aa7; --colradius: 0; --headborder: 3px solid #707aa7;
+  --colshadow: 6px 6px 0 #0c0e1b;
+  --avatar: #49406c; --avatarborder: 2px solid #b8a2de; --avatarradius: 0;
+  --chipfont: 500 13px/1 "Pixelify Sans", monospace; --chipfg: #c5cbe9; --chipbg: #292c49; --chipbd: #707aa7; --chipradius: 0;
+  --chipon: #c386b0; --chiponfg: #1c1028;
+  --radius: 0; --bw: 2px; --shadow: 4px 4px 0 #0c0e1b;
+  --u-bg: #49406c; --u-bd: #b8a2de; --u-fg: #faf0ff;
+  --th-bg: #292c49; --th-bd: #707aa7; --th-fg: #c5cbe9;
+  --say-bg: #293d50; --say-bd: #83b0c5; --say-fg: #e4f6ff;
+  --cmd-bg: #192c2c; --cmd-bd: #608c7f; --cmd-fg: #c8e6cc;
+  --diff-bg: #303d26; --diff-bd: #91aa65; --diff-fg: #e2edc6;
+  --read-bg: #42382c; --read-bd: #ba985f; --read-fg: #f7e2b5;
+  --out-bg: #493047; --out-bd: #c386b0; --out-fg: #f8d4ed;
+  --in-bg: #293e49; --in-bd: #77b6be; --in-fg: #d2f4f3;
+}
+.charla-page[data-fx="savegame"] :is(.ch-user, .ch-think, .ch-say, .ch-cmd, .ch-diff, .ch-read, .ch-handoff) {
+  clip-path: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px));
+  box-shadow: none;
+}
+.charla-page[data-fx="savegame"] .ch-head svg {
+  image-rendering: pixelated;
+}
+.charla-page[data-fx="savegame"] .ch-handoff b::after {
+  content: "  ▶ objeto entregado";
+  opacity: 0.7;
+}
+.charla-page[data-fx="savegame"] .ch-handoff.in b::after {
+  content: "  ◀ objeto recibido";
+}
+.charla-page[data-fx="savegame"] .ch-read::before {
+  content: "🎒";
+}
+.charla-page[data-fx="savegame"] .ch-feed {
+  background: repeating-linear-gradient(0deg, #ffffff05 0 2px, transparent 2px 4px);
+}
+
+/* ================= 4. GOMA: soft matte silicone desk toys ================= */
+.charla-page[data-fx="goma"] {
+  --page: #191719; --col: #252226;
+  --body: "Nunito Sans", system-ui, sans-serif; --mono: "JetBrains Mono", "IBM Plex Mono", monospace;
+  --titlefont: 700 32px/1 "Fredoka", sans-serif; --titlecolor: #efbe64;
+  --labelfont: 700 13px/1.2 "Fredoka", sans-serif;
+  --colborder: 1px solid #3a353d; --colradius: 28px; --headborder: 1px solid #3a353d;
+  --colshadow: inset 0 2px 0 #ffffff12, 0 8px 20px #00000040;
+  --avatar: #393440; --avatarborder: 1px solid #62586c; --avatarradius: 22px;
+  --chipfont: 700 12px/1 "Fredoka", sans-serif; --chipfg: #d7ccdf; --chipbg: #393440; --chipbd: #62586c; --chipradius: 999px;
+  --chipon: #efbe64; --chiponfg: #30230f;
+  --radius: 22px; --codeRadius: 10px; --bw: 1px;
+  --shadow: inset 0 2px 0 #ffffff18, inset 0 -3px 0 #00000020, 0 5px 9px #00000030;
+  --u-bg: #efbe64; --u-bd: #c49746; --u-fg: #30230f;
+  --th-bg: #393440; --th-bd: #62586c; --th-fg: #d7ccdf;
+  --say-bg: #afcdba; --say-bd: #7e9e89; --say-fg: #172b20;
+  --cmd-bg: #211f24; --cmd-bd: #514a59; --cmd-fg: #ded8e5;
+  --diff-bg: #303c35; --diff-bd: #718c78; --diff-fg: #d5e7d8;
+  --read-bg: #45404a; --read-bd: #81758b; --read-fg: #f0e5f8;
+  --out-bg: #daa18a; --out-bd: #af7964; --out-fg: #372018;
+  --in-bg: #a5bbdc; --in-bd: #758cac; --in-fg: #1b2940;
+}
+.charla-page[data-fx="goma"] .ch-say code {
+  background: #172b2018;
+}
+.charla-page[data-fx="goma"] .ch-read {
+  border-radius: 999px;
+}
+.charla-page[data-fx="goma"] .ch-read code {
+  border-radius: 999px;
+  background: #ffffff1c;
+}
+.charla-page[data-fx="goma"] .ch-handoff {
+  border-left: 10px solid var(--bd);
+}
+.charla-page[data-fx="goma"] .ch-say .ch-tag {
+  display: inline-block;
+  background: #172b20;
+  color: #afcdba;
+  border-radius: 999px;
+  padding: 4px 10px;
+  opacity: 1;
+}

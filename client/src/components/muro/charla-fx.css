@@ -1,0 +1,223 @@
+/**
+ * @file charla-fx.css
+ * @description Mockup-only visual effect options for the Charla page (glass, neon, gradient), chosen with ?fx=.
+ * @author Son Nguyen <hoangson091104@gmail.com>
+ */
+
+/* ---------- A. Cristal: frosted translucent panels over glowing colour blobs ---------- */
+[data-fx="glass"] .ch-col {
+  background:
+    radial-gradient(420px 320px at 15% 10%, #ff3d8b55, transparent 70%),
+    radial-gradient(380px 380px at 90% 35%, #2ba39466, transparent 70%),
+    radial-gradient(460px 360px at 30% 75%, #7c4dff66, transparent 70%),
+    radial-gradient(360px 300px at 85% 95%, #dfff0033, transparent 70%),
+    #140f1f;
+}
+[data-fx="glass"] .ch-say,
+[data-fx="glass"] .ch-think,
+[data-fx="glass"] .ch-cmd,
+[data-fx="glass"] .ch-diff,
+[data-fx="glass"] .ch-read,
+[data-fx="glass"] .ch-handoff,
+[data-fx="glass"] .ch-user {
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1.5px solid #ffffff40;
+  box-shadow: 0 8px 28px #0000004d, inset 0 1px 0 #ffffff40;
+}
+[data-fx="glass"] .ch-say {
+  background: linear-gradient(135deg, #ffffffd9, #fff3dcb3);
+}
+[data-fx="glass"] .ch-say::before,
+[data-fx="glass"] .ch-say::after {
+  display: none;
+}
+[data-fx="glass"] .ch-think {
+  background: linear-gradient(135deg, #b9a2ff40, #7c4dff1f);
+  border-style: solid;
+  color: #f1ecff;
+}
+[data-fx="glass"] .ch-cmd {
+  background: #05040acc;
+}
+[data-fx="glass"] .ch-diff {
+  background: #0e1a2ecc;
+}
+[data-fx="glass"] .ch-read {
+  background: linear-gradient(135deg, #ffe14dd9, #ffb84db3);
+}
+[data-fx="glass"] .ch-handoff {
+  background: linear-gradient(135deg, #f6ff8ae6, #dfff00b3);
+}
+[data-fx="glass"] .ch-handoff.in {
+  background: linear-gradient(135deg, #c8ffd4e6, #6fe0a0b3);
+}
+[data-fx="glass"] .ch-user.martin {
+  background: linear-gradient(135deg, #ff6aa8e6, #ff3d8bb3);
+}
+[data-fx="glass"] .ch-col.codex .ch-user {
+  background: linear-gradient(135deg, #d46f3a8c, #8a3d1a66);
+}
+
+/* ---------- B. Neón: dark cards with coloured glowing edges ---------- */
+[data-fx="neon"] .ch-col {
+  background: radial-gradient(600px 400px at 50% 0%, #2a1e44, #0d0915 70%);
+}
+[data-fx="neon"] .ch-say,
+[data-fx="neon"] .ch-think,
+[data-fx="neon"] .ch-cmd,
+[data-fx="neon"] .ch-diff,
+[data-fx="neon"] .ch-read,
+[data-fx="neon"] .ch-handoff,
+[data-fx="neon"] .ch-user {
+  --glow: #ffffff;
+  background: color-mix(in srgb, var(--glow) 9%, #0d0915);
+  color: #f4f0ff;
+  border: 2px solid var(--glow);
+  box-shadow:
+    0 0 6px var(--glow),
+    0 0 22px color-mix(in srgb, var(--glow) 55%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--glow) 18%, transparent);
+}
+[data-fx="neon"] .ch-say {
+  --glow: #ffd36b;
+}
+[data-fx="neon"] .ch-say::before,
+[data-fx="neon"] .ch-say::after {
+  display: none;
+}
+[data-fx="neon"] .ch-say b,
+[data-fx="neon"] .ch-handoff b,
+[data-fx="neon"] .ch-read code {
+  color: #fff;
+}
+[data-fx="neon"] .ch-say time,
+[data-fx="neon"] .ch-handoff time,
+[data-fx="neon"] .ch-read time {
+  color: #b9b0cf;
+}
+[data-fx="neon"] .ch-say code,
+[data-fx="neon"] .ch-read code {
+  background: #ffffff1a;
+  border-color: transparent;
+}
+[data-fx="neon"] .ch-think {
+  --glow: #b18cff;
+  border-style: solid;
+}
+[data-fx="neon"] .ch-cmd {
+  --glow: #3ef0c8;
+}
+[data-fx="neon"] .ch-cmd.fail {
+  --glow: #ff4d6d;
+}
+[data-fx="neon"] .ch-diff {
+  --glow: #4da3ff;
+}
+[data-fx="neon"] .ch-read {
+  --glow: #ffe14d;
+}
+[data-fx="neon"] .ch-handoff {
+  --glow: #dfff00;
+}
+[data-fx="neon"] .ch-handoff b {
+  text-shadow: 0 0 10px #dfff00;
+}
+[data-fx="neon"] .ch-handoff.in {
+  --glow: #5cf59a;
+}
+[data-fx="neon"] .ch-user.martin {
+  --glow: #ff3d8b;
+}
+[data-fx="neon"] .ch-col.codex .ch-user {
+  --glow: #ff8a4d;
+}
+
+/* ---------- C. Degradado: soft gradients, shine and coloured soft shadow ---------- */
+[data-fx="gradient"] .ch-col {
+  background: linear-gradient(180deg, #2a1d40, #160f22);
+}
+[data-fx="gradient"] .ch-say,
+[data-fx="gradient"] .ch-think,
+[data-fx="gradient"] .ch-cmd,
+[data-fx="gradient"] .ch-diff,
+[data-fx="gradient"] .ch-read,
+[data-fx="gradient"] .ch-handoff,
+[data-fx="gradient"] .ch-user {
+  position: relative;
+  border: 0;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px -8px var(--shadow, #0008);
+}
+[data-fx="gradient"] .ch-say::before,
+[data-fx="gradient"] .ch-say::after {
+  display: none;
+}
+[data-fx="gradient"] .ch-say,
+[data-fx="gradient"] .ch-read,
+[data-fx="gradient"] .ch-handoff,
+[data-fx="gradient"] .ch-user.martin,
+[data-fx="gradient"] .ch-think {
+  background-image:
+    linear-gradient(180deg, #ffffff59, transparent 45%),
+    var(--fill);
+}
+[data-fx="gradient"] .ch-say {
+  --fill: linear-gradient(135deg, #fffaf0, #ffd9b8);
+  --shadow: #ff9a5c99;
+}
+[data-fx="gradient"] .ch-think {
+  --fill: linear-gradient(135deg, #8a5cff, #d24dff 60%, #ff5fa8);
+  --shadow: #b84dff99;
+  color: #fff;
+}
+[data-fx="gradient"] .ch-think summary time {
+  color: #ffffffcc;
+}
+[data-fx="gradient"] .ch-think p b {
+  color: #fff;
+}
+[data-fx="gradient"] .ch-cmd {
+  background: linear-gradient(160deg, #1d1b2e, #050409);
+  --shadow: #3ef0c855;
+}
+[data-fx="gradient"] .ch-cmd.fail {
+  --shadow: #ff4d6d77;
+}
+[data-fx="gradient"] .ch-diff {
+  background: linear-gradient(160deg, #18315c, #0a1426);
+  --shadow: #4da3ff66;
+}
+[data-fx="gradient"] .ch-read {
+  --fill: linear-gradient(135deg, #fff27a, #ffb33d);
+  --shadow: #ffb33d88;
+}
+[data-fx="gradient"] .ch-read code {
+  border: 0;
+}
+[data-fx="gradient"] .ch-handoff {
+  --fill: linear-gradient(135deg, #f4ff6b, #7dff9a);
+  --shadow: #b8ff4d88;
+}
+[data-fx="gradient"] .ch-handoff.in {
+  --fill: linear-gradient(135deg, #8dffc0, #4de0ff);
+  --shadow: #4de0ff88;
+}
+[data-fx="gradient"] .ch-user.martin {
+  --fill: linear-gradient(135deg, #ff7ab6, #ff3d6e);
+  --shadow: #ff3d8b99;
+}
+[data-fx="gradient"] .ch-col.codex .ch-user {
+  background: linear-gradient(135deg, #e0844e, #a8432a);
+  --shadow: #d46f3a88;
+}
+[data-fx="gradient"] .ch-col.codex .ch-user header b {
+  color: #fff;
+}
+[data-fx="gradient"] .ch-think,
+[data-fx="glass"] .ch-think {
+  background-size: auto;
+}
+[data-fx="glass"] .ch-say {
+  background: linear-gradient(135deg, #ffffffeb, #fff1d6cc);
+}
