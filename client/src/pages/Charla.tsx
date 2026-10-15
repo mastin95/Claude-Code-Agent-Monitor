@@ -172,7 +172,8 @@ function EntryView({ entry, side }: { entry: Entry; side: Side }) {
       return (
         <details className="ch-think" open={entry.open}>
           <summary>
-            💭 Pensó {entry.secs} s<time>{entry.at}</time>
+            <span className="ch-tag">💭 Pensó {entry.secs} s</span>
+            <time>{entry.at}</time>
           </summary>
           {entry.text ? (
             entry.text.split("\n\n").map((paragraph, index) => <p key={index}>{rich(paragraph)}</p>)
@@ -184,6 +185,7 @@ function EntryView({ entry, side }: { entry: Entry; side: Side }) {
     case "say":
       return (
         <div className="ch-say">
+          <span className="ch-tag">{side === "claude" ? "💬 Para ti" : "💬 Para Claude"}</span>
           {entry.text.map((paragraph, index) => (
             <p key={index}>{rich(paragraph)}</p>
           ))}

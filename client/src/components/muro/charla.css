@@ -353,3 +353,147 @@
 .ch-feed > * {
   flex-shrink: 0;
 }
+/* v3: each kind of entry gets its own background so they read apart at a glance. */
+.ch-tag {
+  display: inline-block;
+  font: 400 14px/1 var(--display);
+  letter-spacing: 0.07em;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 4px 8px 2px;
+  transform: rotate(-2deg);
+}
+.ch-say {
+  position: relative;
+  align-self: flex-start;
+  max-width: 94%;
+  background: #fff8e7;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 18px;
+  box-shadow: 4px 4px 0 #000;
+  padding: 12px 16px 10px;
+  margin-left: 10px;
+  font-weight: 800;
+}
+.ch-say::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 18px;
+  border: 9px solid transparent;
+  border-right: 13px solid var(--ink);
+}
+.ch-say::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 21px;
+  border: 6px solid transparent;
+  border-right: 9px solid #fff8e7;
+}
+.ch-say .ch-tag {
+  background: var(--pink);
+  color: #fff;
+  margin-bottom: 8px;
+}
+.ch-col.codex .ch-say .ch-tag {
+  background: var(--claude);
+}
+.ch-say b {
+  color: var(--ink);
+}
+.ch-say code {
+  background: #17132118;
+}
+.ch-say time {
+  color: #6b6478;
+}
+.ch-think {
+  background: radial-gradient(#ffffff12 1.2px, transparent 1.6px) 0 0 / 8px 8px, #3b2a66;
+  border: 2.5px dashed #b9a2ff;
+  border-radius: 22px;
+  padding: 10px 14px;
+  color: #e4dbff;
+}
+.ch-think summary .ch-tag {
+  background: #b9a2ff;
+  color: var(--ink);
+}
+.ch-think summary time {
+  color: #b7a9dd;
+}
+.ch-cmd {
+  background: #07060b;
+  border-color: #3a3550;
+}
+.ch-diff {
+  background: #0e1a2e;
+  border-color: #2f4f7a;
+}
+.ch-diff header {
+  background: #16294a;
+  color: #a9c6f0;
+}
+.ch-read {
+  background: #ffe14d;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+.ch-read code {
+  background: #fff;
+  border: 1.5px solid var(--ink);
+}
+.ch-read time {
+  color: #4a4256;
+}
+.ch-user {
+  border-width: 3px;
+}
+.ch-user.martin {
+  background: #ff3d8b;
+  border-color: var(--ink);
+  color: #fff;
+  box-shadow: 3px 3px 0 #000;
+}
+.ch-user.martin header b,
+.ch-user.martin time {
+  color: #fff;
+}
+.ch-col.codex .ch-user {
+  background: #4a2a1c;
+  border-color: var(--claude);
+}
+.ch-col.codex .ch-user header b {
+  color: #ffb38a;
+}
+.ch-handoff {
+  background:
+    repeating-linear-gradient(-45deg, #ffffff55 0 6px, transparent 6px 14px),
+    var(--acid);
+}
+.ch-handoff.in {
+  background:
+    repeating-linear-gradient(-45deg, #ffffff55 0 6px, transparent 6px 14px),
+    #9debab;
+}
+.ch-handoff b {
+  color: var(--ink);
+}
+.ch-handoff time {
+  color: #3b3546;
+}
+.ch-say::before {
+  left: -19px;
+  top: 16px;
+  border-width: 10px;
+  border-right-width: 16px;
+}
+.ch-say::after {
+  left: -11px;
+  top: 20px;
+  border-width: 6px;
+  border-right-width: 10px;
+}
