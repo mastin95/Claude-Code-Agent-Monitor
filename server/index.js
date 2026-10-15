@@ -119,6 +119,7 @@ function createApp() {
   app.use("/api/webhooks", webhooksRouter);
   app.use("/api/remote-sources", remoteSourcesRouter);
   app.use("/api/metrics", metricsRouter);
+  app.use("/api/system", require("./routes/system"));
   app.get("/favicon.svg", (_req, res) => {
     res.type("image/svg+xml").sendFile(DASHBOARD_FAVICON_PATH);
   });
@@ -1381,21 +1382,27 @@ if (require.main === module) {
   // races the old process on the same port, and adopting there would wedge
   // hot-reload. Dev already runs its own isolated server by design.
   const isWatchMode = process.execArgv.some((a) => a.startsWith("--watch"));
-  probeDashboardHealth(PORT).then((alreadyRunning) => {
-    if (alreadyRunning && !isWatchMode) {
-      console.log(
-        `Agent Dashboard is already running on http://localhost:${PORT} — not starting a ` +
-          `second instance. Open that URL, or stop the other dashboard first.`
-      );
-      process.exit(0);
-      return;
-    }
-    const app = createApp();
-    startServer(app, PORT).then((server) => {
-      httpServer = server;
-      startBackgroundServices();
+  // A server relaunched by POST /api/system/restart first confirms it started
+  // and waits for the old process to exit, so the guard below sees a free port.
+  const selfRestart = require("./lib/self-restart");
+  selfRestart
+    .awaitPredecessor()
+    .then(() => probeDashboardHealth(PORT))
+    .then((alreadyRunning) => {
+      if (alreadyRunning && !isWatchMode) {
+        console.log(
+          `Agent Dashboard is already running on http://localhost:${PORT} — not starting a ` +
+            `second instance. Open that URL, or stop the other dashboard first.`
+        );
+        process.exit(0);
+        return;
+      }
+      const app = createApp();
+      startServer(app, PORT).then((server) => {
+        httpServer = server;
+        startBackgroundServices();
+      });
     });
-  });
 
   // Graceful shutdown — close connections and DB cleanly
   let shutdownInProgress = false;
@@ -1465,6 +1472,7 @@ if (require.main === module) {
   };
   process.on("SIGTERM", () => shutdown("SIGTERM"));
   process.on("SIGINT", () => shutdown("SIGINT"));
+  if (!isWatchMode) selfRestart.registerShutdown(shutdown);
 
   // Auto-install Claude Code hooks on every startup so users don't have to.
   // Skipped inside containers (issue #193): a container-internal handler path
