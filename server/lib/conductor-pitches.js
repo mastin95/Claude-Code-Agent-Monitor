@@ -82,6 +82,7 @@ function createPitches({
   broadcast = require("../websocket").broadcast,
   conductor = () => require("./conductor").getConductor(),
   timeoutMs = 20 * 60 * 1000,
+  exitGraceMs = 3000,
 } = {}) {
   const runs = new Map(); // pitchId -> { claude, codex, reply, timer }
   const lead = () => (typeof conductor === "function" ? conductor() : conductor);
@@ -196,8 +197,12 @@ function createPitches({
   }
   function onStatus(id, agent, status) {
     // A run that ends before answering (crash, kill, missing CLI) fails only its own side.
-    if (["error", "killed", "completed"].includes(status))
+    if (!["error", "killed", "completed"].includes(status)) return;
+    const fail = () =>
       side(id, agent, { error: `${agent === "claude" ? "Claude" : "Codex"} terminó (${status})` });
+    // "exit" can fire before stdout drains; give a clean exit's last envelope time to land.
+    if (status === "completed" && exitGraceMs > 0) setTimeout(fail, exitGraceMs).unref?.();
+    else fail();
   }
   function start(id, agent, project, prompt, effort) {
     const runtime = runs.get(id);

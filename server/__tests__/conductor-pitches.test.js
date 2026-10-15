@@ -57,6 +57,7 @@ function setup() {
     claude,
     codex,
     broadcast: (type, data) => messages.push({ type, data }),
+    exitGraceMs: 0,
     conductor: {
       createOrder: (input, baseUrl) => {
         orders.push({ input, baseUrl });
@@ -211,4 +212,14 @@ test("stopping a drafting duel kills both runs; restart closes stale duels", () 
   const stale = duel.get(live.id);
   assert.equal(stale.status, "error");
   assert.equal(stale.claude.error, "Dashboard restarted");
+});
+
+test("a clean exit waits for a late result before failing the side", async () => {
+  duel.close();
+  duel = createPitches({ db, claude, codex, broadcast: () => {}, exitGraceMs: 20 });
+  const { id } = duel.create({ projectId: "p1", idea: "Idea" });
+  claude.last().args.onStatus("completed");
+  claudeAnswers(JSON.stringify(PITCH));
+  await new Promise((resolve) => setTimeout(resolve, 40));
+  assert.equal(duel.get(id).claude.status, "ready");
 });
