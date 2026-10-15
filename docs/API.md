@@ -2059,6 +2059,7 @@ implementations are separate tasks; these endpoints are the backend contract.
 
 | Method | Path | Request / response |
 | --- | --- | --- |
+| GET | `/api/conductor/browse?path=…` | Folder picker for the New project form: `{path, parent, sep, dirs: [{name, path}], truncated, roots, places}` — sub-folder names only (hidden `.`/`$` entries skipped, max 500), `roots` are the existing drive letters on Windows (`/` elsewhere), `places` are home, Desktop, Documents and Downloads when present. Omitting `path` lists the home folder; relative paths are `400`, missing folders `404` |
 | GET | `/api/conductor/projects` | `{items: Project[]}` |
 | POST | `/api/conductor/projects` | `{cwd, name?, lead?: "claude", create?, models?}` → `201 Project` |
 | GET | `/api/conductor/orders?projectId=…&limit=20` | `{items: Order[]}` newest first (`limit` 1–100) |

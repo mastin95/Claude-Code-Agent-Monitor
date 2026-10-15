@@ -22,7 +22,8 @@
     "default": "기본값",
     "save": "만들기!",
     "cancel": "취소",
-    "codexSoon": "Codex 리더는 2단계에서 지원됩니다."
+    "codexSoon": "Codex 리더는 2단계에서 지원됩니다.",
+    "browse": "찾아보기"
   },
   "order": {
     "title": "내 지시",
@@ -116,5 +117,19 @@
   "empty": {
     "noProjects": "첫 프로젝트를 만들어 시작하세요.",
     "noOrder": "첫 지시를 내려 보세요."
+  },
+  "picker": {
+    "title": "폴더 선택",
+    "close": "닫기",
+    "drives": "드라이브",
+    "places": "위치",
+    "home": "홈",
+    "up": "위로",
+    "empty": "여기에는 폴더가 없습니다.",
+    "truncated": "처음 500개 폴더만 표시합니다.",
+    "newFolder": "여기에 새 폴더",
+    "newHint": "my-project",
+    "createHere": "여기에 만들기",
+    "use": "이걸로!"
   }
 }

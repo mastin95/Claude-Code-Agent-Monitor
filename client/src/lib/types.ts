@@ -2851,6 +2851,23 @@ export interface ConductorProject {
 }
 
 /** Body of POST /api/conductor/projects. */
+/** A folder entry in the New project folder picker. */
+export interface ConductorFolder {
+  name: string;
+  path: string;
+}
+
+/** GET /api/conductor/browse: one folder's sub-folders plus drives and handy places. */
+export interface ConductorBrowse {
+  path: string;
+  parent: string | null;
+  sep: string;
+  dirs: ConductorFolder[];
+  truncated: boolean;
+  roots: ConductorFolder[];
+  places: ConductorFolder[];
+}
+
 export interface ConductorProjectInput {
   cwd: string;
   name?: string;

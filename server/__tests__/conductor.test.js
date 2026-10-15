@@ -252,6 +252,15 @@ test("poll timeout, cancellation, missing IDs and stopped rounds settle", async 
   conductor.stop(order.id);
   assert.equal((await waiting).status, "error");
 });
+test("browse roots list existing Windows drives only", () => {
+  const { browseRoots } = require("../routes/conductor").__browse;
+  const roots = browseRoots({ platform: "win32", exists: (d) => d === "C:\\" || d === "D:\\" });
+  assert.deepEqual(
+    roots.map((r) => r.path),
+    ["C:\\", "D:\\"]
+  );
+  assert.deepEqual(browseRoots({ platform: "linux" }), [{ name: "/", path: "/" }]);
+});
 test("routes enforce origin, cwd, phase-one lead and model validation before side effects", async () => {
   setup();
   const app = require("express")();
@@ -287,6 +296,30 @@ test("routes enforce origin, cwd, phase-one lead and model validation before sid
     assert.deepEqual(gitArgs.slice(0, 2), ["git", ["init"]]);
     assert.equal(gitArgs[2].shell, false);
     assert.equal((await fetch(url + "/orders/missing")).status, 404);
+    fs.mkdirSync(path.join(TMP, "browse", "zeta"), { recursive: true });
+    fs.mkdirSync(path.join(TMP, "browse", "Alfa"));
+    fs.mkdirSync(path.join(TMP, "browse", ".hidden"));
+    fs.writeFileSync(path.join(TMP, "browse", "file.txt"), "x");
+    const browse = await fetch(
+      `${url}/browse?path=${encodeURIComponent(path.join(TMP, "browse"))}`
+    );
+    assert.equal(browse.status, 200);
+    const listing = await browse.json();
+    assert.deepEqual(
+      listing.dirs.map((d) => d.name),
+      ["Alfa", "zeta"]
+    );
+    assert.equal(listing.parent, TMP);
+    assert.ok(Array.isArray(listing.roots) && listing.roots.length > 0);
+    assert.equal((await fetch(`${url}/browse?path=relative`)).status, 400);
+    assert.equal(
+      (await fetch(`${url}/browse?path=${encodeURIComponent(path.join(TMP, "nope"))}`)).status,
+      404
+    );
+    assert.equal(
+      (await fetch(`${url}/browse`, { headers: { Origin: "https://evil.example" } })).status,
+      403
+    );
   } finally {
     server.closeAllConnections();
     await new Promise((resolve) => server.close(resolve));

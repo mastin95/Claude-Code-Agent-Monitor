@@ -22,7 +22,8 @@
     "default": "默认",
     "save": "创建！",
     "cancel": "取消",
-    "codexSoon": "Codex 担任负责人将在第 2 阶段推出。"
+    "codexSoon": "Codex 担任负责人将在第 2 阶段推出。",
+    "browse": "浏览"
   },
   "order": {
     "title": "你的指令",
@@ -116,5 +117,19 @@
   "empty": {
     "noProjects": "创建你的第一个项目开始吧。",
     "noOrder": "下达你的第一条指令。"
+  },
+  "picker": {
+    "title": "选择文件夹",
+    "close": "关闭",
+    "drives": "磁盘",
+    "places": "位置",
+    "home": "主目录",
+    "up": "上一级",
+    "empty": "这里没有文件夹。",
+    "truncated": "仅显示前 500 个文件夹。",
+    "newFolder": "在此新建文件夹",
+    "newHint": "my-project",
+    "createHere": "在此创建",
+    "use": "就用这个！"
   }
 }

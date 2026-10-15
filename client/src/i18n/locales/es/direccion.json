@@ -22,7 +22,8 @@
     "default": "Por defecto",
     "save": "¡CREAR!",
     "cancel": "Cancelar",
-    "codexSoon": "Codex como jefe llega en la fase 2."
+    "codexSoon": "Codex como jefe llega en la fase 2.",
+    "browse": "Examinar"
   },
   "order": {
     "title": "Tu orden",
@@ -116,5 +117,19 @@
   "empty": {
     "noProjects": "Crea tu primer proyecto para empezar.",
     "noOrder": "Da tu primera orden."
+  },
+  "picker": {
+    "title": "Elige carpeta",
+    "close": "Cerrar",
+    "drives": "Discos",
+    "places": "Sitios",
+    "home": "Inicio",
+    "up": "Subir",
+    "empty": "Aquí no hay carpetas.",
+    "truncated": "Se muestran las primeras 500 carpetas.",
+    "newFolder": "Carpeta nueva aquí",
+    "newHint": "mi-proyecto",
+    "createHere": "Crear aquí",
+    "use": "¡USAR ESTA!"
   }
 }

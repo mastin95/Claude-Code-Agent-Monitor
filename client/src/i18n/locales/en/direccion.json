@@ -22,7 +22,8 @@
     "default": "Default",
     "save": "CREATE!",
     "cancel": "Cancel",
-    "codexSoon": "Codex as lead arrives in phase 2."
+    "codexSoon": "Codex as lead arrives in phase 2.",
+    "browse": "Browse"
   },
   "order": {
     "title": "Your order",
@@ -116,5 +117,19 @@
   "empty": {
     "noProjects": "Create your first project to start.",
     "noOrder": "Give your first order."
+  },
+  "picker": {
+    "title": "Pick a folder",
+    "close": "Close",
+    "drives": "Drives",
+    "places": "Places",
+    "home": "Home",
+    "up": "Up",
+    "empty": "No folders here.",
+    "truncated": "Showing the first 500 folders.",
+    "newFolder": "New folder here",
+    "newHint": "my-project",
+    "createHere": "Create here",
+    "use": "USE THIS ONE!"
   }
 }

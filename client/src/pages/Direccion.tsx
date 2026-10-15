@@ -25,6 +25,7 @@ import type {
   ConductorAgentState,
   ConductorAnswer,
   ConductorApproval,
+  ConductorBrowse,
   ConductorOrder,
   ConductorProject,
 } from "../lib/types";
@@ -85,6 +86,171 @@ function LeadPicker({ lead }: { lead: ConductorAgentName | null }) {
   );
 }
 
+function FolderPicker({
+  start,
+  onPick,
+  onClose,
+}: {
+  start: string;
+  onPick: (path: string, isNew: boolean) => void;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation("direccion");
+  const [view, setView] = useState<ConductorBrowse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [fresh, setFresh] = useState("");
+  const dialog = useRef<HTMLDivElement>(null);
+  const open = useCallback(async (target?: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      setView(await api.conductor.browse(target));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  useEffect(() => {
+    // Start where the typed path points; fall back to the home folder if it does not exist yet.
+    api.conductor
+      .browse(start.trim() || undefined)
+      .then(setView)
+      .catch(() => open());
+    dialog.current?.focus();
+  }, [start, open]);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  const freshName = fresh.trim();
+  const freshOk = !!freshName && !/[\\/:*?"<>|]/.test(freshName) && !/^\.+$/.test(freshName);
+  const join = (base: string, name: string) =>
+    base.endsWith(view?.sep || "/") ? base + name : base + (view?.sep || "/") + name;
+  return (
+    <div className="dir-picker-backdrop" onClick={onClose}>
+      <div
+        ref={dialog}
+        className="dir-picker"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t("picker.title")}
+        tabIndex={-1}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="dir-picker-head">
+          <h2 className="dir-title">{t("picker.title")}</h2>
+          <button
+            type="button"
+            className="dir-picker-x"
+            onClick={onClose}
+            aria-label={t("picker.close")}
+          >
+            ✕
+          </button>
+        </div>
+        <div className="dir-picker-body">
+          <nav className="dir-picker-side" aria-label={t("picker.places")}>
+            <span className="dir-label">{t("picker.drives")}</span>
+            {view?.roots.map((root) => (
+              <button
+                key={root.path}
+                type="button"
+                className="dir-picker-place"
+                data-kind="drive"
+                aria-current={view.path === root.path}
+                onClick={() => open(root.path)}
+              >
+                <span aria-hidden>💾</span> {root.name}
+              </button>
+            ))}
+            <span className="dir-label">{t("picker.places")}</span>
+            {view?.places.map((place, i) => (
+              <button
+                key={place.path}
+                type="button"
+                className="dir-picker-place"
+                aria-current={view.path === place.path}
+                onClick={() => open(place.path)}
+              >
+                <span aria-hidden>{i === 0 ? "🏠" : "⭐"}</span>{" "}
+                {i === 0 ? t("picker.home") : place.name}
+              </button>
+            ))}
+          </nav>
+          <div className="dir-picker-main">
+            <div className="dir-picker-path">
+              <button
+                type="button"
+                className="dir-change"
+                disabled={!view?.parent || loading}
+                onClick={() => view?.parent && open(view.parent)}
+              >
+                <span aria-hidden>⬆</span> {t("picker.up")}
+              </button>
+              <code title={view?.path}>{view?.path || "…"}</code>
+            </div>
+            {error && <p className="dir-error">{error}</p>}
+            <ul className="dir-picker-list" aria-busy={loading}>
+              {view && view.dirs.length === 0 && !loading && (
+                <li className="dir-picker-empty">{t("picker.empty")}</li>
+              )}
+              {view?.dirs.map((dir) => (
+                <li key={dir.path}>
+                  <button
+                    type="button"
+                    className="dir-picker-folder"
+                    title={dir.path}
+                    onClick={() => open(dir.path)}
+                  >
+                    <span aria-hidden>📁</span>
+                    <span>{dir.name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {view?.truncated && <small>{t("picker.truncated")}</small>}
+          </div>
+        </div>
+        <div className="dir-picker-foot">
+          <label className="dir-picker-new">
+            <span>{t("picker.newFolder")}</span>
+            <input
+              value={fresh}
+              onChange={(e) => setFresh(e.target.value)}
+              onKeyDown={(e) => {
+                // The picker lives inside the New project form; Enter must not submit it.
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              placeholder={t("picker.newHint")}
+            />
+          </label>
+          <button
+            type="button"
+            className="dir-change"
+            disabled={!view || !freshOk}
+            onClick={() => view && onPick(join(view.path, freshName), true)}
+          >
+            <span aria-hidden>✨</span> {t("picker.createHere")}
+          </button>
+          <button
+            type="button"
+            className="dir-cta small"
+            disabled={!view || loading}
+            onClick={() => view && onPick(view.path, false)}
+          >
+            {t("picker.use")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function NewProject({
   onCreated,
   onCancel,
@@ -96,6 +262,7 @@ function NewProject({
   const [cwd, setCwd] = useState("");
   const [name, setName] = useState("");
   const [create, setCreate] = useState(true);
+  const [picking, setPicking] = useState(false);
   const [models, setModels] = useState<Record<ConductorAgentName, string[]>>({
     claude: [],
     codex: [],
@@ -148,13 +315,29 @@ function NewProject({
       <h2 className="dir-title">{t("newProject.title")}</h2>
       <label>
         <span>{t("newProject.folder")}</span>
-        <input
-          value={cwd}
-          onChange={(e) => setCwd(e.target.value)}
-          placeholder={t("newProject.folderHint")}
-          required
-        />
+        <span className="dir-folder-row">
+          <input
+            value={cwd}
+            onChange={(e) => setCwd(e.target.value)}
+            placeholder={t("newProject.folderHint")}
+            required
+          />
+          <button type="button" className="dir-change" onClick={() => setPicking(true)}>
+            <span aria-hidden>📂</span> {t("newProject.browse")}
+          </button>
+        </span>
       </label>
+      {picking && (
+        <FolderPicker
+          start={cwd}
+          onClose={() => setPicking(false)}
+          onPick={(picked, isNew) => {
+            setCwd(picked);
+            if (isNew) setCreate(true);
+            setPicking(false);
+          }}
+        />
+      )}
       <label>
         <span>{t("newProject.name")}</span>
         <input value={name} onChange={(e) => setName(e.target.value)} />

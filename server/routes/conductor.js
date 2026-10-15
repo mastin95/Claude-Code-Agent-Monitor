@@ -1,13 +1,82 @@
 /**
- * @file Loopback-guarded conductor API with validated projects and bounded long polls.
+ * @file Loopback-guarded conductor API with validated projects, a folder browser for the
+ *   New project picker, and bounded long polls.
  * @author Son Nguyen <hoangson091104@gmail.com>
  */
 const { Router } = require("express");
 const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const spawn = require("cross-spawn");
 const { __sameOriginGuard: sameOriginGuard } = require("./run");
 const { getConductor, required, problem } = require("../lib/conductor");
+
+// Folder picker for the New project form: a browser page cannot read real paths from its own
+// file dialog, so the local server lists drives and sub-folders (names only, never contents).
+const BROWSE_LIMIT = 500;
+function browseRoots({ platform = process.platform, exists = fs.existsSync } = {}) {
+  if (platform !== "win32") return [{ name: "/", path: "/" }];
+  const roots = [];
+  for (let code = 65; code <= 90; code++) {
+    const drive = `${String.fromCharCode(code)}:\\`;
+    try {
+      if (exists(drive)) roots.push({ name: drive, path: drive });
+    } catch {
+      /* Unready drives (empty card readers) are simply skipped. */
+    }
+  }
+  return roots;
+}
+function browsePlaces(home = os.homedir()) {
+  return ["", "Desktop", "Documents", "Downloads"]
+    .map((sub) => (sub ? path.join(home, sub) : home))
+    .filter((dir) => {
+      try {
+        return fs.statSync(dir).isDirectory();
+      } catch {
+        return false;
+      }
+    })
+    .map((dir) => ({ name: path.basename(dir) || dir, path: dir }));
+}
+function browseDir(raw) {
+  const target = raw ? path.resolve(raw) : os.homedir();
+  if (raw && !path.isAbsolute(raw)) throw problem("path must be absolute");
+  let entries;
+  try {
+    entries = fs.readdirSync(target, { withFileTypes: true });
+  } catch (err) {
+    throw problem(
+      err.code === "ENOENT" || err.code === "ENOTDIR"
+        ? "folder not found"
+        : `cannot open folder (${err.code || "error"})`,
+      err.code === "ENOENT" || err.code === "ENOTDIR" ? 404 : 400
+    );
+  }
+  const dirs = entries
+    .filter((entry) => {
+      if (entry.name.startsWith(".") || entry.name.startsWith("$")) return false;
+      if (entry.isDirectory()) return true;
+      if (!entry.isSymbolicLink()) return false;
+      try {
+        return fs.statSync(path.join(target, entry.name)).isDirectory();
+      } catch {
+        return false;
+      }
+    })
+    .map((entry) => entry.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base", numeric: true }));
+  const parent = path.dirname(target);
+  return {
+    path: target,
+    parent: parent === target ? null : parent,
+    sep: path.sep,
+    dirs: dirs.slice(0, BROWSE_LIMIT).map((name) => ({ name, path: path.join(target, name) })),
+    truncated: dirs.length > BROWSE_LIMIT,
+    roots: browseRoots(),
+    places: browsePlaces(),
+  };
+}
 
 function createRouter({ service = getConductor, spawnGit = spawn } = {}) {
   const router = Router();
@@ -22,6 +91,15 @@ function createRouter({ service = getConductor, spawnGit = spawn } = {}) {
           .json({ error: { code: err.code || "ECONDUCTOR", message: err.message } });
     }
   };
+  router.get(
+    "/browse",
+    handle((req, res) => {
+      const raw = req.query.path;
+      if (raw != null && (typeof raw !== "string" || raw.length > 4096))
+        throw problem("path must be a string (max 4096)");
+      res.json(browseDir(raw || null));
+    })
+  );
   router.get(
     "/projects",
     handle((_req, res, conductor) => res.json({ items: conductor.listProjects() }))
@@ -173,3 +251,4 @@ function createRouter({ service = getConductor, spawnGit = spawn } = {}) {
 }
 module.exports = createRouter();
 module.exports.createRouter = createRouter;
+module.exports.__browse = { browseDir, browseRoots };
