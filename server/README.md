@@ -719,6 +719,15 @@ Both home updates accept `{ "path": "/absolute/path" }`; a leading `~/` is expan
 
 Backup restore accepts exactly one export bundle up to 25 MiB from either multipart field `file` or a server-side absolute `path`. Larger inputs return `413 IMPORT_TOO_LARGE` before parsing.
 
+### System / Self-restart (`/api/system`)
+
+| Method | Path                    | Description |
+| ------ | ----------------------- | ----------- |
+| `GET`  | `/api/system/instance`  | `{ pid, commit, startedAt, restartable }` of the running server (commit read from `.git`, no git subprocess) |
+| `POST` | `/api/system/restart`   | Loopback-only, same-origin-guarded. The standalone server spawns a fresh detached copy of itself (on Windows in its own console window titled "Agent Monitor"), waits up to 15 s for it to confirm it started, then shuts down gracefully; the copy waits for the old pid to exit before binding the port. `202 { status: "restarting", oldPid, commit }`. `409 EBUSY` while agent runs (Dirección / Run) are live unless the body is `{ "force": true }`; `409 ENORESTART` when not started via `node server/index.js` (desktop app, `--watch`); `500 ESPAWNTIMEOUT` if the copy never confirmed (the old server keeps running) |
+
+`npm run update-monitor` (`scripts/update-monitor.js`) is the hands-free install step built on it: stash stray changes (`git stash list` shows them), switch to `master`, `git pull --ff-only origin master`, `npm install` only where a lockfile changed, `npm run build`, then `POST /api/system/restart` (or start a server if none is running) and wait until `/api/system/instance` reports a new pid with the new commit. Flags: `--no-pull`, `--no-build`, `--force`, `--port N`. Exit codes: `0` ok, `2` the running server predates self-restart (restart it by hand once), `3` busy with agent runs, `1` anything else. The restarted server logs to `<data dir>/server-restart.log` on macOS/Linux.
+
 ### Alerts and Webhooks
 
 Webhook targets use HTTPS for hosted providers. The `generic` and `n8n` types also accept HTTP so local or self-hosted receivers remain supported. Delivery never follows redirects, which prevents provider credentials, custom headers, or HMAC signatures from being forwarded to a second destination.
