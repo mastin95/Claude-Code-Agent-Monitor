@@ -301,7 +301,7 @@ Giao diện tối thích ứng bao quát toàn bộ quy trình. Mỗi bản xem 
   <em>⌘ <strong>Bảng lệnh</strong> · một trình khởi chạy bằng bàn phím cho trang, phiên, dự án, bộ lọc và hành động</em>
 </p>
 
-Thanh bên liên kết Dashboard, Bảng Kanban, Muro, Phiên, Luồng hoạt động, Phân tích, Quy trình, Cấu hình Agent, Chạy Agent và Cài đặt. Các phần dưới đây mô tả đầy đủ hành vi đằng sau những chế độ xem này.
+Thanh bên liên kết Dashboard, Bảng Kanban, Muro, Charla, Phiên, Luồng hoạt động, Phân tích, Quy trình, Cấu hình Agent, Chạy Agent và Cài đặt. Các phần dưới đây mô tả đầy đủ hành vi đằng sau những chế độ xem này.
 
 ---
 
@@ -315,6 +315,7 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 | **Dashboard** | Hai tab **Monitor** và **Health** được lưu bền vững, kết hợp tổng số Agent, hệ thống phân cấp đang hoạt động, hoạt động gần đây, sức khỏe có trọng số theo thành công/cache/lỗi/heap, lưu trữ, công cụ, model, hiệu quả Subagent và chỉ số compaction. Health làm mới mỗi 5 giây từ `/api/settings/info` và `/api/workflows`. |
 | **Bảng Kanban** | Các cột Agent gồm Đang làm việc, Đang chờ, Hoàn tất và Lỗi; các cột phiên bổ sung Đang hoạt động và Bị bỏ dở. Thẻ phân trang 10 mục mỗi lần, chỉ đăng ký chế độ xem WebSocket đang hoạt động, giữ nguyên tiêu đề đầy đủ và giải thích lý do chờ như yêu cầu quyền, kết thúc lượt, đang ở dấu nhắc hoặc bị gián đoạn. |
 | **Muro** | Bức tường trực quan Claude/Codex tại `/muro`: ghi chú phiên có minh họa, linh vật trực tiếp, tác vụ hoàn tất, token, thời gian làm việc, chuỗi ngày, biểu đồ vòng hoàn tất, cột nhịp độ và bản đồ nhiệt năm tuần. Hôm nay / 7 ngày / 30 ngày cùng bộ lọc Agent chung đồng bộ bảng và biểu đồ; không gồm Cursor. Ý tưởng chính được đánh dấu xuất hiện trực tiếp qua bong bóng, chấm và dòng thời gian phiên được lưu. Tác vụ Claude giao cho Codex hiển thị yêu cầu, phản hồi và hội thoại liên kết. |
+| **Charla** | Đọc Claude và Codex cạnh nhau tại `/charla` với phong cách hoàng hôn Telegram cố định. |
 | **Phiên** | Lịch sử có thể tìm kiếm, lọc và phân trang phía máy chủ, với chi phí chỉ tính trên trang đang hiển thị và một hàng khởi động Codex tạm thời trong bộ nhớ. Tìm kiếm bao quát `id`, `name` và `cwd` với debounce 300 ms. Tên được lấy lần lượt từ tiêu đề rõ ràng, tiêu đề AI rồi lời nhắc người dùng có ý nghĩa đầu tiên. |
 | **Chi tiết phiên** | Thống kê trực tiếp, công việc hiện tại, mức dùng công cụ, Subagent, token, hệ thống phân cấp, dòng thời gian sự kiện có bộ lọc, nhóm theo `tool_use_id` và trình kết xuất riêng cho từng công cụ. Chế độ Hội thoại kết xuất lượt chờ, thông báo hệ thống, Markdown, mã được tô sáng và công cụ có kiểu riêng; banner chờ hiển thị lý do và thời gian đã trôi qua. |
 | **Luồng hoạt động** | Sự kiện thời gian thực có thể tạm dừng, với bộ lọc dùng chung, phân trang phía máy chủ, nhóm, nguồn dự án/phiên/Subagent, liên kết phiên và badge trạng thái Claude/Codex nhất quán. |
@@ -362,6 +363,10 @@ Dashboard bao quát toàn bộ vòng đời Agent cục bộ. Các hợp đồng
 > **Phạm vi nhà cung cấp và thư mục:** Cài đặt giữ lựa chọn tương thích Claude (Claude Code + Cursor) / Codex / Cả hai nhất quán trên toàn ứng dụng. Có thể chỉnh sửa thư mục Claude Code và Codex mà không cần khởi động lại dashboard; Cursor được tự động phát hiện từ `~/.cursor` hoặc `DASHBOARD_CURSOR_HOME`.
 >
 > **Ranh giới an toàn cục bộ:** Chạy Agent chấp nhận mọi thư mục làm việc tuyệt đối đang tồn tại và chuẩn hóa trước khi dùng, nên vẫn hỗ trợ khởi chạy từ thư mục nhà và dự án gần đây. Nhà cung cấp webhook được lưu trữ bắt buộc dùng HTTPS; đích generic và n8n có thể dùng HTTP cho bên nhận cục bộ/tự lưu trữ, và quá trình gửi không theo redirect.
+
+### Charla
+
+Đọc Claude và Codex cạnh nhau tại `/charla` với phong cách hoàng hôn Telegram cố định. Chọn tác vụ để ghép phiên Claude cha với phiên Codex liên kết; mặc định chọn tác vụ đang chạy mới nhất. Bản ghi thực phân biệt yêu cầu và phản hồi, suy luận có thể mở rộng, lệnh shell kèm đầu ra, khác biệt chỉnh sửa, thao tác đọc và tác vụ gửi/nhận. Tiêu đề hiển thị trạng thái phiên, mô hình, mức suy luận và token. Các nút Suy luận, Lệnh và Thay đổi bật/tắt từng khối; đầu ra dài có thể mở rộng khi cần. Sự kiện WebSocket của phiên tải dòng bản ghi mới bằng con trỏ `after` / `last_line`. Dưới 900 px, hai cột xếp dọc và chế độ giảm chuyển động tắt hoạt ảnh hoạt động.
 
 ### Muro
 
@@ -562,7 +567,7 @@ sequenceDiagram
    - Đồng bộ dự án liên tục kết hợp quét ngay lập tức, `fs.watch` có debounce và polling `DASHBOARD_SESSION_SYNC_MS`, mặc định 30 giây. Một cache mtime chỉ phân tích lại transcript mới hoặc lớn hơn và broadcast cùng các frame phiên như hook.
 4. **WebSocket** phát thay đổi đã commit.
 5. **UI** làm mới chế độ xem bị ảnh hưởng mà không cần polling.
-6. **Muro** tải lại phiên và tổng hợp trong phạm vi sau sự kiện trực tiếp với debounce 300 ms; thay đổi khoảng thời gian hoặc Agent làm mới biểu đồ. Siêu dữ liệu tác vụ và bảng hội thoại đang mở được làm mới qua cùng các cập nhật phiên.
+6. **Muro** tải lại phiên và tổng hợp trong phạm vi sau sự kiện trực tiếp với debounce 300 ms; thay đổi khoảng thời gian hoặc Agent làm mới biểu đồ. Siêu dữ liệu tác vụ và bảng hội thoại đang mở được làm mới qua cùng các cập nhật phiên. **Charla**: Đọc Claude và Codex cạnh nhau tại `/charla` với phong cách hoàng hôn Telegram cố định.
 
 ### Máy trạng thái Agent
 

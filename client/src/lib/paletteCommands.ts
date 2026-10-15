@@ -397,7 +397,7 @@ export const PAGE_ACTION_COMMANDS: {
   },
 ];
 
-/** The nine sidebar destinations. */
+/** The sidebar destinations. */
 export const PAGE_COMMANDS: {
   to: string;
   icon: LucideIcon;
@@ -406,6 +406,7 @@ export const PAGE_COMMANDS: {
   { to: "/", icon: LayoutDashboard, navKey: "nav:dashboard" },
   { to: "/kanban", icon: Columns3, navKey: "nav:agentBoard" },
   { to: "/muro", icon: StickyNote, navKey: "nav:muro" },
+  { to: "/charla", icon: StickyNote, navKey: "nav:charla" },
   { to: "/sessions", icon: FolderOpen, navKey: "nav:sessions" },
   { to: "/activity", icon: Activity, navKey: "nav:activityFeed" },
   { to: "/analytics", icon: BarChart3, navKey: "nav:analytics" },

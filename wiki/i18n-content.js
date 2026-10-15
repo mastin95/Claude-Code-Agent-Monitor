@@ -6,6 +6,8 @@
  */
 window.__WIKI_CONTENT_I18N = {
   zh: {
+    "<strong>Charla</strong>: Read Claude and Codex side by side at <code>/charla</code> in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show session status, model, effort and tokens. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the <code>after</code> / <code>last_line</code> cursor. Below 900 px the columns stack, and reduced motion disables activity animations.":
+      "<strong>Charla</strong>: 在 <code>/charla</code> 中以固定的 Telegram 日落风格并排阅读 Claude 和 Codex。 选择委托，将 Claude 父会话与关联的 Codex 会话配对；默认选择最新的进行中委托。真实对话记录区分请求和回复、可展开的推理、带输出的 shell 命令、编辑差异、读取操作以及发送和接收的委托。标题栏显示会话状态、模型、推理强度和 token。推理、命令和更改开关控制对应内容；长输出可按需展开。会话 WebSocket 事件通过 <code>after</code> / <code>last_line</code> 游标获取新的对话记录行。宽度低于 900 px 时两列纵向排列，减少动态效果设置会禁用活动动画。",
     "The manga presentation uses locally bundled Bangers and Nunito fonts, inked speech bubbles and lane-colored notes: yellow for Working, pink for Waiting for my OK and green for Done. Handoff rows show mini Claude and Codex mascots, single-line requests and replies, and a two-line status stamp. Hover a row for the full first request and its sent time plus the latest reply time; opening it still shows the complete retained conversation.":
       "漫画风格使用本地打包的 Bangers 和 Nunito 字体、墨线对话气泡及按列着色的便签：工作中为黄色，等待我确认为粉色，已完成为绿色。委托行显示迷你 Claude 和 Codex 吉祥物、单行请求与回复，以及两行状态印章。悬停可查看完整的首次请求、发送时间和最新回复时间；打开后仍可查看完整保留的对话。",
     "Plugin data root for handoff parent links; reads <code>state/*/jobs/*.json</code>. Always also scans <code>os.tmpdir()/codex-companion/*/jobs/*.json</code>.":
@@ -1537,6 +1539,8 @@ window.__WIKI_CONTENT_I18N = {
       "<strong>服务端分页</strong>的表格，列出每一个已记录的会话。每一页只获取对应的数据片段，因此无论会话数量多少，成本计算都保持有界。针对 <code>id</code>、<code>name</code> 和 <code>cwd</code> 的不区分大小写搜索在服务端运行，并带有 300 ms 防抖；状态过滤器可与搜索组合以精确缩小范围。可搜索的复选框项目选择器支持选择多个目录；完整长路径仍可查看，紧凑的触发器文字让筛选栏保持易读。排序使用相同的自定义下拉模式。每一行显示会话的真实名称（从 transcript 实时同步：<code>/rename</code> 或 <code>claude -n</code> 标题，否则使用自动标题，再否则使用首条用户 prompt，并回退到短 ID）、状态徽章、agent 数量、时长、模型和预估成本。点击任意行即可深入查看完整的会话详情视图，包含对话记录和 agent 层级。",
   },
   vi: {
+    "<strong>Charla</strong>: Read Claude and Codex side by side at <code>/charla</code> in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show session status, model, effort and tokens. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the <code>after</code> / <code>last_line</code> cursor. Below 900 px the columns stack, and reduced motion disables activity animations.":
+      "<strong>Charla</strong>: Đọc Claude và Codex cạnh nhau tại <code>/charla</code> với phong cách hoàng hôn Telegram cố định. Chọn tác vụ để ghép phiên Claude cha với phiên Codex liên kết; mặc định chọn tác vụ đang chạy mới nhất. Bản ghi thực phân biệt yêu cầu và phản hồi, suy luận có thể mở rộng, lệnh shell kèm đầu ra, khác biệt chỉnh sửa, thao tác đọc và tác vụ gửi/nhận. Tiêu đề hiển thị trạng thái phiên, mô hình, mức suy luận và token. Các nút Suy luận, Lệnh và Thay đổi bật/tắt từng khối; đầu ra dài có thể mở rộng khi cần. Sự kiện WebSocket của phiên tải dòng bản ghi mới bằng con trỏ <code>after</code> / <code>last_line</code>. Dưới 900 px, hai cột xếp dọc và chế độ giảm chuyển động tắt hoạt ảnh hoạt động.",
     "The manga presentation uses locally bundled Bangers and Nunito fonts, inked speech bubbles and lane-colored notes: yellow for Working, pink for Waiting for my OK and green for Done. Handoff rows show mini Claude and Codex mascots, single-line requests and replies, and a two-line status stamp. Hover a row for the full first request and its sent time plus the latest reply time; opening it still shows the complete retained conversation.":
       "Giao diện manga dùng phông Bangers và Nunito được đóng gói cục bộ, bong bóng thoại viền mực và ghi chú theo màu cột: vàng khi đang làm việc, hồng khi chờ tôi xác nhận và xanh lá khi hoàn tất. Mỗi hàng tác vụ có linh vật Claude và Codex nhỏ, yêu cầu và phản hồi trên một dòng, cùng dấu trạng thái hai dòng. Di chuột lên hàng để xem đầy đủ yêu cầu đầu tiên, giờ gửi và giờ phản hồi mới nhất; mở hàng vẫn hiển thị toàn bộ hội thoại được lưu.",
     "Plugin data root for handoff parent links; reads <code>state/*/jobs/*.json</code>. Always also scans <code>os.tmpdir()/codex-companion/*/jobs/*.json</code>.":
@@ -3092,6 +3096,8 @@ window.__WIKI_CONTENT_I18N = {
       "Bảng <strong>phân trang phía máy chủ</strong> liệt kê mọi phiên đã ghi. Mỗi trang chỉ lấy phần dữ liệu của mình nên việc tính chi phí luôn có giới hạn, dù có bao nhiêu phiên. Tìm kiếm không phân biệt hoa thường trên <code>id</code>, <code>name</code> và <code>cwd</code> chạy ở phía máy chủ với độ trễ chống dội 300 ms; bộ lọc trạng thái kết hợp với tìm kiếm để thu hẹp chính xác. Bộ chọn dự án dạng hộp kiểm có thể tìm kiếm hỗ trợ chọn nhiều thư mục; đường dẫn dài vẫn có thể xem đầy đủ, còn văn bản gọn trên nút giữ thanh lọc dễ đọc. Sắp xếp dùng cùng mẫu menu tùy chỉnh. Mỗi hàng hiển thị tên thật của phiên (đồng bộ trực tiếp từ bản ghi: tiêu đề <code>/rename</code> hoặc <code>claude -n</code>, nếu không thì tiêu đề tự động, nếu vẫn không có thì prompt đầu tiên của người dùng, với dự phòng là ID ngắn), huy hiệu trạng thái, số lượng agent, thời lượng, mô hình và chi phí ước tính. Nhấp vào bất kỳ hàng nào để đi sâu vào chế độ xem chi tiết đầy đủ của phiên với bản ghi hội thoại và phân cấp agent.",
   },
   ko: {
+    "<strong>Charla</strong>: Read Claude and Codex side by side at <code>/charla</code> in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show session status, model, effort and tokens. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the <code>after</code> / <code>last_line</code> cursor. Below 900 px the columns stack, and reduced motion disables activity animations.":
+      "<strong>Charla</strong>: <code>/charla</code>에서 고정된 Telegram 석양 스타일로 Claude와 Codex를 나란히 읽습니다. 의뢰를 선택하면 상위 Claude 세션과 연결된 Codex 세션이 함께 표시되며, 기본값은 가장 최근 진행 중인 의뢰입니다. 실제 대화 기록은 요청과 응답, 펼칠 수 있는 추론, 출력이 포함된 shell 명령, 편집 차이, 읽기, 의뢰 송수신을 구분합니다. 머리글에는 세션 상태, 모델, 추론 수준과 토큰이 표시됩니다. 추론, 명령, 변경 버튼으로 각 블록을 표시하거나 숨기며 긴 출력은 필요할 때 펼칩니다. 세션 WebSocket 이벤트는 <code>after</code> / <code>last_line</code> 커서로 새 대화 기록 줄을 가져옵니다. 900 px 미만에서는 열이 세로로 쌓이고 동작 줄이기 설정은 활동 애니메이션을 끕니다.",
     "The manga presentation uses locally bundled Bangers and Nunito fonts, inked speech bubbles and lane-colored notes: yellow for Working, pink for Waiting for my OK and green for Done. Handoff rows show mini Claude and Codex mascots, single-line requests and replies, and a two-line status stamp. Hover a row for the full first request and its sent time plus the latest reply time; opening it still shows the complete retained conversation.":
       "만화 스타일은 로컬에 포함된 Bangers 및 Nunito 글꼴, 잉크 테두리 말풍선과 열별 색상 메모를 사용합니다. 작업 중은 노란색, 내 승인 대기는 분홍색, 완료는 초록색입니다. 의뢰 행에는 작은 Claude와 Codex 마스코트, 한 줄 요청과 응답, 두 줄 상태 도장이 표시됩니다. 행에 마우스를 올리면 첫 요청 전문과 전송 시각, 최신 응답 시각을 볼 수 있으며, 열면 저장된 전체 대화가 그대로 표시됩니다.",
     "Plugin data root for handoff parent links; reads <code>state/*/jobs/*.json</code>. Always also scans <code>os.tmpdir()/codex-companion/*/jobs/*.json</code>.":
@@ -4597,6 +4603,8 @@ window.__WIKI_CONTENT_I18N = {
       "<strong>서버 페이지네이션</strong> 테이블은 기록된 모든 세션을 보여줍니다. 각 페이지는 해당 구간만 가져오므로 세션 수와 관계없이 비용 계산 범위가 제한됩니다. <code>id</code>, <code>name</code>, <code>cwd</code>에 대한 대소문자 구분 없는 검색은 300 ms 디바운스와 함께 서버 측에서 실행되며 상태 필터와 조합할 수 있습니다. 검색 가능한 체크박스 프로젝트 선택기로 여러 디렉터리를 고를 수 있고, 긴 경로는 전체를 확인할 수 있으며 간결한 트리거 텍스트가 필터 바를 읽기 쉽게 유지합니다. 정렬도 같은 맞춤 드롭다운 패턴을 사용합니다. 각 행은 세션의 실제 이름(트랜스크립트에서 실시간으로 동기화됨: <code>/rename</code> 또는 <code>claude -n</code> 제목, 없으면 자동 생성된 제목, 그마저도 없으면 첫 사용자 프롬프트, 최종적으로 짧은 ID로 대체), 상태 배지, 에이전트 수, 지속 시간, 모델, 예상 비용을 표시합니다. 행을 클릭하면 대화 트랜스크립트와 에이전트 계층 구조가 포함된 전체 세션 상세 화면으로 이동합니다.",
   },
   es: {
+    "<strong>Charla</strong>: Read Claude and Codex side by side at <code>/charla</code> in a fixed Telegram sunset style. Select an assignment to pair its parent Claude session with a linked Codex session; the latest ongoing assignment is selected by default. Real transcripts distinguish requests and replies, expandable reasoning, shell commands with output, edit diffs, reads, and sent/received handoffs. Headers show session status, model, effort and tokens. Reasoning, Commands and Changes toggle their blocks; long output expands on demand. Session WebSocket events fetch new transcript lines using the <code>after</code> / <code>last_line</code> cursor. Below 900 px the columns stack, and reduced motion disables activity animations.":
+      "<strong>Charla</strong>: Lee Claude y Codex lado a lado en <code>/charla</code> con el estilo fijo Telegram Atardecer. Selecciona un encargo para unir la sesión padre de Claude con una sesión Codex enlazada; por defecto se elige el encargo en curso más reciente. Las transcripciones reales distinguen peticiones y respuestas, razonamiento desplegable, comandos de shell con salida, diferencias de edición, lecturas y envíos y vueltas del encargo. Las cabeceras muestran estado, modelo, esfuerzo y tokens. Razonamiento, Comandos y Cambios muestran u ocultan sus bloques; las salidas largas se despliegan cuando lo necesitas. Los eventos WebSocket de la sesión solicitan nuevas líneas de transcripción mediante el cursor <code>after</code> / <code>last_line</code>. Por debajo de 900 px las columnas se apilan y la preferencia de movimiento reducido desactiva las animaciones de actividad.",
     "The manga presentation uses locally bundled Bangers and Nunito fonts, inked speech bubbles and lane-colored notes: yellow for Working, pink for Waiting for my OK and green for Done. Handoff rows show mini Claude and Codex mascots, single-line requests and replies, and a two-line status stamp. Hover a row for the full first request and its sent time plus the latest reply time; opening it still shows the complete retained conversation.":
       "El estilo manga usa las fuentes locales Bangers y Nunito, bocadillos con bordes de tinta y notas por color de columna: amarillo para Trabajando, rosa para Esperando mi OK y verde para Hecho. Las filas de encargos muestran mini mascotas de Claude y Codex, pedido y respuesta en una línea y un sello de estado de dos líneas. Al pasar el ratón se ve el primer pedido completo, su hora de envío y la hora de la última respuesta; al abrir la fila se conserva la conversación completa guardada.",
     "Plugin data root for handoff parent links; reads <code>state/*/jobs/*.json</code>. Always also scans <code>os.tmpdir()/codex-companion/*/jobs/*.json</code>.":
@@ -6522,6 +6530,7 @@ window.__WIKI_CONTENT_I18N = {
   },
   plain: {
     es: {
+      Charla: "Charla",
       "Run Agent": "Ejecutar agente",
       "Agent Config": "Configuración de agentes",
       "ccam CLI": "CLI de ccam",
@@ -6729,6 +6738,7 @@ window.__WIKI_CONTENT_I18N = {
       "Workflow Runs": "Ejecuciones del flujo de trabajo",
     },
     zh: {
+      Charla: "Charla",
       "Run Agent": "运行 Agent",
       "Agent Config": "Agent 配置",
       "Remote Data Sources": "远程数据源",
@@ -6919,6 +6929,7 @@ window.__WIKI_CONTENT_I18N = {
       "Workflow Runs": "工作流运行",
     },
     vi: {
+      Charla: "Charla",
       "Run Agent": "Chạy Agent",
       "Agent Config": "Cấu hình Agent",
       "Remote Data Sources": "Nguồn dữ liệu từ xa",
@@ -7112,6 +7123,7 @@ window.__WIKI_CONTENT_I18N = {
       "Workflow Runs": "Lần chạy quy trình",
     },
     ko: {
+      Charla: "Charla",
       "Run Agent": "에이전트 실행",
       "Agent Config": "에이전트 구성",
       "Remote Data Sources": "원격 데이터 소스",

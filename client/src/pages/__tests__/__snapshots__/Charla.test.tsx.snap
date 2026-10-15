@@ -1,0 +1,416 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Charla loaded screen 1`] = `
+<div>
+  <div
+    class="charla-page"
+  >
+    <div
+      class="charla-top"
+    >
+      <h1>
+        Live chat
+      </h1>
+      <label
+        class="charla-pick"
+      >
+        Assignment
+         
+        <select>
+          <option
+            value="child"
+          >
+            Parent task
+             · 
+            Child task
+          </option>
+        </select>
+      </label>
+      <div
+        aria-label="Show"
+        class="charla-filters"
+        role="group"
+      >
+        <button
+          aria-pressed="true"
+          type="button"
+        >
+          Reasoning
+        </button>
+        <button
+          aria-pressed="true"
+          type="button"
+        >
+          Commands
+        </button>
+        <button
+          aria-pressed="true"
+          type="button"
+        >
+          Changes
+        </button>
+      </div>
+    </div>
+    <div
+      class="ch-cols"
+    >
+      <section
+        aria-label="Claude"
+        class="ch-col claude"
+      >
+        <header
+          class="ch-head"
+        >
+          <h2>
+            Claude
+          </h2>
+          <p>
+            <span>
+              Active
+            </span>
+            <span>
+              opus
+               · 
+              Unknown
+            </span>
+            <span>
+              1,234 tokens
+            </span>
+          </p>
+        </header>
+        <div
+          class="ch-feed"
+        >
+          <details
+            class="ch-think"
+          >
+            <summary>
+              Thought · duration unavailable
+               
+            </summary>
+            <p>
+              A summary
+            </p>
+          </details>
+          <article
+            class="ch-cmd fail"
+          >
+            <header>
+              <b>
+                Command
+              </b>
+            </header>
+            <pre>
+              <span>
+                npm test
+                
+
+              </span>
+            </pre>
+            <pre>
+              <span>
+                failed
+                
+
+              </span>
+            </pre>
+          </article>
+          <article
+            class="ch-diff"
+          >
+            <header>
+              <b>
+                Changes
+              </b>
+            </header>
+            <pre>
+              <span>
+                a.ts
+                
+
+              </span>
+            </pre>
+            <pre>
+              <span
+                class="del"
+              >
+                -old
+                
+
+              </span>
+              <span
+                class="add"
+              >
+                +new
+                
+
+              </span>
+            </pre>
+          </article>
+          <article
+            class="ch-read"
+          >
+            <header>
+              <b>
+                Read
+              </b>
+            </header>
+            <p>
+              b.ts
+            </p>
+          </article>
+          <article
+            class="ch-user"
+          >
+            <header>
+              <b>
+                Martin
+              </b>
+            </header>
+            <p>
+              Hello
+            </p>
+          </article>
+          <article
+            class="ch-say"
+          >
+            <header>
+              <b>
+                For you
+              </b>
+            </header>
+            <p>
+              Reply
+            </p>
+          </article>
+          <article
+            class="ch-handoff"
+          >
+            <header>
+              <b>
+                Sent to Codex
+              </b>
+              <time
+                datetime="2026-10-15T10:00:00Z"
+              >
+                10:00 AM
+              </time>
+            </header>
+            <p>
+              Build it
+            </p>
+          </article>
+          <article
+            class="ch-handoff in"
+          >
+            <header>
+              <b>
+                Received from Codex
+              </b>
+              <time
+                datetime="2026-10-15T10:01:00Z"
+              >
+                10:01 AM
+              </time>
+            </header>
+            <p>
+              Done
+            </p>
+          </article>
+          <div
+            class="ch-live"
+          >
+            <span
+              aria-hidden="true"
+              class="ch-dots"
+            >
+              <i />
+              <i />
+              <i />
+            </span>
+            Working…
+          </div>
+        </div>
+      </section>
+      <section
+        aria-label="Codex"
+        class="ch-col codex"
+      >
+        <header
+          class="ch-head"
+        >
+          <h2>
+            Codex
+          </h2>
+          <p>
+            <span>
+              Active
+            </span>
+            <span>
+              opus
+               · 
+              Unknown
+            </span>
+            <span>
+              1,234 tokens
+            </span>
+          </p>
+        </header>
+        <div
+          class="ch-feed"
+        >
+          <details
+            class="ch-think"
+          >
+            <summary>
+              Thought · duration unavailable
+               
+            </summary>
+            <p>
+              A summary
+            </p>
+          </details>
+          <article
+            class="ch-cmd fail"
+          >
+            <header>
+              <b>
+                Command
+              </b>
+            </header>
+            <pre>
+              <span>
+                npm test
+                
+
+              </span>
+            </pre>
+            <pre>
+              <span>
+                failed
+                
+
+              </span>
+            </pre>
+          </article>
+          <article
+            class="ch-diff"
+          >
+            <header>
+              <b>
+                Changes
+              </b>
+            </header>
+            <pre>
+              <span>
+                a.ts
+                
+
+              </span>
+            </pre>
+            <pre>
+              <span
+                class="del"
+              >
+                -old
+                
+
+              </span>
+              <span
+                class="add"
+              >
+                +new
+                
+
+              </span>
+            </pre>
+          </article>
+          <article
+            class="ch-read"
+          >
+            <header>
+              <b>
+                Read
+              </b>
+            </header>
+            <p>
+              b.ts
+            </p>
+          </article>
+          <article
+            class="ch-user"
+          >
+            <header>
+              <b>
+                Claude
+              </b>
+            </header>
+            <p>
+              Hello
+            </p>
+          </article>
+          <article
+            class="ch-say"
+          >
+            <header>
+              <b>
+                For Claude
+              </b>
+            </header>
+            <p>
+              Reply
+            </p>
+          </article>
+          <article
+            class="ch-handoff"
+          >
+            <header>
+              <b>
+                Sent to Codex
+              </b>
+              <time
+                datetime="2026-10-15T10:00:00Z"
+              >
+                10:00 AM
+              </time>
+            </header>
+            <p>
+              Build it
+            </p>
+          </article>
+          <article
+            class="ch-handoff in"
+          >
+            <header>
+              <b>
+                Received from Codex
+              </b>
+              <time
+                datetime="2026-10-15T10:01:00Z"
+              >
+                10:01 AM
+              </time>
+            </header>
+            <p>
+              Done
+            </p>
+          </article>
+          <div
+            class="ch-live"
+          >
+            <span
+              aria-hidden="true"
+              class="ch-dots"
+            >
+              <i />
+              <i />
+              <i />
+            </span>
+            Working…
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+`;

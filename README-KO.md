@@ -300,7 +300,7 @@ flowchart LR
   <em>⌘ <strong>Command Palette</strong> · 페이지, 세션, 프로젝트, 필터, 작업을 위한 단일 키보드 실행기</em>
 </p>
 
-사이드바는 Dashboard, Kanban Board, Muro, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, Settings로 이동합니다. 아래 섹션에서 이 보기의 전체 동작을 설명합니다.
+사이드바는 Dashboard, Kanban Board, Muro, Charla, Sessions, Activity Feed, Analytics, Workflows, Agent Config, Run Agent, Settings로 이동합니다. 아래 섹션에서 이 보기의 전체 동작을 설명합니다.
 
 ---
 
@@ -314,6 +314,7 @@ flowchart LR
 | **Dashboard** | 저장되는 **Monitor**와 **Health** 탭이 전체 합계, 활성 계층, 최근 활동, 가중 성공률/캐시/오류/힙 상태, 스토리지, 도구, 모델, Subagent 효과, 컴팩션 지표를 결합합니다. Health는 `/api/settings/info`와 `/api/workflows`에서 5초마다 새로 고칩니다. |
 | **Kanban Board** | Agent 열은 Working, Waiting, Completed, Error를, 세션 열은 Active와 Abandoned를 추가로 다룹니다. 카드는 10개씩 표시하고 활성 WebSocket 보기만 구독하며, 전체 제목을 보존하고 권한 입력, 턴 완료, 프롬프트 대기, 중단 같은 대기 사유를 설명합니다. |
 | **Muro** | `/muro`의 Claude/Codex 시각적 작업 벽: 그림이 있는 세션 메모, 실시간 마스코트, 완료 작업, 토큰, 작업 시간, 연속 완료 일수, 완료 도넛, 작업 리듬 막대와 5주 히트맵을 제공합니다. 오늘 / 7일 / 30일과 공유 Agent 필터가 보드와 차트를 동기화하며 Cursor는 제외합니다. 명시적으로 표시한 핵심 아이디어는 실시간 말풍선, 점, 보존된 세션 타임라인으로 나타납니다. Claude가 Codex에 맡긴 의뢰의 요청, 응답과 연결된 대화를 보여 줍니다. |
+| **Charla** | `/charla`에서 고정된 Telegram 석양 스타일로 Claude와 Codex를 나란히 읽습니다. |
 | **Sessions** | 보이는 페이지만 비용을 계산하는 검색, 필터, 서버 페이지네이션 히스토리와 메모리 내 임시 Codex 시작 행을 제공합니다. 검색은 300 ms 디바운스로 `id`, `name`, `cwd`를 대상으로 합니다. 이름은 명시적 제목, AI 제목, 첫 의미 있는 사용자 프롬프트 순으로 결정됩니다. |
 | **Session Detail** | 실시간 통계, 활성 작업, 도구 사용량, Subagent, 토큰, 계층, 필터링된 이벤트 타임라인, `tool_use_id` 그룹화, 도구별 렌더러를 제공합니다. Conversation 보기는 대기 중인 턴, 시스템 알림, Markdown, 구문 강조 코드, 스타일이 적용된 도구를 렌더링하고, 대기 배너에는 사유와 경과 시간을 표시합니다. |
 | **Activity Feed** | 공유 필터, 서버 페이지네이션, 그룹화, 프로젝트/세션/Subagent 출처, 세션 링크, 일관된 Claude/Codex 상태 배지를 갖춘 일시 정지 가능한 실시간 이벤트를 제공합니다. |
@@ -361,6 +362,10 @@ flowchart LR
 > **Provider 범위와 home:** Settings는 Claude 호환(Claude Code + Cursor) / Codex / Both 선택을 앱 전체에서 일관되게 유지합니다. Claude Code와 Codex home은 대시보드를 재시작하지 않고 편집할 수 있으며, Cursor는 `~/.cursor` 또는 `DASHBOARD_CURSOR_HOME`에서 자동으로 검색됩니다.
 >
 > **로컬 안전 경계:** Run Agent는 존재하는 모든 절대 작업 디렉터리를 허용하고 사용 전에 경로를 canonicalize하므로 home과 최근 프로젝트 실행을 계속 지원합니다. Hosted webhook provider는 HTTPS가 필요합니다. Generic과 n8n target은 로컬 또는 self-hosted receiver에 HTTP를 사용할 수 있으며, 전달은 redirect를 따르지 않습니다.
+
+### Charla
+
+`/charla`에서 고정된 Telegram 석양 스타일로 Claude와 Codex를 나란히 읽습니다. 의뢰를 선택하면 상위 Claude 세션과 연결된 Codex 세션이 함께 표시되며, 기본값은 가장 최근 진행 중인 의뢰입니다. 실제 대화 기록은 요청과 응답, 펼칠 수 있는 추론, 출력이 포함된 shell 명령, 편집 차이, 읽기, 의뢰 송수신을 구분합니다. 머리글에는 세션 상태, 모델, 추론 수준과 토큰이 표시됩니다. 추론, 명령, 변경 버튼으로 각 블록을 표시하거나 숨기며 긴 출력은 필요할 때 펼칩니다. 세션 WebSocket 이벤트는 `after` / `last_line` 커서로 새 대화 기록 줄을 가져옵니다. 900 px 미만에서는 열이 세로로 쌓이고 동작 줄이기 설정은 활동 애니메이션을 끕니다.
 
 ### Muro
 
@@ -564,7 +569,7 @@ sequenceDiagram
    - 지속적 프로젝트 동기화는 즉시 sweep, debounce `fs.watch`, 기본값 30초인 `DASHBOARD_SESSION_SYNC_MS` polling을 결합합니다. 하나의 mtime cache가 새 트랜스크립트나 커진 트랜스크립트만 다시 파싱하고 Hook과 같은 세션 frame을 broadcast합니다.
 4. **WebSocket**이 commit된 변경을 게시합니다.
 5. **UI**가 polling 없이 영향을 받는 보기를 새로 고칩니다.
-6. **Muro**는 실시간 이벤트 후 300 ms 디바운스로 범위 내 세션과 요약을 다시 불러오며, 기간이나 Agent를 바꾸면 차트를 새로 고칩니다. 의뢰 메타데이터와 열린 대화 상세 화면도 같은 세션 업데이트로 새로 고칩니다.
+6. **Muro**는 실시간 이벤트 후 300 ms 디바운스로 범위 내 세션과 요약을 다시 불러오며, 기간이나 Agent를 바꾸면 차트를 새로 고칩니다. 의뢰 메타데이터와 열린 대화 상세 화면도 같은 세션 업데이트로 새로 고칩니다. **Charla**: `/charla`에서 고정된 Telegram 석양 스타일로 Claude와 Codex를 나란히 읽습니다.
 
 ### 에이전트 상태 머신
 
